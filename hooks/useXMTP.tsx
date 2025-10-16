@@ -71,7 +71,12 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         }),
         signMessage: async (message: string): Promise<Uint8Array> => {
           const signature = await wallet.sign({ message });
-          return new Uint8Array(Buffer.from(signature.replace('0x', ''), 'hex'));
+          const hex = signature.replace('0x', '');
+          const bytes = new Uint8Array(hex.length / 2);
+          for (let i = 0; i < hex.length; i += 2) {
+            bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+          }
+          return bytes;
         },
       };
 
@@ -85,7 +90,13 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       setConversation(conv);
 
       const existingMessages = await conv.messages();
-      setMessages(existingMessages);
+      const normalizedMessages = existingMessages.map((msg: any) => ({
+        id: msg.id,
+        content: msg.content as string,
+        senderInboxId: msg.senderAddress || msg.senderInboxId,
+        sentAt: msg.sent || msg.sentAt,
+      }));
+      setMessages(normalizedMessages);
 
       setIsConnected(true);
       setReconnectAttempts(0);
@@ -126,8 +137,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
               return [...prev, {
                 id: message.id,
                 content: message.content as string,
-                senderInboxId: message.senderInboxId,
-                sentAt: message.sentAt,
+                senderInboxId: message.senderAddress || message.senderInboxId,
+                sentAt: message.sent || message.sentAt,
               }];
             });
 
