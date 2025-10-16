@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  swcMinify: false,
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -14,6 +13,7 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
+        '@react-native-async-storage/async-storage': false,
       };
     }
 
