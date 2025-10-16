@@ -41,7 +41,7 @@ const XMTPContext = createContext<XMTPContextType>({
 
 export function XMTPProvider({ children }: { children: ReactNode }) {
   const { authenticated } = usePrivy();
-  const { wallets } = useWallets();
+  const { wallets, ready } = useWallets();
   const [client, setClient] = useState<any | null>(null);
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -52,8 +52,17 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
 
   const initializeClient = useCallback(async () => {
-    const wallet = wallets[0];
-    if (!authenticated || !wallet) {
+    // Wait for wallets to be ready
+    if (!authenticated || !ready) {
+      return;
+    }
+
+    // Find embedded wallet or use first available
+    const wallet = wallets.find(w => w.walletClientType === 'privy') || wallets[0];
+    
+    if (!wallet) {
+      console.error('No wallet found');
+      setError('No wallet available. Please connect a wallet.');
       return;
     }
 
@@ -126,13 +135,13 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsConnecting(false);
     }
-  }, [authenticated, wallets, reconnectAttempts]);
+  }, [authenticated, ready, wallets, reconnectAttempts]);
 
   useEffect(() => {
-    if (authenticated && wallets.length > 0) {
+    if (authenticated && ready && wallets.length > 0) {
       initializeClient();
     }
-  }, [authenticated, wallets, initializeClient]);
+  }, [authenticated, ready, wallets, initializeClient]);
 
   useEffect(() => {
     if (!conversation || !client) return;
