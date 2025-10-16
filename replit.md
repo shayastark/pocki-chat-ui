@@ -111,27 +111,46 @@ Update `.env.local` with real values:
 
 ## Known Issues
 
-### Privy Iframe Loading Error
-**Error:** "Privy iframe failed to load"  
-**Cause:** Replit preview domain not whitelisted in Privy app configuration  
-**Current Domain:** `91fa36a8-073f-4d91-8728-918f26fb1525-00-3qehajd2olvp.spock.replit.dev`
+### Privy Domain Whitelist Required
+**Issue:** XMTP signature requests auto-rejected by Privy  
+**Cause:** Preview domain cannot be whitelisted in Privy (requires deployment domain)  
+**Current Preview Domain:** `91fa36a8-073f-4d91-8728-918f26fb1525-00-3qehajd2olvp.spock.replit.dev`
 
-**Solution:**
-1. Go to [Privy Dashboard](https://dashboard.privy.io)
-2. Select your app (ID: `cmgt1rxc7000qjr0do7m2hsvh`)
-3. Navigate to Settings → Allowed domains
-4. Add the current Replit domain to the allowed list
-5. **Alternative:** Use `*` (wildcard) for development to allow all domains
-6. Save changes and refresh the Replit preview
+**Solution - Deploy First, Then Whitelist:**
+1. **Deploy the app** to get a stable deployment domain (e.g., `pocki-chat.replit.app`)
+2. Go to [Privy Dashboard](https://dashboard.privy.io)
+3. Select your app (ID: `cmgt1rxc7000qjr0do7m2hsvh`)
+4. Navigate to Settings → Allowed domains
+5. Add the **deployment domain** to the allowed list
+6. Save changes and test authentication on the deployed app
 
-**Note:** Replit preview domains change when the app restarts, so using wildcard for development is recommended.
+**Note:** Preview domains are temporary and not accepted by Privy. You must deploy to get a permanent domain.
+
+## Deployment Configuration
+
+**Type:** Autoscale (optimal for this stateless Next.js web app)  
+**Build:** `npm run build`  
+**Run:** `npm start` (uses PORT env variable in production)
+
+**Why Autoscale:**
+- Stateless web UI (AI agent runs on separate reserved VM)
+- Supports WebSocket for XMTP streaming
+- Scales to zero when idle (cost-efficient)
+- Can handle multiple instances and restarts
 
 ## Next Steps for User
-1. **Fix Privy Configuration:** Whitelist the Replit domain in Privy dashboard (see Known Issues above)
-2. **Test Authentication:** Click "Get Started with Privy" to connect wallet/email/social login
-3. **Chat with AI Agent:** After auth, navigate to /chat to start XMTP messaging
-4. **Test Transactions:** Send transaction requests through chat to test Base network integration
-5. **Deploy:** When ready, configure deployment settings and publish the app
+1. **Deploy the app** to get a permanent domain (e.g., `pocki-chat.replit.app`)
+2. **Whitelist deployment domain** in Privy Dashboard:
+   - Go to [Privy Dashboard](https://dashboard.privy.io)
+   - Select app (ID: `cmgt1rxc7000qjr0do7m2hsvh`)
+   - Settings → Allowed domains
+   - Add your deployment domain
+3. **Test on deployed app:**
+   - Click "Get Started with Privy"
+   - Connect wallet/email/social login
+   - Navigate to /chat
+   - Chat with AI agent at 0xd003c8136e974da7317521ef5866c250f17ad155
+4. **Test transactions** through chat to verify Base network integration
 
 ## Development Commands
 ```bash
