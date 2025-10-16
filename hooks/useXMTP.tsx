@@ -13,8 +13,9 @@ interface Message {
 
 interface Conversation {
   id: string;
-  send: (content: string) => Promise<void>;
+  send: (content: string) => Promise<string | void>;
   messages: () => Promise<Message[]>;
+  members?: () => Promise<any[]>;
 }
 
 interface XMTPContextType {
@@ -103,7 +104,45 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
       setClient(newClient);
 
-      const conv = await newClient.conversations.findOrCreateDm(AGENT_ADDRESS) as any;
+      // XMTP v4 requires inbox ID, not Ethereum address
+      // Try to find existing conversation with the agent first
+      let conv = null;
+      
+      try {
+        const conversations = await newClient.conversations.list();
+        
+        // Search for conversation with the agent by checking member addresses
+        for (const conversation of conversations) {
+          const members = await conversation.members();
+          for (const member of members) {
+            try {
+              const inboxState = await newClient.preferences.inboxStateFromInboxIds([member.inboxId]);
+              const memberAddress = inboxState[0]?.identifiers?.[0]?.identifier;
+              
+              if (memberAddress?.toLowerCase() === AGENT_ADDRESS.toLowerCase()) {
+                conv = conversation;
+                console.log('Found existing conversation with agent');
+                break;
+              }
+            } catch (err) {
+              console.error('Error checking member address:', err);
+            }
+          }
+          if (conv) break;
+        }
+      } catch (err) {
+        console.error('Error finding conversations:', err);
+      }
+      
+      if (!conv) {
+        // No existing conversation found - need inbox ID to create new one
+        throw new Error(
+          `Cannot create conversation with agent ${AGENT_ADDRESS}. ` +
+          `XMTP v4 requires inbox ID instead of Ethereum address. ` +
+          `Please get the agent's inbox ID and update NEXT_PUBLIC_AGENT_ADDRESS.`
+        );
+      }
+      
       setConversation(conv);
 
       const existingMessages = await conv.messages();

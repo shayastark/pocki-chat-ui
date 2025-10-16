@@ -111,20 +111,35 @@ Update `.env.local` with real values:
 
 ## Known Issues
 
-### Privy Domain Whitelist Required
-**Issue:** XMTP signature requests auto-rejected by Privy  
-**Cause:** Preview domain cannot be whitelisted in Privy (requires deployment domain)  
+### XMTP Browser SDK v4 Inbox ID Requirement
+**Issue:** Cannot create new conversations with Ethereum addresses  
+**Cause:** XMTP Browser SDK v4.0+ requires inbox IDs instead of Ethereum addresses  
+**Current Agent Address:** `0xd003c8136e974da7317521ef5866c250f17ad155`
+
+**Workaround Implemented:**
+- App searches existing conversations for the agent by address
+- If found, reuses that conversation
+- If not found, shows error asking for inbox ID
+
+**Permanent Solution:**
+1. On your AI agent server, get the inbox ID: `console.log(client.inboxId)`
+2. Update `.env.local`: Change `NEXT_PUBLIC_AGENT_ADDRESS` to the inbox ID
+3. Or: Have the agent initiate the first conversation with a test user
+
+### Privy Domain Whitelist Required  
+**Issue:** XMTP signature requests auto-rejected by Privy (CORS errors)
+**Cause:** Preview domain cannot be whitelisted in Privy  
 **Current Preview Domain:** `91fa36a8-073f-4d91-8728-918f26fb1525-00-3qehajd2olvp.spock.replit.dev`
 
-**Solution - Deploy First, Then Whitelist:**
+**Solution:**
 1. **Deploy the app** to get a stable deployment domain (e.g., `pocki-chat.replit.app`)
 2. Go to [Privy Dashboard](https://dashboard.privy.io)
 3. Select your app (ID: `cmgt1rxc7000qjr0do7m2hsvh`)
 4. Navigate to Settings → Allowed domains
 5. Add the **deployment domain** to the allowed list
-6. Save changes and test authentication on the deployed app
+6. Save changes
 
-**Note:** Preview domains are temporary and not accepted by Privy. You must deploy to get a permanent domain.
+**Note:** These CORS errors are expected on preview domains and will resolve once deployed and whitelisted.
 
 ## Deployment Configuration
 
