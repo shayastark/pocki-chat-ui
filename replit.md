@@ -105,14 +105,33 @@ Update `.env.local` with real values:
 ## Recent Fixes (Oct 16, 2025)
 1. **XMTP Browser SDK:** Fixed SWC compiler crash by making SDK load dynamically (`await import()` instead of static import)
 2. **Next.js Version:** Successfully using Next.js 14.2.15 (v15 had Turbopack compatibility issues with Privy)
-3. **Dev Server:** Working properly, compiles and serves pages successfully
-4. **Privy Integration:** App ID configured via Replit Secrets, authentication ready
+3. **Dev Server:** Working properly, compiles and serves pages successfully (21ms-6s response time)
+4. **Webpack Optimization:** Simplified Next.js config to reduce compilation time and prevent chunk timeout errors
+5. **Privy Integration:** App ID configured, but **REQUIRES DOMAIN WHITELIST** (see Known Issues below)
+
+## Known Issues
+
+### Privy Iframe Loading Error
+**Error:** "Privy iframe failed to load"  
+**Cause:** Replit preview domain not whitelisted in Privy app configuration  
+**Current Domain:** `91fa36a8-073f-4d91-8728-918f26fb1525-00-3qehajd2olvp.spock.replit.dev`
+
+**Solution:**
+1. Go to [Privy Dashboard](https://dashboard.privy.io)
+2. Select your app (ID: `cmgt1rxc7000qjr0do7m2hsvh`)
+3. Navigate to Settings → Allowed domains
+4. Add the current Replit domain to the allowed list
+5. **Alternative:** Use `*` (wildcard) for development to allow all domains
+6. Save changes and refresh the Replit preview
+
+**Note:** Replit preview domains change when the app restarts, so using wildcard for development is recommended.
 
 ## Next Steps for User
-1. **Test Authentication:** Click "Get Started with Privy" to connect wallet/email/social login
-2. **Chat with AI Agent:** After auth, navigate to /chat to start XMTP messaging
-3. **Test Transactions:** Send transaction requests through chat to test Base network integration
-4. **Deploy:** When ready, configure deployment settings and publish the app
+1. **Fix Privy Configuration:** Whitelist the Replit domain in Privy dashboard (see Known Issues above)
+2. **Test Authentication:** Click "Get Started with Privy" to connect wallet/email/social login
+3. **Chat with AI Agent:** After auth, navigate to /chat to start XMTP messaging
+4. **Test Transactions:** Send transaction requests through chat to test Base network integration
+5. **Deploy:** When ready, configure deployment settings and publish the app
 
 ## Development Commands
 ```bash

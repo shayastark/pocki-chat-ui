@@ -14,12 +14,17 @@ export default function LandingPage() {
     }
   }, [ready, authenticated, router]);
 
+  useEffect(() => {
+    console.log('Privy state:', { ready, authenticated });
+  }, [ready, authenticated]);
+
   if (!ready) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 animate-pulse-gentle">🐼</div>
           <p className="text-gray-600">Loading...</p>
+          <p className="text-xs text-gray-400 mt-2">Initializing Privy...</p>
         </div>
       </div>
     );
