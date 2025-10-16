@@ -1,0 +1,54 @@
+Create a Next.js 14 web application for "Pocki Chat" - an XMTP messaging client to chat with an AI wallet health agent.
+
+TECHNICAL REQUIREMENTS:
+- Next.js 14 with App Router
+- TypeScript (strict mode)
+- Tailwind CSS for styling
+- Privy authentication: @privy-io/react-auth, @privy-io/wagmi
+- XMTP messaging: @xmtp/react-sdk
+- Ethereum interactions: wagmi, viem, @tanstack/react-query
+
+PROJECT STRUCTURE:
+Set up the following provider hierarchy in the root layout:
+1. PrivyProvider (with app ID placeholder for now)
+2. QueryClientProvider (TanStack Query)
+3. WagmiProvider (using @privy-io/wagmi's createConfig, not wagmi directly)
+4. App content
+
+CORE FEATURES TO SCAFFOLD:
+1. Landing page (app/page.tsx) with:
+   - Pocki branding introduction
+   - Privy login button (support wallet + email/social login)
+   - Panda-themed design (calm greens, bamboo accents)
+
+2. Chat interface (app/chat/page.tsx) with:
+   - Protected route (requires Privy authentication)
+   - XMTP client initialization using user's wallet
+   - Message list component (displays conversation history)
+   - Message input component (send messages)
+   - Connection to XMTP agent address: 0xd003c8136e974da7317521ef5866c250f17ad155
+
+3. Transaction handling:
+   - Component to display transaction requests from XMTP messages
+   - Integration with wagmi to execute Base network transactions
+   - Support for ERC-20 token approvals and swaps
+
+DESIGN THEME:
+- Panda mascot: 🐼 (calm, thoughtful, supportive personality)
+- Bamboo accent emoji: 🎋
+- Color palette: soft greens, blacks, whites (panda/bamboo inspired)
+- Clean, minimal, calming interface
+- Smooth animations (gentle, not jarring)
+
+IMPORTANT TECHNICAL NOTES:
+- Import createConfig and WagmiProvider from '@privy-io/wagmi', NOT from 'wagmi'
+- Configure wagmi for Base network (chainId: 8453)
+- XMTP environment should be 'production'
+- Use XMTP React SDK hooks for message streaming and sending
+- All wallet operations should use Privy + wagmi
+
+CONFIG PLACEHOLDERS:
+- Create .env.example with: NEXT_PUBLIC_PRIVY_APP_ID, NEXT_PUBLIC_XMTP_ENV
+- Add instructions in README for obtaining Privy app ID
+
+Please scaffold the complete file structure with provider setup, routing, and placeholder components ready for implementation.
