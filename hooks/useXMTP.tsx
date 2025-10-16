@@ -61,8 +61,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      // Dynamically import XMTP Browser SDK to avoid SWC compilation crash
+      // Dynamically import XMTP Browser SDK and ethers to avoid SWC compilation crash
       const { Client } = await import('@xmtp/browser-sdk');
+      const { ethers } = await import('ethers');
+      
+      // Get ethers signer from Privy wallet
+      const ethereumProvider = await wallet.getEthereumProvider();
+      const provider = new ethers.BrowserProvider(ethereumProvider);
+      const ethersSigner = await provider.getSigner();
       
       const signer: any = {
         type: 'EOA',
@@ -70,14 +76,15 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           identifier: wallet.address.toLowerCase(),
           identifierKind: 'Ethereum' as const,
         }),
-        signMessage: async (message: string): Promise<Uint8Array> => {
-          const signature = await wallet.sign({ message });
-          const hex = signature.replace('0x', '');
-          const bytes = new Uint8Array(hex.length / 2);
-          for (let i = 0; i < hex.length; i += 2) {
-            bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
-          }
-          return bytes;
+        signMessage: async (message: string | { message: string }): Promise<Uint8Array> => {
+          // Extract message string if it's an object
+          const messageText = typeof message === 'string' ? message : message.message;
+          
+          // Sign with ethers signer
+          const signature = await ethersSigner.signMessage(messageText);
+          
+          // Convert hex signature to Uint8Array using ethers
+          return ethers.getBytes(signature);
         },
       };
 
@@ -102,7 +109,12 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       setIsConnected(true);
       setReconnectAttempts(0);
     } catch (err) {
-      console.error('Failed to initialize XMTP:', err);
+      console.error('Failed to initialize XMTP - Full error:', {
+        error: err,
+        message: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : undefined,
+        type: typeof err,
+      });
       setError(err instanceof Error ? err.message : 'Failed to connect to XMTP');
       
       if (reconnectAttempts < 3) {
