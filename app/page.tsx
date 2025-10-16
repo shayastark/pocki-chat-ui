@@ -1,0 +1,105 @@
+'use client';
+
+import { usePrivy } from '@privy-io/react-auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+export default function LandingPage() {
+  const { login, authenticated, ready } = usePrivy();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (ready && authenticated) {
+      router.push('/chat');
+    }
+  }, [ready, authenticated, router]);
+
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4 animate-pulse-gentle">🐼</div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="max-w-4xl w-full">
+        <div className="text-center mb-12 animate-fade-in">
+          <div className="text-8xl mb-6">🐼</div>
+          <h1 className="text-5xl font-bold mb-4 text-gray-900">
+            Welcome to Pocki Chat
+          </h1>
+          <p className="text-xl text-gray-600 mb-2">
+            Your AI Wallet Health Agent
+          </p>
+          <div className="flex items-center justify-center gap-2 text-panda-bamboo-600">
+            <span className="text-2xl">🎋</span>
+            <span className="text-lg">Powered by XMTP</span>
+            <span className="text-2xl">🎋</span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-8 animate-slide-up">
+          <h2 className="text-2xl font-semibold mb-6 text-center text-gray-900">
+            What is Pocki? 🐼
+          </h2>
+          <div className="space-y-4 text-gray-700">
+            <p className="leading-relaxed">
+              Pocki is your calm, thoughtful companion for managing your wallet health. 
+              Like a wise panda carefully selecting the best bamboo, Pocki helps you make 
+              informed decisions about your crypto assets.
+            </p>
+            <div className="grid md:grid-cols-3 gap-6 mt-8">
+              <div className="text-center p-4">
+                <div className="text-4xl mb-3">💬</div>
+                <h3 className="font-semibold mb-2">Chat with AI</h3>
+                <p className="text-sm text-gray-600">
+                  Get personalized advice through secure XMTP messaging
+                </p>
+              </div>
+              <div className="text-center p-4">
+                <div className="text-4xl mb-3">🔒</div>
+                <h3 className="font-semibold mb-2">Secure Transactions</h3>
+                <p className="text-sm text-gray-600">
+                  Execute transactions safely on Base network
+                </p>
+              </div>
+              <div className="text-center p-4">
+                <div className="text-4xl mb-3">📊</div>
+                <h3 className="font-semibold mb-2">Wallet Insights</h3>
+                <p className="text-sm text-gray-600">
+                  Monitor your portfolio health in real-time
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center">
+          <button
+            onClick={login}
+            className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+          >
+            Connect Wallet to Start 🚀
+          </button>
+          <p className="mt-4 text-sm text-gray-500">
+            Supports wallet, email, Google, and Twitter login
+          </p>
+        </div>
+
+        <div className="mt-12 text-center text-gray-500 text-sm">
+          <p className="flex items-center justify-center gap-2">
+            <span>Built with</span>
+            <span className="text-panda-bamboo-600 font-semibold">🎋 calmness</span>
+            <span>and</span>
+            <span className="text-panda-green-600 font-semibold">💚 care</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

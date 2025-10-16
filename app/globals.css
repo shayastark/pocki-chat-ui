@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50 text-gray-900;
+  }
+}
+
+@layer utilities {
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+  
+  .message-bubble {
+    @apply rounded-2xl px-4 py-3 max-w-sm shadow-sm;
+  }
+  
+  .message-bubble-sent {
+    @apply bg-panda-green-600 text-white ml-auto;
+  }
+  
+  .message-bubble-received {
+    @apply bg-white text-gray-900;
+  }
+}
