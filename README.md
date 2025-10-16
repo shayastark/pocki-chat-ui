@@ -21,19 +21,26 @@ A Next.js 14 web application for chatting with an AI wallet health agent using X
 
 ### Environment Setup
 
-1. Copy the `.env.example` file to `.env.local`:
+1. **Get Your Privy App ID:**
+   - Visit [https://dashboard.privy.io](https://dashboard.privy.io)
+   - Create a new app or select an existing one
+   - Copy your App ID from the dashboard
 
-```bash
-cp .env.example .env.local
-```
+2. **Configure Environment in Replit:**
+   - Open the "Secrets" tab in Replit (lock icon in left sidebar)
+   - Add a new secret:
+     - Key: `NEXT_PUBLIC_PRIVY_APP_ID`
+     - Value: Your Privy App ID from step 1
+   - The `.env.local` file is already configured with other values
 
-2. Add your Privy App ID to `.env.local`:
-
-```env
-NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id_here
-NEXT_PUBLIC_XMTP_ENV=production
-NEXT_PUBLIC_AGENT_ADDRESS=0xd003c8136e974da7317521ef5866c250f17ad155
-```
+3. **Alternative: Manual Configuration**
+   If not using Replit Secrets, update `.env.local` directly:
+   
+   ```env
+   NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id_here
+   NEXT_PUBLIC_XMTP_ENV=production
+   NEXT_PUBLIC_AGENT_ADDRESS=0xd003c8136e974da7317521ef5866c250f17ad155
+   ```
 
 ### Installation
 
