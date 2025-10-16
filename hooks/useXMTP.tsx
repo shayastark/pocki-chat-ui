@@ -1,8 +1,6 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, type ReactNode, useCallback } from 'react';
-import { Client } from '@xmtp/browser-sdk';
-import type { Signer } from '@xmtp/browser-sdk';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { XMTP_ENV, AGENT_ADDRESS } from '@/lib/constants';
 
@@ -20,7 +18,7 @@ interface Conversation {
 }
 
 interface XMTPContextType {
-  client: Client | null;
+  client: any | null;
   conversation: Conversation | null;
   messages: Message[];
   isConnected: boolean;
@@ -44,7 +42,7 @@ const XMTPContext = createContext<XMTPContextType>({
 export function XMTPProvider({ children }: { children: ReactNode }) {
   const { authenticated } = usePrivy();
   const { wallets } = useWallets();
-  const [client, setClient] = useState<Client | null>(null);
+  const [client, setClient] = useState<any | null>(null);
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isConnected, setIsConnected] = useState(false);
@@ -63,7 +61,10 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      const signer: Signer = {
+      // Dynamically import XMTP Browser SDK to avoid SWC compilation crash
+      const { Client } = await import('@xmtp/browser-sdk');
+      
+      const signer: any = {
         type: 'EOA',
         getIdentifier: () => ({
           identifier: wallet.address.toLowerCase(),
