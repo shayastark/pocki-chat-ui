@@ -182,10 +182,16 @@ npm run lint   # Run ESLint
 ```
 
 ## Recent Changes (Oct 17, 2025)
+- **CRITICAL FIX: Reply content type handling** - Fixed bug where Pocki's responses weren't displaying in UI
+  - Reply messages have nested content structure (`msg.content.content` not `msg.content`)
+  - Now properly extracts text from both direct strings and reply objects
+  - Added detailed logging to show which messages are being filtered and why
+- **Added manual refresh button** - 🔄 Refresh button in chat header to manually sync messages
+- **Added auto-sync after send** - Automatically syncs 2 seconds after sending to fetch agent responses
 - **Upgraded to XMTP Browser SDK v5.0.1** - Latest version with bug fixes for duplicate welcome errors and unnecessary network requests
 - **Fixed v5.0.1 compatibility issues:**
   - Removed deprecated `conv.sync()` call (method no longer exists in v5.0.1)
-  - Added text message filtering to prevent React error #31 (filters out group membership changes and other non-text content)
+  - Content type handling for text, reply, group_updated, reaction types
   - **Added message syncing after send** - Syncs and re-fetches messages after sending to immediately show agent responses (with sync guard to prevent overlapping syncs)
 - **Added conversation syncing** - Calls `syncAll()` to sync all conversations and messages
 - **Fixed message sending error** - Now checks for existing DM before creating new one to prevent InboxValidationFailed errors

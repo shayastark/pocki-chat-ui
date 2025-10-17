@@ -253,19 +253,32 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       console.log(`Fetched ${updatedMessages.length} total messages from DB`);
       
       const normalizedMessages = updatedMessages
-        .filter((msg: any) => {
-          const isText = typeof msg.content === 'string';
-          if (!isText) {
-            console.log('Filtering out non-text message:', msg.contentType || 'unknown');
+        .map((msg: any) => {
+          // Handle different content types
+          let textContent: string | null = null;
+          
+          // Direct text content (regular messages)
+          if (typeof msg.content === 'string') {
+            textContent = msg.content;
           }
-          return isText;
+          // Reply content type (Pocki's responses)
+          else if (msg.contentType?.typeId === 'reply' && typeof msg.content === 'object') {
+            textContent = msg.content.content || msg.content.text || null;
+            console.log('Extracted reply text:', textContent);
+          }
+          // Filter out non-text content types
+          else {
+            console.log('Filtering out non-text message:', msg.contentType?.typeId || 'unknown');
+          }
+          
+          return textContent ? {
+            id: msg.id,
+            content: textContent,
+            senderInboxId: msg.senderAddress || msg.senderInboxId,
+            sentAt: msg.sent || msg.sentAt,
+          } : null;
         })
-        .map((msg: any) => ({
-          id: msg.id,
-          content: msg.content as string,
-          senderInboxId: msg.senderAddress || msg.senderInboxId,
-          sentAt: msg.sent || msg.sentAt,
-        }));
+        .filter((msg): msg is Message => msg !== null);
       
       console.log(`Displaying ${normalizedMessages.length} text messages`);
       setMessages(normalizedMessages);
