@@ -110,11 +110,6 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         env: XMTP_ENV,
       });
 
-      console.log('✅ XMTP Client created successfully');
-      console.log('👤 Your wallet address:', wallet.address);
-      console.log('📬 Your XMTP inbox ID:', newClient.inboxId);
-      console.log('🤖 Agent inbox ID to connect to:', AGENT_ADDRESS);
-
       // Revoke all other installations to prevent hitting the 10 installation limit
       // This keeps only the current installation active
       try {
@@ -132,19 +127,18 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         throw new Error('Agent address not configured. Please set NEXT_PUBLIC_AGENT_ADDRESS environment variable.');
       }
 
-      console.log('🔍 Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
+      console.log('Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
 
       // Try to get existing DM first, create new one if it doesn't exist
       let conv;
       try {
         conv = await (newClient.conversations as any).getDmByInboxId(AGENT_ADDRESS);
-        console.log('✅ Found existing DM with agent');
+        console.log('Found existing DM with agent');
       } catch (getDmErr) {
-        console.log('ℹ️ No existing DM found, creating new one...');
+        console.log('No existing DM found, creating new one...');
         conv = await (newClient.conversations as any).newDm(AGENT_ADDRESS);
-        console.log('✅ Created new DM with agent');
+        console.log('Created new DM with agent');
       }
-      
       setConversation(conv);
 
       const existingMessages = await conv.messages();
