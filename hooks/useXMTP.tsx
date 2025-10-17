@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, type ReactNode, useCallback } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, type ReactNode, useCallback } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { XMTP_ENV, AGENT_ADDRESS } from '@/lib/constants';
 
@@ -50,9 +50,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAgentTyping, setIsAgentTyping] = useState(false);
-  const [reconnectAttempts, setReconnectAttempts] = useState(0);
+  const isInitializing = useRef(false);
+  const hasInitialized = useRef(false);
 
   const initializeClient = useCallback(async () => {
+    // Prevent multiple simultaneous initialization attempts
+    if (isInitializing.current) {
+      console.log('Already initializing, skipping...');
+      return;
+    }
+
     // Wait for wallets to be ready
     if (!authenticated || !ready) {
       return;
@@ -67,6 +74,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    isInitializing.current = true;
     setIsConnecting(true);
     setError(null);
 
@@ -129,7 +137,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       setMessages(normalizedMessages);
 
       setIsConnected(true);
-      setReconnectAttempts(0);
+      hasInitialized.current = true;
     } catch (err) {
       console.error('Failed to initialize XMTP - Full error:', {
         error: err,
@@ -137,24 +145,25 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         stack: err instanceof Error ? err.stack : undefined,
         type: typeof err,
       });
-      setError(err instanceof Error ? err.message : 'Failed to connect to XMTP');
       
-      if (reconnectAttempts < 3) {
-        setTimeout(() => {
-          setReconnectAttempts(prev => prev + 1);
-          initializeClient();
-        }, 5000 * (reconnectAttempts + 1));
+      // Check if user rejected the signature request
+      const errorMessage = err instanceof Error ? err.message : '';
+      if (errorMessage.includes('User rejected') || errorMessage.includes('user rejected')) {
+        setError('You need to sign the message to connect to XMTP. Please try again.');
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to connect to XMTP');
       }
     } finally {
       setIsConnecting(false);
+      isInitializing.current = false;
     }
-  }, [authenticated, ready, wallets, reconnectAttempts]);
+  }, [authenticated, ready, wallets]);
 
   useEffect(() => {
-    if (authenticated && ready && wallets.length > 0) {
+    if (authenticated && ready && wallets.length > 0 && !client && !hasInitialized.current) {
       initializeClient();
     }
-  }, [authenticated, ready, wallets, initializeClient]);
+  }, [authenticated, ready, wallets, client, initializeClient]);
 
   useEffect(() => {
     if (!conversation || !client) return;
@@ -189,13 +198,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         });
       } catch (err) {
         console.error('Message stream error:', err);
-        
-        if (streamActive && reconnectAttempts < 6) {
-          setTimeout(() => {
-            setReconnectAttempts(prev => prev + 1);
-            streamMessages();
-          }, 10000);
-        }
+        // Stream will be restarted if conversation/client changes
       }
     };
 
@@ -204,7 +207,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     return () => {
       streamActive = false;
     };
-  }, [conversation, client, wallets, reconnectAttempts]);
+  }, [conversation, client, wallets]);
 
   const sendMessage = async (content: string) => {
     if (!conversation) {

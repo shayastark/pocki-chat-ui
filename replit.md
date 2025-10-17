@@ -168,7 +168,14 @@ npm start      # Start production server
 npm run lint   # Run ESLint
 ```
 
-## Recent Changes (Oct 16, 2025)
+## Recent Changes (Oct 17, 2025)
+- **Fixed infinite signature loop** - Removed automatic retry logic that caused MetaMask to repeatedly ask for signatures
+- Added initialization guard to prevent multiple simultaneous XMTP client creations
+- Improved error handling for user-rejected signatures (no auto-retry)
+- Updated to use agent's inbox ID (046320945635c5a7b314bf268f77b0075fbf33599450615ea7f1a167d3ab4691)
+- Implemented automatic installation cleanup with `revokeAllOtherInstallations()`
+
+## Previous Changes (Oct 16, 2025)
 - Created full Next.js 14 application structure
 - Installed all dependencies (@privy-io, @xmtp/browser-sdk, wagmi, viem)
 - Configured CORS headers for XMTP Browser SDK
