@@ -179,6 +179,7 @@ npm run lint   # Run ESLint
 - **Fixed v5.0.1 compatibility issues:**
   - Removed deprecated `conv.sync()` call (method no longer exists in v5.0.1)
   - Added text message filtering to prevent React error #31 (filters out group membership changes and other non-text content)
+  - **Added message syncing after send** - Syncs and re-fetches messages after sending to immediately show agent responses (with sync guard to prevent overlapping syncs)
 - **Added conversation syncing** - Calls `syncAll()` to sync all conversations and messages
 - **Fixed message sending error** - Now checks for existing DM before creating new one to prevent InboxValidationFailed errors
 - **Fixed XMTP API method** - Changed from `findOrCreateDm()` to `newDm()` / `getDmByInboxId()` for XMTP Browser SDK v5

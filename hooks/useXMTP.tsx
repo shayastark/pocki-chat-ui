@@ -52,6 +52,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const [isAgentTyping, setIsAgentTyping] = useState(false);
   const isInitializing = useRef(false);
   const hasInitialized = useRef(false);
+  const isSyncing = useRef(false);
 
   const initializeClient = useCallback(async () => {
     // Prevent multiple simultaneous initialization attempts
@@ -237,13 +238,37 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     };
   }, [conversation, client, wallets]);
 
+
   const sendMessage = async (content: string) => {
-    if (!conversation) {
+    if (!conversation || !client) {
       throw new Error('No active conversation');
     }
 
     try {
       await conversation.send(content);
+      
+      // Only sync if not already syncing (prevent overlapping syncs)
+      if (!isSyncing.current) {
+        isSyncing.current = true;
+        try {
+          console.log('Syncing after send to fetch response...');
+          await (client.conversations as any).syncAll();
+          
+          // Re-fetch messages from local DB after sync
+          const updatedMessages = await conversation.messages();
+          const normalizedMessages = updatedMessages
+            .filter((msg: any) => typeof msg.content === 'string')
+            .map((msg: any) => ({
+              id: msg.id,
+              content: msg.content as string,
+              senderInboxId: msg.senderAddress || msg.senderInboxId,
+              sentAt: msg.sent || msg.sentAt,
+            }));
+          setMessages(normalizedMessages);
+        } finally {
+          isSyncing.current = false;
+        }
+      }
     } catch (err) {
       console.error('Failed to send message:', err);
       throw err;
