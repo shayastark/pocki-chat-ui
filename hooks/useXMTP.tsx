@@ -147,12 +147,15 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       setConversation(conv);
 
       const existingMessages = await conv.messages();
-      const normalizedMessages = existingMessages.map((msg: any) => ({
-        id: msg.id,
-        content: msg.content as string,
-        senderInboxId: msg.senderAddress || msg.senderInboxId,
-        sentAt: msg.sent || msg.sentAt,
-      }));
+      // Filter for text messages only (exclude group membership changes, etc.)
+      const normalizedMessages = existingMessages
+        .filter((msg: any) => typeof msg.content === 'string')
+        .map((msg: any) => ({
+          id: msg.id,
+          content: msg.content as string,
+          senderInboxId: msg.senderAddress || msg.senderInboxId,
+          sentAt: msg.sent || msg.sentAt,
+        }));
       setMessages(normalizedMessages);
 
       setIsConnected(true);
@@ -193,6 +196,12 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         const stream = await (client as any).conversations.streamAllMessages({
           onValue: (message: any) => {
             if (!streamActive) return;
+            
+            // Only process text messages (filter out group membership changes, etc.)
+            if (typeof message.content !== 'string') {
+              console.log('Skipping non-text message:', message.contentType || 'unknown type');
+              return;
+            }
             
             setMessages(prev => {
               const exists = prev.some((m: Message) => m.id === message.id);

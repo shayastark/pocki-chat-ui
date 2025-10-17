@@ -176,9 +176,12 @@ npm run lint   # Run ESLint
 
 ## Recent Changes (Oct 17, 2025)
 - **Upgraded to XMTP Browser SDK v5.0.1** - Latest version with bug fixes for duplicate welcome errors and unnecessary network requests
-- **Added conversation syncing** - Calls `syncAll()` and `conv.sync()` to prevent InboxValidationFailed errors
+- **Fixed v5.0.1 compatibility issues:**
+  - Removed deprecated `conv.sync()` call (method no longer exists in v5.0.1)
+  - Added text message filtering to prevent React error #31 (filters out group membership changes and other non-text content)
+- **Added conversation syncing** - Calls `syncAll()` to sync all conversations and messages
 - **Fixed message sending error** - Now checks for existing DM before creating new one to prevent InboxValidationFailed errors
-- **Fixed XMTP API method** - Changed from `findOrCreateDm()` to `newDm()` / `getDmByInboxId()` for XMTP Browser SDK v4
+- **Fixed XMTP API method** - Changed from `findOrCreateDm()` to `newDm()` / `getDmByInboxId()` for XMTP Browser SDK v5
 - **Fixed infinite signature loop** - Removed automatic retry logic that caused MetaMask to repeatedly ask for signatures
 - Added initialization guard to prevent multiple simultaneous XMTP client creations
 - Improved error handling for user-rejected signatures (no auto-retry)

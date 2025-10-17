@@ -50,7 +50,9 @@ export function MessageList() {
                     isOwn ? 'message-bubble-sent' : 'message-bubble-received'
                   }`}
                 >
-                  <p className="whitespace-pre-wrap break-words">{message.content as string}</p>
+                  <p className="whitespace-pre-wrap break-words">
+                    {typeof message.content === 'string' ? message.content : '[Unsupported message type]'}
+                  </p>
                 </div>
                 <div className={`text-xs mt-1 ${isOwn ? 'text-right' : 'text-left'}`}>
                   <span className="text-gray-400">
