@@ -254,17 +254,17 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       
       const normalizedMessages = updatedMessages
         .map((msg: any) => {
-          // Handle different content types
+          // Handle different content types using XMTP stable filter pattern
           let textContent: string | null = null;
           
           // Direct text content (regular messages)
           if (typeof msg.content === 'string') {
             textContent = msg.content;
           }
-          // Reply content type (Pocki's responses)
-          else if (msg.contentType?.typeId === 'reply' && typeof msg.content === 'object') {
-            textContent = msg.content.content || msg.content.text || null;
-            console.log('Extracted reply text:', textContent);
+          // Text reply (Pocki's responses) - XMTP recommended pattern
+          else if (msg.contentType?.typeId === 'reply' && typeof msg.content?.content === 'string') {
+            textContent = msg.content.content;
+            console.log('Extracted text reply:', textContent);
           }
           // Filter out non-text content types
           else {

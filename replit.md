@@ -184,7 +184,8 @@ npm run lint   # Run ESLint
 ## Recent Changes (Oct 17, 2025)
 - **CRITICAL FIX: Reply content type handling** - Fixed bug where Pocki's responses weren't displaying in UI
   - Reply messages have nested content structure (`msg.content.content` not `msg.content`)
-  - Now properly extracts text from both direct strings and reply objects
+  - Now uses XMTP stable filter pattern: `typeof msg.content?.content === 'string'`
+  - Matches official XMTP agent-sdk filter utilities for reliable text reply detection
   - Added detailed logging to show which messages are being filtered and why
 - **Added manual refresh button** - 🔄 Refresh button in chat header to manually sync messages
 - **Added auto-sync after send** - Automatically syncs 2 seconds after sending to fetch agent responses
