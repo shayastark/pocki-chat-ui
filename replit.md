@@ -111,20 +111,12 @@ Update `.env.local` with real values:
 
 ## Known Issues
 
-### XMTP Browser SDK v4 Inbox ID Requirement
-**Issue:** Cannot create new conversations with Ethereum addresses  
-**Cause:** XMTP Browser SDK v4.0+ requires inbox IDs instead of Ethereum addresses  
-**Current Agent Address:** `0xd003c8136e974da7317521ef5866c250f17ad155`
+### ✅ XMTP Browser SDK v4 Inbox ID - RESOLVED
+**Previous Issue:** Cannot create new conversations with Ethereum addresses  
+**Solution:** Now using agent's inbox ID instead of Ethereum address  
+**Agent Inbox ID:** `046320945635c5a7b314bf268f77b0075fbf33599450615ea7f1a167d3ab4691`
 
-**Workaround Implemented:**
-- App searches existing conversations for the agent by address
-- If found, reuses that conversation
-- If not found, shows error asking for inbox ID
-
-**Permanent Solution:**
-1. On your AI agent server, get the inbox ID: `console.log(client.inboxId)`
-2. Update `.env.local`: Change `NEXT_PUBLIC_AGENT_ADDRESS` to the inbox ID
-3. Or: Have the agent initiate the first conversation with a test user
+The app now correctly uses `findOrCreateDm(inboxId)` to create conversations with the AI agent.
 
 ### Privy Domain Whitelist Required  
 **Issue:** XMTP signature requests auto-rejected by Privy (CORS errors)
