@@ -102,6 +102,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         env: XMTP_ENV,
       });
 
+      // Revoke all other installations to prevent hitting the 10 installation limit
+      // This keeps only the current installation active
+      try {
+        await newClient.revokeAllOtherInstallations();
+        console.log('Successfully revoked old installations');
+      } catch (revokeErr) {
+        console.warn('Could not revoke old installations:', revokeErr);
+        // Continue anyway - this might fail on first installation
+      }
+
       setClient(newClient);
 
       // Create or find DM with agent using inbox ID

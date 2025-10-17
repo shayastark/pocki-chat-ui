@@ -30,6 +30,7 @@ A Next.js 14 web application that allows users to chat with an AI wallet health 
 - ✅ Landing page with Privy authentication
 - ✅ Protected chat route
 - ✅ XMTP client initialization with auto-reconnection (up to 6 retries)
+- ✅ **Automatic installation cleanup** - Auto-revokes old XMTP installations to prevent 10/10 limit
 - ✅ Message list with real-time streaming
 - ✅ Typing indicators from AI agent
 - ✅ Panda emoji read status
