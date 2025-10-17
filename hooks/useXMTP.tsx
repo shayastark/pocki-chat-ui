@@ -27,6 +27,7 @@ interface XMTPContextType {
   error: string | null;
   sendMessage: (content: string) => Promise<void>;
   isAgentTyping: boolean;
+  refreshMessages: () => Promise<void>;
 }
 
 const XMTPContext = createContext<XMTPContextType>({
@@ -38,6 +39,7 @@ const XMTPContext = createContext<XMTPContextType>({
   error: null,
   sendMessage: async () => {},
   isAgentTyping: false,
+  refreshMessages: async () => {},
 });
 
 export function XMTPProvider({ children }: { children: ReactNode }) {
@@ -239,6 +241,41 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   }, [conversation, client, wallets]);
 
 
+  const refreshMessages = useCallback(async () => {
+    if (!conversation || !client || isSyncing.current) return;
+
+    isSyncing.current = true;
+    try {
+      console.log('Manually syncing messages...');
+      await (client.conversations as any).syncAll();
+      
+      const updatedMessages = await conversation.messages();
+      console.log(`Fetched ${updatedMessages.length} total messages from DB`);
+      
+      const normalizedMessages = updatedMessages
+        .filter((msg: any) => {
+          const isText = typeof msg.content === 'string';
+          if (!isText) {
+            console.log('Filtering out non-text message:', msg.contentType || 'unknown');
+          }
+          return isText;
+        })
+        .map((msg: any) => ({
+          id: msg.id,
+          content: msg.content as string,
+          senderInboxId: msg.senderAddress || msg.senderInboxId,
+          sentAt: msg.sent || msg.sentAt,
+        }));
+      
+      console.log(`Displaying ${normalizedMessages.length} text messages`);
+      setMessages(normalizedMessages);
+    } catch (err) {
+      console.error('Failed to refresh messages:', err);
+    } finally {
+      isSyncing.current = false;
+    }
+  }, [conversation, client]);
+
   const sendMessage = async (content: string) => {
     if (!conversation || !client) {
       throw new Error('No active conversation');
@@ -246,29 +283,12 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
     try {
       await conversation.send(content);
+      console.log('Message sent, waiting 2s for agent response...');
       
-      // Only sync if not already syncing (prevent overlapping syncs)
-      if (!isSyncing.current) {
-        isSyncing.current = true;
-        try {
-          console.log('Syncing after send to fetch response...');
-          await (client.conversations as any).syncAll();
-          
-          // Re-fetch messages from local DB after sync
-          const updatedMessages = await conversation.messages();
-          const normalizedMessages = updatedMessages
-            .filter((msg: any) => typeof msg.content === 'string')
-            .map((msg: any) => ({
-              id: msg.id,
-              content: msg.content as string,
-              senderInboxId: msg.senderAddress || msg.senderInboxId,
-              sentAt: msg.sent || msg.sentAt,
-            }));
-          setMessages(normalizedMessages);
-        } finally {
-          isSyncing.current = false;
-        }
-      }
+      // Wait 2 seconds for agent to respond, then sync
+      setTimeout(async () => {
+        await refreshMessages();
+      }, 2000);
     } catch (err) {
       console.error('Failed to send message:', err);
       throw err;
@@ -286,6 +306,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         error,
         sendMessage,
         isAgentTyping,
+        refreshMessages,
       }}
     >
       {children}

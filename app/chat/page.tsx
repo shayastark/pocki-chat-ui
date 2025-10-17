@@ -10,10 +10,17 @@ import { TransactionModal } from '@/components/TransactionModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 function ChatContent() {
-  const { isConnected, isConnecting, error } = useXMTP();
+  const { isConnected, isConnecting, error, refreshMessages } = useXMTP();
   const { logout, user } = usePrivy();
   const [showTxModal, setShowTxModal] = useState(false);
   const [currentTx, setCurrentTx] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refreshMessages();
+    setTimeout(() => setIsRefreshing(false), 500);
+  };
 
   if (isConnecting) {
     return (
@@ -66,6 +73,14 @@ function ChatContent() {
                 {isConnected ? 'Connected' : 'Disconnected'}
               </span>
             </div>
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="text-sm px-3 py-1 rounded-lg bg-panda-green-100 text-panda-green-700 hover:bg-panda-green-200 transition-colors disabled:opacity-50"
+              title="Refresh messages"
+            >
+              {isRefreshing ? '🔄 Syncing...' : '🔄 Refresh'}
+            </button>
             <div className="text-sm text-gray-600">
               {user?.wallet?.address?.slice(0, 6)}...{user?.wallet?.address?.slice(-4)}
             </div>

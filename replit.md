@@ -32,6 +32,8 @@ A Next.js 14 web application that allows users to chat with an AI wallet health 
 - ✅ XMTP client initialization with auto-reconnection (up to 6 retries)
 - ✅ **Automatic installation cleanup** - Auto-revokes old XMTP installations to prevent 10/10 limit
 - ✅ Message list with real-time streaming
+- ✅ **Manual refresh button** - Sync messages on-demand to fetch agent responses
+- ✅ **Auto-sync after send** - Waits 2s for agent response, then syncs automatically
 - ✅ Typing indicators from AI agent
 - ✅ Panda emoji read status
 - ✅ Transaction confirmation modal
