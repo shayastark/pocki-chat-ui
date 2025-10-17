@@ -28,6 +28,7 @@ interface XMTPContextType {
   sendMessage: (content: string) => Promise<void>;
   isAgentTyping: boolean;
   refreshMessages: () => Promise<void>;
+  activeWalletAddress: string | null;
 }
 
 const XMTPContext = createContext<XMTPContextType>({
@@ -40,6 +41,7 @@ const XMTPContext = createContext<XMTPContextType>({
   sendMessage: async () => {},
   isAgentTyping: false,
   refreshMessages: async () => {},
+  activeWalletAddress: null,
 });
 
 export function XMTPProvider({ children }: { children: ReactNode }) {
@@ -52,6 +54,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAgentTyping, setIsAgentTyping] = useState(false);
+  const [activeWalletAddress, setActiveWalletAddress] = useState<string | null>(null);
   const isInitializing = useRef(false);
   const hasInitialized = useRef(false);
   const isSyncing = useRef(false);
@@ -76,6 +79,9 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       setError('No wallet available. Please connect a wallet.');
       return;
     }
+
+    console.log('Initializing XMTP with wallet:', wallet.address);
+    setActiveWalletAddress(wallet.address);
 
     isInitializing.current = true;
     setIsConnecting(true);
@@ -358,6 +364,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         sendMessage,
         isAgentTyping,
         refreshMessages,
+        activeWalletAddress,
       }}
     >
       {children}

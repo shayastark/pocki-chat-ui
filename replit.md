@@ -190,6 +190,10 @@ npm run lint   # Run ESLint
   - **Applied fix to BOTH** initial load and refresh function
   - Falls back to `contentFallback` if reply content is not decoded
   - Added detailed logging to show which messages are being filtered and why
+- **Fixed wallet address display mismatch** - UI now shows the actual wallet used for XMTP
+  - Previously showed Privy authenticated wallet while XMTP could use a different wallet (e.g., MetaMask)
+  - Now displays `activeWalletAddress` from XMTP context
+  - Prevents confusion when switching wallets in MetaMask
 - **Added manual refresh button** - 🔄 Refresh button in chat header to manually sync messages
 - **Added auto-sync after send** - Automatically syncs 2 seconds after sending to fetch agent responses
 - **Upgraded to XMTP Browser SDK v5.0.1** - Latest version with bug fixes for duplicate welcome errors and unnecessary network requests

@@ -10,8 +10,8 @@ import { TransactionModal } from '@/components/TransactionModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 function ChatContent() {
-  const { isConnected, isConnecting, error, refreshMessages } = useXMTP();
-  const { logout, user } = usePrivy();
+  const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress } = useXMTP();
+  const { logout } = usePrivy();
   const [showTxModal, setShowTxModal] = useState(false);
   const [currentTx, setCurrentTx] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -81,8 +81,8 @@ function ChatContent() {
             >
               {isRefreshing ? '🔄 Syncing...' : '🔄 Refresh'}
             </button>
-            <div className="text-sm text-gray-600">
-              {user?.wallet?.address?.slice(0, 6)}...{user?.wallet?.address?.slice(-4)}
+            <div className="text-sm text-gray-600" title={activeWalletAddress || 'No wallet connected'}>
+              {activeWalletAddress ? `${activeWalletAddress.slice(0, 6)}...${activeWalletAddress.slice(-4)}` : 'No wallet'}
             </div>
             <button
               onClick={logout}
