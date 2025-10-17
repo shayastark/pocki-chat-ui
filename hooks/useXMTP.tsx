@@ -125,11 +125,6 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         // Continue anyway - this might fail on first installation
       }
 
-      // Sync the client to ensure we have the latest inbox state
-      console.log('🔄 Syncing client...');
-      await (newClient.conversations as any).syncAll();
-      console.log('✅ Client synced');
-
       setClient(newClient);
 
       // Check if agent address is configured
@@ -149,11 +144,6 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         conv = await (newClient.conversations as any).newDm(AGENT_ADDRESS);
         console.log('✅ Created new DM with agent');
       }
-      
-      // Sync the conversation to ensure we have the latest state
-      console.log('🔄 Syncing conversation...');
-      await conv.sync();
-      console.log('✅ Conversation synced');
       
       setConversation(conv);
 
