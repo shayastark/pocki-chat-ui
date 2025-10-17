@@ -150,15 +150,36 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       setConversation(conv);
 
       const existingMessages = await conv.messages();
-      // Filter for text messages only (exclude group membership changes, etc.)
+      console.log(`Initial load: Fetched ${existingMessages.length} messages`);
+      
+      // Filter for text messages and text replies
       const normalizedMessages = existingMessages
-        .filter((msg: any) => typeof msg.content === 'string')
-        .map((msg: any) => ({
-          id: msg.id,
-          content: msg.content as string,
-          senderInboxId: msg.senderAddress || msg.senderInboxId,
-          sentAt: msg.sent || msg.sentAt,
-        }));
+        .map((msg: any) => {
+          let textContent: string | null = null;
+          
+          // Direct text content
+          if (typeof msg.content === 'string') {
+            textContent = msg.content;
+          }
+          // Text reply (agent responses)
+          else if (msg.contentType?.typeId === 'reply') {
+            if (typeof msg.content?.content === 'string') {
+              textContent = msg.content.content;
+            } else if (typeof msg.contentFallback === 'string') {
+              textContent = msg.contentFallback;
+            }
+          }
+          
+          return textContent ? {
+            id: msg.id,
+            content: textContent,
+            senderInboxId: msg.senderAddress || msg.senderInboxId,
+            sentAt: msg.sent || msg.sentAt,
+          } : null;
+        })
+        .filter((msg: Message | null): msg is Message => msg !== null);
+      
+      console.log(`Initial load: Displaying ${normalizedMessages.length} text messages`);
       setMessages(normalizedMessages);
 
       setIsConnected(true);
@@ -295,7 +316,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             sentAt: msg.sent || msg.sentAt,
           } : null;
         })
-        .filter((msg): msg is Message => msg !== null);
+        .filter((msg: Message | null): msg is Message => msg !== null);
       
       console.log(`Displaying ${normalizedMessages.length} text messages`);
       setMessages(normalizedMessages);
