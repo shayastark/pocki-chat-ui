@@ -14,7 +14,7 @@ A Next.js 14 web application that allows users to chat with an AI wallet health 
 - **Frontend:** Next.js 14 (App Router), React, TypeScript (strict mode)
 - **Styling:** Tailwind CSS with custom panda/bamboo theme
 - **Authentication:** Privy (@privy-io/react-auth, @privy-io/wagmi)
-- **Messaging:** XMTP Browser SDK v4.0.0
+- **Messaging:** XMTP Browser SDK v5.0.1
 - **Web3:** Wagmi, Viem for Base network (chainId: 8453)
 - **State Management:** TanStack Query
 
@@ -169,6 +169,8 @@ npm run lint   # Run ESLint
 ```
 
 ## Recent Changes (Oct 17, 2025)
+- **Upgraded to XMTP Browser SDK v5.0.1** - Latest version with bug fixes for duplicate welcome errors and unnecessary network requests
+- **Added conversation syncing** - Calls `syncAll()` and `conv.sync()` to prevent InboxValidationFailed errors
 - **Fixed message sending error** - Now checks for existing DM before creating new one to prevent InboxValidationFailed errors
 - **Fixed XMTP API method** - Changed from `findOrCreateDm()` to `newDm()` / `getDmByInboxId()` for XMTP Browser SDK v4
 - **Fixed infinite signature loop** - Removed automatic retry logic that caused MetaMask to repeatedly ask for signatures
