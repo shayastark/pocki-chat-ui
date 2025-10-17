@@ -122,6 +122,13 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
       setClient(newClient);
 
+      // Check if agent address is configured
+      if (!AGENT_ADDRESS) {
+        throw new Error('Agent address not configured. Please set NEXT_PUBLIC_AGENT_ADDRESS environment variable.');
+      }
+
+      console.log('Creating conversation with agent inbox ID:', AGENT_ADDRESS);
+
       // Create or find DM with agent using inbox ID
       // Type assertion needed as SDK types may not be fully updated
       const conv = await (newClient.conversations as any).findOrCreateDm(AGENT_ADDRESS);
