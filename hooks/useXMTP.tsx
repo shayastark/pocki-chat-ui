@@ -129,24 +129,20 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
       console.log('Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
 
-      // Sync all conversations first
-      console.log('Syncing conversations...');
+      // Sync all conversations and messages first (v5.0.1 recommended approach)
+      console.log('Syncing all conversations and messages...');
       await (newClient.conversations as any).syncAll();
       
       // Try to get existing DM first, create new one if it doesn't exist
-      let conv;
-      try {
-        conv = await (newClient.conversations as any).getDmByInboxId(AGENT_ADDRESS);
+      let conv = await (newClient.conversations as any).getDmByInboxId(AGENT_ADDRESS);
+      
+      if (conv) {
         console.log('Found existing DM with agent');
-      } catch (getDmErr) {
+      } else {
         console.log('No existing DM found, creating new one...');
         conv = await (newClient.conversations as any).newDm(AGENT_ADDRESS);
         console.log('Created new DM with agent');
       }
-      
-      // Sync the conversation to ensure it's up to date
-      console.log('Syncing conversation...');
-      await conv.sync();
       
       setConversation(conv);
 

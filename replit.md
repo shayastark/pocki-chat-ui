@@ -81,18 +81,24 @@ Update `.env.local` with real values:
 
 ## XMTP Integration Notes
 
-### Browser SDK v4.0.0 Considerations
+### Browser SDK v5.0.1 Considerations
 - **CORS Headers Required:** Configured in `next.config.js`
   - `Cross-Origin-Embedder-Policy: require-corp`
   - `Cross-Origin-Opener-Policy: same-origin`
 - **Single Tab Only:** OPFS limitation (Origin Private File System)
 - **WebAssembly:** Uses WASM for performance
-- **Auto-Reconnection:** 6 retries with 10s delay on stream failures
+- **Auto-Reconnection:** Built-in stream auto-retry (6 retries with 10s delay)
 
-### API Implementation
+### API Implementation (v5.0.1)
 - Signer type: EOA (Externally Owned Account)
 - Uses Privy wallet for signing
-- DM conversations via `client.conversations.findOrCreateDm()`
+- **Conversation Syncing:**
+  - `client.conversations.syncAll()` - Syncs all conversations AND messages (recommended)
+  - `client.conversations.sync()` - Syncs only conversations (no messages)
+  - ⚠️ Individual `conv.sync()` method removed in v5.0.1
+- **DM Management:**
+  - `getDmByInboxId(inboxId)` - Returns DM or `null` (doesn't throw error)
+  - `newDm(inboxId)` - Creates new DM conversation
 - Message streaming via `streamAllMessages()` callback pattern
 
 ## Design Theme
