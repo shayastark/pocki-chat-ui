@@ -127,10 +127,18 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         throw new Error('Agent address not configured. Please set NEXT_PUBLIC_AGENT_ADDRESS environment variable.');
       }
 
-      console.log('Creating conversation with agent inbox ID:', AGENT_ADDRESS);
+      console.log('Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
 
-      // Create or find DM with agent using inbox ID
-      const conv = await (newClient.conversations as any).newDm(AGENT_ADDRESS);
+      // Try to get existing DM first, create new one if it doesn't exist
+      let conv;
+      try {
+        conv = await (newClient.conversations as any).getDmByInboxId(AGENT_ADDRESS);
+        console.log('Found existing DM with agent');
+      } catch (getDmErr) {
+        console.log('No existing DM found, creating new one...');
+        conv = await (newClient.conversations as any).newDm(AGENT_ADDRESS);
+        console.log('Created new DM with agent');
+      }
       setConversation(conv);
 
       const existingMessages = await conv.messages();
