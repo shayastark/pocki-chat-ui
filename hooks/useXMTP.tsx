@@ -291,8 +291,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           // Text reply (Pocki's responses) - XMTP recommended pattern
           else if (msg.contentType?.typeId === 'reply') {
             console.log('🔍 DEBUG Reply message:', {
-              id: msg.id,
-              senderInboxId: msg.senderInboxId,
+              id: String(msg.id),
+              senderInboxId: String(msg.senderInboxId),
               hasContent: !!msg.content,
               contentType: typeof msg.content,
               hasContentContent: !!msg.content?.content,
