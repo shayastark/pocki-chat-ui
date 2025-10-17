@@ -303,11 +303,13 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             
             if (typeof msg.content?.content === 'string') {
               textContent = msg.content.content;
-              console.log('✅ Extracted text from reply.content.content:', textContent.substring(0, Math.min(50, textContent.length)));
+              const preview = textContent.substring(0, Math.min(50, textContent.length));
+              console.log('✅ Extracted text from reply.content.content:', preview);
             } else if (typeof msg.contentFallback === 'string') {
               // Try fallback content
               textContent = msg.contentFallback;
-              console.log('✅ Extracted text from contentFallback:', textContent.substring(0, Math.min(50, textContent.length)));
+              const preview = textContent.substring(0, Math.min(50, textContent.length));
+              console.log('✅ Extracted text from contentFallback:', preview);
             } else {
               console.log('❌ Reply has no extractable text content');
             }

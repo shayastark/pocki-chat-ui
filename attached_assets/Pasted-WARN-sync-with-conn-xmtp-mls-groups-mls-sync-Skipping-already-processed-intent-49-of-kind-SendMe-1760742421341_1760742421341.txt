@@ -1,0 +1,65 @@
+WARN sync_with_conn: xmtp_mls::groups::mls_sync: Skipping already processed intent 49 of kind SendMessage because it is in state Committed
+
+e.wbg.__wbg_warn_d89f6637da554c8d @ 05808931.001c5ddbac590247.js:1
+$func14824 @ bindings_wasm_bg.665c59bc.wasm:0x778cdf
+$func10291 @ bindings_wasm_bg.665c59bc.wasm:0x727561
+$func7461 @ bindings_wasm_bg.665c59bc.wasm:0x6d6f65
+$func1270 @ bindings_wasm_bg.665c59bc.wasm:0x3a8a4e
+$func7604 @ bindings_wasm_bg.665c59bc.wasm:0x6db53c
+$func11210 @ bindings_wasm_bg.665c59bc.wasm:0x73745d
+$func242 @ bindings_wasm_bg.665c59bc.wasm:0x54951
+$func254 @ bindings_wasm_bg.665c59bc.wasm:0x84800
+$func425 @ bindings_wasm_bg.665c59bc.wasm:0x1bdc25
+$func1402 @ bindings_wasm_bg.665c59bc.wasm:0x3ea4f6
+$func918 @ bindings_wasm_bg.665c59bc.wasm:0x340d3f
+$func328 @ bindings_wasm_bg.665c59bc.wasm:0x144de7
+$func441 @ bindings_wasm_bg.665c59bc.wasm:0x1dc1cd
+$func264 @ bindings_wasm_bg.665c59bc.wasm:0xbf748
+$func5302 @ bindings_wasm_bg.665c59bc.wasm:0x65284c
+$func1275 @ bindings_wasm_bg.665c59bc.wasm:0x3aa105
+$func313 @ bindings_wasm_bg.665c59bc.wasm:0x12eefa
+$func365 @ bindings_wasm_bg.665c59bc.wasm:0x173ba2
+$func405 @ bindings_wasm_bg.665c59bc.wasm:0x1abb5c
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.001c5ddbac590247.js:1
+s @ 05808931.001c5ddbac590247.js:1Understand this warning
+05808931.001c5ddbac590247.js:1  WARN sync_with_conn: xmtp_mls::groups::mls_sync: Intent [49] is already in state [Committed]
+
+e.wbg.__wbg_warn_d89f6637da554c8d @ 05808931.001c5ddbac590247.js:1
+$func14824 @ bindings_wasm_bg.665c59bc.wasm:0x778cdf
+$func10291 @ bindings_wasm_bg.665c59bc.wasm:0x727561
+$func7461 @ bindings_wasm_bg.665c59bc.wasm:0x6d6f65
+$func1270 @ bindings_wasm_bg.665c59bc.wasm:0x3a8a4e
+$func7604 @ bindings_wasm_bg.665c59bc.wasm:0x6db53c
+$func11210 @ bindings_wasm_bg.665c59bc.wasm:0x73745d
+$func5607 @ bindings_wasm_bg.665c59bc.wasm:0x669232
+$func242 @ bindings_wasm_bg.665c59bc.wasm:0x55db1
+$func254 @ bindings_wasm_bg.665c59bc.wasm:0x84800
+$func425 @ bindings_wasm_bg.665c59bc.wasm:0x1bdc25
+$func1402 @ bindings_wasm_bg.665c59bc.wasm:0x3ea4f6
+$func918 @ bindings_wasm_bg.665c59bc.wasm:0x340d3f
+$func328 @ bindings_wasm_bg.665c59bc.wasm:0x144de7
+$func441 @ bindings_wasm_bg.665c59bc.wasm:0x1dc1cd
+$func264 @ bindings_wasm_bg.665c59bc.wasm:0xbf748
+$func5302 @ bindings_wasm_bg.665c59bc.wasm:0x65284c
+$func1275 @ bindings_wasm_bg.665c59bc.wasm:0x3aa105
+$func313 @ bindings_wasm_bg.665c59bc.wasm:0x12eefa
+$func365 @ bindings_wasm_bg.665c59bc.wasm:0x173ba2
+$func405 @ bindings_wasm_bg.665c59bc.wasm:0x1abb5c
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.001c5ddbac590247.js:1
+s @ 05808931.001c5ddbac590247.js:1Understand this warning
+05808931.001c5ddbac590247.js:1  INFO sync_with_conn: xmtp_mls::groups::mls_sync: Transaction completed successfully: process for group [74b2d3043038b955d03aa8032c6b6a37] envelope cursor[47407776]
+
+page-a4f4e1e532a062f6.js:1 Message sent, waiting 2s for agent response...
+page-a4f4e1e532a062f6.js:1 Manually syncing messages...
+205808931.001c5ddbac590247.js:1  INFO xmtp_mls::groups::welcome_sync: [dd60a023150ba4ffa2fd339c3ac14939a01de73564b55b081c51280c606c3a77] syncing group inbox_id="dd60a023150ba4ffa2fd339c3ac14939a01de73564b55b081c51280c606c3a77"
+
+page-a4f4e1e532a062f6.js:1 Fetched 33 total messages from DB
+page-a4f4e1e532a062f6.js:1 Filtering out non-text message: group_updated
+page-a4f4e1e532a062f6.js:1 Filtering out non-text message: reaction
+2117-d83d1bfef3d0eb05.js:1 Failed to refresh messages: TypeError: Do not know how to serialize a BigInt
