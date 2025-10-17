@@ -263,18 +263,24 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           }
           // Text reply (Pocki's responses) - XMTP recommended pattern
           else if (msg.contentType?.typeId === 'reply') {
-            console.log('🔍 DEBUG Reply message:', {
-              hasContent: !!msg.content,
-              contentType: typeof msg.content,
-              contentKeys: msg.content ? Object.keys(msg.content) : [],
-              contentContent: msg.content?.content,
-              contentContentType: typeof msg.content?.content,
-              fullContent: JSON.stringify(msg.content, null, 2)
+            console.log('🔍 DEBUG Full reply message object:', {
+              messageKeys: Object.keys(msg),
+              id: msg.id,
+              senderInboxId: msg.senderInboxId,
+              contentType: msg.contentType,
+              content: msg.content,
+              contentFallback: msg.contentFallback,
+              // Log all properties
+              fullMessage: JSON.stringify(msg, null, 2)
             });
             
             if (typeof msg.content?.content === 'string') {
               textContent = msg.content.content;
               console.log('✅ Extracted text reply:', textContent);
+            } else if (typeof msg.contentFallback === 'string') {
+              // Try fallback content
+              textContent = msg.contentFallback;
+              console.log('✅ Extracted fallback text:', textContent);
             }
           }
           // Filter out non-text content types
