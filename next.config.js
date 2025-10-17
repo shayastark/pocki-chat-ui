@@ -7,6 +7,11 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Speed up production builds
+  productionBrowserSourceMaps: false,
+  experimental: {
+    optimizeCss: false, // Disable CSS optimization that can be slow
+  },
   webpack: (config, { dev, isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -16,6 +21,12 @@ const nextConfig = {
         tls: false,
         '@react-native-async-storage/async-storage': false,
       };
+    }
+
+    // Speed up builds
+    if (!dev) {
+      config.optimization.minimize = true;
+      config.optimization.moduleIds = 'deterministic';
     }
 
     return config;

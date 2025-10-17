@@ -143,8 +143,13 @@ The app now correctly uses `findOrCreateDm(inboxId)` to create conversations wit
 ## Deployment Configuration
 
 **Type:** Autoscale (optimal for this stateless Next.js web app)  
-**Build:** `npm run build`  
+**Build:** `npm run build` (optimized for faster builds)
 **Run:** `npm start` (uses PORT env variable in production)
+
+**Build Optimizations:**
+- Source maps disabled in production (speeds up builds)
+- CSS optimization disabled (reduces build time)
+- Deterministic module IDs for consistent builds
 
 **Why Autoscale:**
 - Stateless web UI (AI agent runs on separate reserved VM)
