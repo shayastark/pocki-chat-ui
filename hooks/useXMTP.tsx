@@ -168,19 +168,6 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
       console.log('Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
 
-      // CRITICAL: Check if agent is reachable on XMTP first
-      console.log('🔍 Checking if agent is reachable on XMTP...');
-      const canMessageResponse = await Client.canMessage([{
-        identifier: AGENT_ADDRESS,
-        identifierKind: 'InboxId' as any,
-      }]);
-      console.log('📡 Agent reachability:', canMessageResponse);
-      
-      if (!canMessageResponse.get(AGENT_ADDRESS)) {
-        throw new Error('Agent is not reachable on XMTP network. Please verify the inbox ID is correct.');
-      }
-      console.log('✅ Agent IS reachable on XMTP');
-
       // Sync all conversations and messages first (v5.0.1 recommended approach)
       console.log('Syncing all conversations and messages (including all consent states)...');
       await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
