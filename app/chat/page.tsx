@@ -15,7 +15,7 @@ function ChatContent() {
   const [showTxModal, setShowTxModal] = useState(false);
   const [currentTx, setCurrentTx] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [showDebug, setShowDebug] = useState(true);
+  const [showDebug, setShowDebug] = useState(false);
   const [isFixing, setIsFixing] = useState(false);
   const [diagnosticResults, setDiagnosticResults] = useState<any>(null);
   const [isRunningDiagnostics, setIsRunningDiagnostics] = useState(false);
@@ -182,6 +182,13 @@ function ChatContent() {
               title="Refresh messages"
             >
               {isRefreshing ? '🔄 Syncing...' : '🔄 Refresh'}
+            </button>
+            <button
+              onClick={() => setShowDebug(!showDebug)}
+              className="text-sm px-3 py-1 rounded-lg bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors"
+              title="Toggle debug panel"
+            >
+              {showDebug ? '🔍 Hide Debug' : '🔍 Debug'}
             </button>
             <div className="text-sm text-gray-600" title={activeWalletAddress || 'No wallet connected'}>
               {activeWalletAddress ? `${activeWalletAddress.slice(0, 6)}...${activeWalletAddress.slice(-4)}` : 'No wallet'}
