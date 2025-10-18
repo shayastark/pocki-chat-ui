@@ -443,30 +443,55 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     if (!client) return;
     
     console.log('🔧 Fixing conversation - Finding or creating correct DM with agent...');
+    console.log('🎯 Target agent inbox ID:', AGENT_ADDRESS);
     
     // Sync first
     await (client.conversations as any).syncAll();
+    
+    // List all conversations to debug
+    const allConvs = await (client.conversations as any).list();
+    console.log(`📋 Total conversations found: ${allConvs.length}`);
+    allConvs.forEach((c: any, idx: number) => {
+      console.log(`  Conversation ${idx + 1}:`, {
+        id: c.id,
+        peerInboxId: c.peerInboxId,
+        createdAt: c.createdAt,
+        matchesTarget: c.peerInboxId === AGENT_ADDRESS,
+      });
+    });
     
     // Try to get the correct DM by inbox ID
     let correctConv = await (client.conversations as any).getDmByInboxId(AGENT_ADDRESS);
     
     if (!correctConv) {
-      console.log('Creating new DM with agent inbox ID:', AGENT_ADDRESS);
+      console.log('⚠️ No DM found with target inbox ID, creating new one...');
       correctConv = await (client.conversations as any).newDm(AGENT_ADDRESS);
-      console.log('✅ Created new DM with correct agent');
+      console.log('✅ Created new DM');
+      console.log('📋 New conversation peer inbox ID:', correctConv.peerInboxId);
       
       // Sync again after creating
       await (client.conversations as any).syncAll();
     } else {
-      console.log('✅ Found existing DM with correct agent inbox ID');
+      console.log('✅ Found existing DM with target inbox ID');
+      console.log('📋 Conversation peer inbox ID:', correctConv.peerInboxId);
+      console.log('📋 Conversation ID:', correctConv.id);
+    }
+    
+    // Verify it matches
+    if (correctConv.peerInboxId !== AGENT_ADDRESS) {
+      console.error('❌ ERROR: Found conversation peerInboxId does NOT match target!');
+      console.error('  Expected:', AGENT_ADDRESS);
+      console.error('  Got:', correctConv.peerInboxId);
+    } else {
+      console.log('✅ VERIFIED: Conversation peerInboxId matches target!');
     }
     
     // Update conversation
     setConversation(correctConv);
     
     // Refresh conversation list
-    const allConvs = await (client.conversations as any).list();
-    setAllConversations(allConvs);
+    const updatedConvs = await (client.conversations as any).list();
+    setAllConversations(updatedConvs);
     
     // Load messages from correct conversation
     const messages = await correctConv.messages();
