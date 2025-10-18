@@ -124,6 +124,9 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         codecs: [new ReplyCodec()],
       });
       console.log('✅ Created XMTP client with ReplyCodec for decoding agent responses');
+      console.log('🌍 XMTP Environment:', XMTP_ENV);
+      console.log('📬 Client Inbox ID:', newClient.inboxId);
+      console.log('🎯 Target Agent Inbox ID:', AGENT_ADDRESS);
 
       // Revoke all other installations to prevent hitting the 10 installation limit
       // This keeps only the current installation active
@@ -147,6 +150,18 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       // Sync all conversations and messages first (v5.0.1 recommended approach)
       console.log('Syncing all conversations and messages...');
       await (newClient.conversations as any).syncAll();
+      
+      // DEBUG: List all conversations to diagnose duplicates
+      const allConvs = await (newClient.conversations as any).list();
+      console.log(`📋 Total conversations: ${allConvs.length}`);
+      allConvs.forEach((c: any, idx: number) => {
+        console.log(`Conversation ${idx + 1}:`, {
+          id: c.id,
+          peerInboxId: c.peerInboxId,
+          createdAt: c.createdAt,
+          isGroup: c.isGroup,
+        });
+      });
       
       // Try to get existing DM first, create new one if it doesn't exist
       let conv = await (newClient.conversations as any).getDmByInboxId(AGENT_ADDRESS);
