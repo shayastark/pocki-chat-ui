@@ -221,6 +221,16 @@ If new messages don't reach the agent:
 - ✅ Verify agent inbox ID matches the one configured in this app
 
 ## Recent Changes (Oct 18, 2025)
+- **CRITICAL FIX: Consent state filtering** - Added explicit consent states to all `syncAll()` calls
+  - Now syncs ALL consent states: `['allowed', 'unknown', 'denied']`
+  - Previous implementation used default filtering which only synced 'allowed'/'unknown'
+  - This was blocking messages from reaching Pocki agent backend
+  - Applied to all 6 syncAll() calls throughout the codebase
+- **CRITICAL FIX: COEP header** - Changed from `require-corp` to `credentialless`
+  - Fixed `ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep` error
+  - XMTP production servers don't send `Cross-Origin-Resource-Policy` headers
+  - `credentialless` allows third-party resources while maintaining SharedArrayBuffer support
+  - XMTP Network Reachability now PASSES on deployed app
 - **CRITICAL FIX: ReplyCodec registration** - Registered ReplyCodec during XMTP client creation (Browser SDK v5 pattern)
   - Browser SDK v5 requires codecs passed in `Client.create({codecs: [...]})` 
   - Previous attempts to use `registerCodec()` or `contentTypeManager.register()` failed (API doesn't exist)

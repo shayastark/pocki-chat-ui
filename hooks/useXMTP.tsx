@@ -169,8 +169,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       console.log('Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
 
       // Sync all conversations and messages first (v5.0.1 recommended approach)
-      console.log('Syncing all conversations and messages...');
-      await (newClient.conversations as any).syncAll();
+      console.log('Syncing all conversations and messages (including all consent states)...');
+      await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
       
       // DEBUG: List all conversations to diagnose duplicates
       const allConvs = await (newClient.conversations as any).list();
@@ -209,7 +209,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         });
         
         // After creating new DM, sync again to ensure it's registered
-        await (newClient.conversations as any).syncAll();
+        await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
       }
       
       setConversation(conv);
@@ -344,8 +344,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
     isSyncing.current = true;
     try {
-      console.log('Manually syncing messages...');
-      await (client.conversations as any).syncAll();
+      console.log('Manually syncing messages (including all consent states)...');
+      await (client.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
       
       const updatedMessages = await conversation.messages();
       console.log(`Fetched ${updatedMessages.length} total messages from DB`);
@@ -448,8 +448,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
   const forceSyncAll = async () => {
     if (!client) return;
-    console.log('🔄 Force syncing all conversations...');
-    await (client.conversations as any).syncAll();
+    console.log('🔄 Force syncing all conversations (including all consent states)...');
+    await (client.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
     const allConvs = await (client.conversations as any).list();
     setAllConversations(allConvs);
     console.log(`✅ Synced! Total conversations: ${allConvs.length}`);
@@ -462,8 +462,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     console.log('🔧 Fixing conversation - Finding or creating correct DM with agent...');
     console.log('🎯 Target agent inbox ID:', AGENT_ADDRESS);
     
-    // Sync first
-    await (client.conversations as any).syncAll();
+    // Sync first (including all consent states)
+    await (client.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
     
     // List all conversations to debug
     const allConvs = await (client.conversations as any).list();
@@ -488,8 +488,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       const newPeerInboxId = await correctConv.peerInboxId();
       console.log('📋 New conversation peer inbox ID:', newPeerInboxId);
       
-      // Sync again after creating
-      await (client.conversations as any).syncAll();
+      // Sync again after creating (including all consent states)
+      await (client.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
     } else {
       console.log('✅ Found existing DM with target inbox ID');
       const existingPeerInboxId = await correctConv.peerInboxId();
