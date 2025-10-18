@@ -168,6 +168,36 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
       console.log('Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
 
+      // CRITICAL: Verify the agent's inbox ID by querying inbox state
+      try {
+        console.log('🔍 Verifying agent inbox ID by querying XMTP network...');
+        const agentInboxStates = await Client.inboxStateFromInboxIds([AGENT_ADDRESS], XMTP_ENV as any);
+        if (agentInboxStates && agentInboxStates.length > 0) {
+          const agentState = agentInboxStates[0];
+          console.log('✅ Agent inbox state found:', {
+            inboxId: agentState.inboxId,
+            recoveryAddress: agentState.recoveryAddress,
+            identifiers: agentState.identifiers.map((id: any) => ({
+              identifier: id.identifier,
+              kind: id.identifierKind,
+            })),
+            installationIds: agentState.installations.map((i: any) => i.id),
+          });
+          
+          // Verify the inbox ID matches
+          if (agentState.inboxId.toLowerCase() !== AGENT_ADDRESS.toLowerCase()) {
+            console.error('❌ CRITICAL: Inbox ID mismatch!');
+            console.error('Expected:', AGENT_ADDRESS);
+            console.error('Got:', agentState.inboxId);
+          }
+        } else {
+          console.warn('⚠️ WARNING: Could not find inbox state for agent. Agent might not be registered on XMTP.');
+        }
+      } catch (verifyErr) {
+        console.warn('Could not verify agent inbox ID:', verifyErr);
+        // Continue anyway - this is just for diagnostics
+      }
+
       // Sync all conversations and messages first (v5.0.1 recommended approach)
       console.log('Syncing all conversations and messages (including all consent states)...');
       await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
@@ -215,11 +245,22 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       if (conv) {
         console.log('✅ Found existing DM with agent');
         const peerInboxId = await conv.peerInboxId();
+        
+        // CRITICAL: Check conversation consent state
+        const consentState = await conv.consentState();
         console.log('📋 Conversation details:', {
           id: conv.id,
           peerInboxId,
           createdAt: conv.createdAt,
+          consentState,
         });
+        
+        // If consent is denied or unknown, allow it
+        if (consentState !== 'allowed') {
+          console.warn(`⚠️ WARNING: Conversation consent is "${consentState}", setting to "allowed"...`);
+          await conv.updateConsentState('allowed');
+          console.log('✅ Updated conversation consent to "allowed"');
+        }
       } else {
         console.log('⚠️ No existing DM found, creating new one...');
         conv = await (newClient.conversations as any).newDm(AGENT_ADDRESS);
