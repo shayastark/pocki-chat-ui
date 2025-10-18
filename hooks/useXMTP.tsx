@@ -349,15 +349,27 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      await conversation.send(content);
-      console.log('Message sent, waiting 2s for agent response...');
+      console.log('📤 Sending message to agent:', content);
+      const messageId = await conversation.send(content);
+      console.log('✅ Message sent successfully! ID:', messageId);
+      console.log('⏳ Waiting 2s for agent response...');
+      
+      // Immediately add optimistic message to UI
+      const optimisticMessage: Message = {
+        id: messageId || `temp-${Date.now()}`,
+        content,
+        senderInboxId: client.inboxId,
+        sentAt: new Date(),
+      };
+      setMessages(prev => [...prev, optimisticMessage]);
       
       // Wait 2 seconds for agent to respond, then sync
       setTimeout(async () => {
+        console.log('🔄 Auto-syncing to fetch agent response...');
         await refreshMessages();
       }, 2000);
     } catch (err) {
-      console.error('Failed to send message:', err);
+      console.error('❌ Failed to send message:', err);
       throw err;
     }
   };

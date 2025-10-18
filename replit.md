@@ -181,6 +181,55 @@ npm start      # Start production server
 npm run lint   # Run ESLint
 ```
 
+## Pocki Agent Backend Requirements
+
+⚠️ **CRITICAL**: For the chat to work, the Pocki agent backend must be configured correctly:
+
+### Required Agent Configuration
+The agent backend (Pocki) must have the following setup based on [XMTP Agent SDK docs](https://docs.xmtp.org/agents):
+
+1. **ReplyCodec Registration** - Agent must register ReplyCodec to send reply messages:
+   ```typescript
+   import { ReplyCodec } from '@xmtp/content-type-reply';
+   const agent = await Agent.create(signer, {
+     env: 'production',
+     codecs: [new ReplyCodec()],
+   });
+   ```
+
+2. **Event Listeners** - Agent must listen for incoming text messages:
+   ```typescript
+   agent.on('text', async (ctx) => {
+     // Process user message
+     const userMessage = ctx.message.content;
+     
+     // Send reply
+     await ctx.sendTextReply('Your response here');
+   });
+   ```
+
+3. **Agent Must Be Running** - The agent backend service must be actively running and listening for messages
+
+4. **Inbox ID Match** - Agent's inbox ID must match: `046320945635c5a7b314bf268f77b0075fbf33599450615ea7f1a167d3ab4691`
+
+### Troubleshooting Agent Issues
+If new messages don't reach the agent:
+- ✅ Verify agent backend is running
+- ✅ Check agent logs for incoming message events
+- ✅ Confirm agent has ReplyCodec registered
+- ✅ Ensure agent is listening for 'text' or 'message' events
+- ✅ Verify agent inbox ID matches the one configured in this app
+
+## Recent Changes (Oct 18, 2025)
+- **CRITICAL FIX: ReplyCodec registration** - Registered ReplyCodec during XMTP client creation (Browser SDK v5 pattern)
+  - Browser SDK v5 requires codecs passed in `Client.create({codecs: [...]})` 
+  - Previous attempts to use `registerCodec()` or `contentTypeManager.register()` failed (API doesn't exist)
+  - Now using correct pattern: `codecs: [new ReplyCodec()]` in create options
+  - **Result:** Old reply messages from Pocki now display correctly in UI! 🎉
+- **Added optimistic UI updates** - User messages appear immediately while sending
+- **Enhanced logging** - Added detailed logging for send/sync flow to debug agent communication
+- **Added agent backend documentation** - Documented required agent configuration based on XMTP Agent SDK docs
+
 ## Recent Changes (Oct 17, 2025)
 - **CRITICAL FIX: Reply content type handling** - Fixed bug where Pocki's responses weren't displaying in UI
   - **Root cause:** Initial message loading used old filter that excluded reply content types
