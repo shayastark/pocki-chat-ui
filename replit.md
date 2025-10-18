@@ -1,285 +1,45 @@
 # Pocki Chat - AI Wallet Health Agent
 
-## Project Overview
-A Next.js 14 web application that allows users to chat with an AI wallet health agent using XMTP messaging protocol. Features panda-themed design with calm greens and bamboo accents.
-
-## Current Status
-**Project Structure:** ✅ Complete  
-**Dependencies:** ✅ Installed  
-**Configuration:** ✅ Complete
-**Dev Server:** ✅ Running (Next.js 14.2.15)
-**Privy Setup:** ✅ Complete (App ID configured)
-
-## Tech Stack
-- **Frontend:** Next.js 14 (App Router), React, TypeScript (strict mode)
-- **Styling:** Tailwind CSS with custom panda/bamboo theme
-- **Authentication:** Privy (@privy-io/react-auth, @privy-io/wagmi)
-- **Messaging:** XMTP Browser SDK v5.0.1
-- **Web3:** Wagmi, Viem for Base network (chainId: 8453)
-- **State Management:** TanStack Query
-
-## Architecture
-
-### Provider Hierarchy
-1. `PrivyProvider` - Wallet authentication (wallet, email, Google, Twitter)
-2. `QueryClientProvider` - TanStack Query for data fetching
-3. `WagmiProvider` - Ethereum interactions (Base network)
-4. `XMTPProvider` - XMTP messaging client (custom context)
-
-### Key Features Implemented
-- ✅ Landing page with Privy authentication
-- ✅ Protected chat route
-- ✅ XMTP client initialization with auto-reconnection (up to 6 retries)
-- ✅ **Automatic installation cleanup** - Auto-revokes old XMTP installations to prevent 10/10 limit
-- ✅ Message list with real-time streaming
-- ✅ **Manual refresh button** - Sync messages on-demand to fetch agent responses
-- ✅ **Auto-sync after send** - Waits 2s for agent response, then syncs automatically
-- ✅ Typing indicators from AI agent
-- ✅ Panda emoji read status
-- ✅ Transaction confirmation modal
-- ✅ Transaction execution on Base network
-- ✅ Comprehensive error boundaries
-- ✅ Loading skeletons and animations
-
-### File Structure
-```
-/
-├── app/
-│   ├── layout.tsx          # Root layout with providers
-│   ├── page.tsx            # Landing page
-│   ├── chat/
-│   │   └── page.tsx        # Chat interface (protected route)
-│   ├── providers.tsx       # Provider configuration
-│   └── globals.css         # Global styles & Tailwind
-├── components/
-│   ├── ErrorBoundary.tsx   # Error handling
-│   ├── LoadingSpinner.tsx  # Loading states
-│   ├── MessageList.tsx     # Chat message display
-│   ├── MessageInput.tsx    # Send message input
-│   └── TransactionModal.tsx # Transaction confirmation
-├── hooks/
-│   └── useXMTP.tsx         # XMTP client context & hooks
-├── lib/
-│   ├── wagmi-config.ts     # Wagmi configuration (Base)
-│   └── constants.ts        # App constants
-└── utils/                   # Utility functions
-
-```
-
-## Setup Required
-
-### 1. Privy App ID
-The user needs to provide their Privy App ID:
-1. Go to https://dashboard.privy.io
-2. Create a new app or use existing
-3. Copy the App ID
-4. Add to Replit Secrets: `NEXT_PUBLIC_PRIVY_APP_ID`
-
-### 2. Environment Variables
-Update `.env.local` with real values:
-- `NEXT_PUBLIC_PRIVY_APP_ID` - From Privy dashboard
-- `NEXT_PUBLIC_XMTP_ENV` - Set to 'production' for mainnet
-- `NEXT_PUBLIC_AGENT_ADDRESS` - AI agent XMTP address
-
-## XMTP Integration Notes
-
-### Browser SDK v5.0.1 Considerations
-- **CORS Headers Required:** Configured in `next.config.js`
-  - `Cross-Origin-Embedder-Policy: require-corp`
-  - `Cross-Origin-Opener-Policy: same-origin`
-- **Single Tab Only:** OPFS limitation (Origin Private File System)
-- **WebAssembly:** Uses WASM for performance
-- **Auto-Reconnection:** Built-in stream auto-retry (6 retries with 10s delay)
-
-### API Implementation (v5.0.1)
-- Signer type: EOA (Externally Owned Account)
-- Uses Privy wallet for signing
-- **Conversation Syncing:**
-  - `client.conversations.syncAll()` - Syncs all conversations AND messages (recommended)
-  - `client.conversations.sync()` - Syncs only conversations (no messages)
-  - ⚠️ Individual `conv.sync()` method removed in v5.0.1
-- **DM Management:**
-  - `getDmByInboxId(inboxId)` - Returns DM or `null` (doesn't throw error)
-  - `newDm(inboxId)` - Creates new DM conversation
-- Message streaming via `streamAllMessages()` callback pattern
-
-## Design Theme
-- **Mascot:** 🐼 Panda (calm, thoughtful, supportive)
-- **Accent:** 🎋 Bamboo
-- **Colors:** 
-  - Panda Green: #16a34a (green-600) to #f0fdf4 (green-50)
-  - Bamboo: #84cc16 (lime-600) to #f7fee7 (lime-50)
-- **Animations:** Gentle, smooth (fade-in, slide-up, pulse-gentle)
-
-## Recent Fixes (Oct 16, 2025)
-1. **XMTP Browser SDK:** Fixed SWC compiler crash by making SDK load dynamically (`await import()` instead of static import)
-2. **Next.js Version:** Successfully using Next.js 14.2.15 (v15 had Turbopack compatibility issues with Privy)
-3. **Dev Server:** Working properly, compiles and serves pages successfully (21ms-6s response time)
-4. **Webpack Optimization:** Simplified Next.js config to reduce compilation time and prevent chunk timeout errors
-5. **Privy Integration:** App ID configured, but **REQUIRES DOMAIN WHITELIST** (see Known Issues below)
-
-## Known Issues
-
-### ✅ XMTP Browser SDK v4 Inbox ID - RESOLVED
-**Previous Issue:** Cannot create new conversations with Ethereum addresses  
-**Solution:** Now using agent's inbox ID instead of Ethereum address  
-**Agent Inbox ID:** `046320945635c5a7b314bf268f77b0075fbf33599450615ea7f1a167d3ab4691`
-
-The app now correctly uses `findOrCreateDm(inboxId)` to create conversations with the AI agent.
-
-### Privy Domain Whitelist Required  
-**Issue:** XMTP signature requests auto-rejected by Privy (CORS errors)
-**Cause:** Preview domain cannot be whitelisted in Privy  
-**Current Preview Domain:** `91fa36a8-073f-4d91-8728-918f26fb1525-00-3qehajd2olvp.spock.replit.dev`
-
-**Solution:**
-1. **Deploy the app** to get a stable deployment domain (e.g., `pocki-chat.replit.app`)
-2. Go to [Privy Dashboard](https://dashboard.privy.io)
-3. Select your app (ID: `cmgt1rxc7000qjr0do7m2hsvh`)
-4. Navigate to Settings → Allowed domains
-5. Add the **deployment domain** to the allowed list
-6. Save changes
-
-**Note:** These CORS errors are expected on preview domains and will resolve once deployed and whitelisted.
-
-## Deployment Configuration
-
-**Type:** Autoscale (optimal for this stateless Next.js web app)  
-**Build:** `npm run build` (optimized for faster builds)
-**Run:** `npm start` (uses PORT env variable in production)
-
-**Build Optimizations:**
-- Source maps disabled in production (speeds up builds)
-- CSS optimization disabled (reduces build time)
-- Deterministic module IDs for consistent builds
-
-**Why Autoscale:**
-- Stateless web UI (AI agent runs on separate reserved VM)
-- Supports WebSocket for XMTP streaming
-- Scales to zero when idle (cost-efficient)
-- Can handle multiple instances and restarts
-
-## Next Steps for User
-1. **Deploy the app** to get a permanent domain (e.g., `pocki-chat.replit.app`)
-2. **Whitelist deployment domain** in Privy Dashboard:
-   - Go to [Privy Dashboard](https://dashboard.privy.io)
-   - Select app (ID: `cmgt1rxc7000qjr0do7m2hsvh`)
-   - Settings → Allowed domains
-   - Add your deployment domain
-3. **Test on deployed app:**
-   - Click "Get Started with Privy"
-   - Connect wallet/email/social login
-   - Navigate to /chat
-   - Chat with AI agent at 0xd003c8136e974da7317521ef5866c250f17ad155
-4. **Test transactions** through chat to verify Base network integration
-
-## Development Commands
-```bash
-npm run dev    # Start development server on port 5000
-npm run build  # Build for production
-npm start      # Start production server
-npm run lint   # Run ESLint
-```
-
-## Pocki Agent Backend Requirements
-
-⚠️ **CRITICAL**: For the chat to work, the Pocki agent backend must be configured correctly:
-
-### Required Agent Configuration
-The agent backend (Pocki) must have the following setup based on [XMTP Agent SDK docs](https://docs.xmtp.org/agents):
-
-1. **ReplyCodec Registration** - Agent must register ReplyCodec to send reply messages:
-   ```typescript
-   import { ReplyCodec } from '@xmtp/content-type-reply';
-   const agent = await Agent.create(signer, {
-     env: 'production',
-     codecs: [new ReplyCodec()],
-   });
-   ```
-
-2. **Event Listeners** - Agent must listen for incoming text messages:
-   ```typescript
-   agent.on('text', async (ctx) => {
-     // Process user message
-     const userMessage = ctx.message.content;
-     
-     // Send reply
-     await ctx.sendTextReply('Your response here');
-   });
-   ```
-
-3. **Agent Must Be Running** - The agent backend service must be actively running and listening for messages
-
-4. **Inbox ID Match** - Agent's inbox ID must match: `046320945635c5a7b314bf268f77b0075fbf33599450615ea7f1a167d3ab4691`
-
-### Troubleshooting Agent Issues
-If new messages don't reach the agent:
-- ✅ Verify agent backend is running
-- ✅ Check agent logs for incoming message events
-- ✅ Confirm agent has ReplyCodec registered
-- ✅ Ensure agent is listening for 'text' or 'message' events
-- ✅ Verify agent inbox ID matches the one configured in this app
-
-## Recent Changes (Oct 18, 2025)
-- **CRITICAL FIX: Consent state filtering** - Added explicit consent states to all `syncAll()` calls
-  - Now syncs ALL consent states: `['allowed', 'unknown', 'denied']`
-  - Previous implementation used default filtering which only synced 'allowed'/'unknown'
-  - This was blocking messages from reaching Pocki agent backend
-  - Applied to all 6 syncAll() calls throughout the codebase
-- **CRITICAL FIX: COEP header** - Changed from `require-corp` to `credentialless`
-  - Fixed `ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep` error
-  - XMTP production servers don't send `Cross-Origin-Resource-Policy` headers
-  - `credentialless` allows third-party resources while maintaining SharedArrayBuffer support
-  - XMTP Network Reachability now PASSES on deployed app
-- **CRITICAL FIX: ReplyCodec registration** - Registered ReplyCodec during XMTP client creation (Browser SDK v5 pattern)
-  - Browser SDK v5 requires codecs passed in `Client.create({codecs: [...]})` 
-  - Previous attempts to use `registerCodec()` or `contentTypeManager.register()` failed (API doesn't exist)
-  - Now using correct pattern: `codecs: [new ReplyCodec()]` in create options
-  - **Result:** Old reply messages from Pocki now display correctly in UI! 🎉
-- **Added optimistic UI updates** - User messages appear immediately while sending
-- **Enhanced logging** - Added detailed logging for send/sync flow to debug agent communication
-- **Added agent backend documentation** - Documented required agent configuration based on XMTP Agent SDK docs
-
-## Recent Changes (Oct 17, 2025)
-- **CRITICAL FIX: Reply content type handling** - Fixed bug where Pocki's responses weren't displaying in UI
-  - **Root cause:** Initial message loading used old filter that excluded reply content types
-  - Reply messages have nested content structure (`msg.content.content` not `msg.content`)
-  - Now uses XMTP stable filter pattern: `typeof msg.content?.content === 'string'`
-  - Matches official XMTP agent-sdk filter utilities for reliable text reply detection
-  - **Applied fix to BOTH** initial load and refresh function
-  - Falls back to `contentFallback` if reply content is not decoded
-  - Added detailed logging to show which messages are being filtered and why
-- **Fixed wallet address display mismatch** - UI now shows the actual wallet used for XMTP
-  - Previously showed Privy authenticated wallet while XMTP could use a different wallet (e.g., MetaMask)
-  - Now displays `activeWalletAddress` from XMTP context
-  - Prevents confusion when switching wallets in MetaMask
-- **Added manual refresh button** - 🔄 Refresh button in chat header to manually sync messages
-- **Added auto-sync after send** - Automatically syncs 2 seconds after sending to fetch agent responses
-- **Upgraded to XMTP Browser SDK v5.0.1** - Latest version with bug fixes for duplicate welcome errors and unnecessary network requests
-- **Fixed v5.0.1 compatibility issues:**
-  - Removed deprecated `conv.sync()` call (method no longer exists in v5.0.1)
-  - Content type handling for text, reply, group_updated, reaction types
-  - **Added message syncing after send** - Syncs and re-fetches messages after sending to immediately show agent responses (with sync guard to prevent overlapping syncs)
-- **Added conversation syncing** - Calls `syncAll()` to sync all conversations and messages
-- **Fixed message sending error** - Now checks for existing DM before creating new one to prevent InboxValidationFailed errors
-- **Fixed XMTP API method** - Changed from `findOrCreateDm()` to `newDm()` / `getDmByInboxId()` for XMTP Browser SDK v5
-- **Fixed infinite signature loop** - Removed automatic retry logic that caused MetaMask to repeatedly ask for signatures
-- Added initialization guard to prevent multiple simultaneous XMTP client creations
-- Improved error handling for user-rejected signatures (no auto-retry)
-- Updated to use agent's inbox ID (046320945635c5a7b314bf268f77b0075fbf33599450615ea7f1a167d3ab4691)
-- Implemented automatic installation cleanup with `revokeAllOtherInstallations()`
-
-## Previous Changes (Oct 16, 2025)
-- Created full Next.js 14 application structure
-- Installed all dependencies (@privy-io, @xmtp/browser-sdk, wagmi, viem)
-- Configured CORS headers for XMTP Browser SDK
-- Implemented all core components and features
-- Set up provider hierarchy
-- Created panda-themed UI with Tailwind
-- Added comprehensive error handling and loading states
+## Overview
+Pocki Chat is a Next.js 14 web application enabling users to interact with an AI wallet health agent via the XMTP messaging protocol. The project aims to provide a secure and intuitive chat interface for managing wallet health, leveraging Web3 technologies. Its design features a unique panda-themed aesthetic with calm greens and bamboo accents. The application offers robust authentication, real-time messaging, and on-chain transaction capabilities on the Base network, designed for a smooth user experience and efficient AI interaction.
 
 ## User Preferences
 - Prefers comprehensive implementations with all requested features
 - Wants auto-reconnection, typing indicators, and transaction handling
 - Requires panda emoji for read status
 - Needs confirmation modals before transaction execution
+
+## System Architecture
+
+### UI/UX Decisions
+The application features a panda-themed design with calm green and bamboo accents, utilizing Tailwind CSS for styling. Animations are gentle and smooth, including fade-in, slide-up, and pulse effects.
+
+### Technical Implementations
+The core application is built with Next.js 14 (App Router), React, and TypeScript.
+- **Authentication:** Privy is used for secure wallet, email, and social logins.
+- **Messaging:** XMTP Browser SDK (v5.0.1) provides real-time, secure messaging.
+- **Web3:** Wagmi and Viem are integrated for Ethereum interactions, specifically targeting the Base network (chainId: 8453).
+- **State Management:** TanStack Query handles data fetching and caching.
+
+### Feature Specifications
+- **Authentication & Authorization:** Landing page with Privy authentication and protected chat routes.
+- **XMTP Integration:** XMTP client initialization with auto-reconnection (up to 6 retries), automatic revocation of old XMTP installations to prevent limit issues, real-time message streaming, and typing indicators from the AI agent.
+- **Message Management:** Message list display, manual refresh button for on-demand message syncing, and auto-sync after sending messages to fetch agent responses.
+- **Transaction Handling:** Confirmation modal and execution of transactions on the Base network.
+- **User Feedback:** Panda emoji read status, loading skeletons, and animations.
+- **Robustness:** Comprehensive error boundaries are implemented throughout the application.
+
+### System Design Choices
+- **Provider Hierarchy:** `PrivyProvider` (authentication), `QueryClientProvider` (data fetching), `WagmiProvider` (Ethereum interactions), and `XMTPProvider` (messaging client) are nested to ensure proper context flow.
+- **XMTP Browser SDK v5.0.1:** Requires specific CORS headers (`Cross-Origin-Embedder-Policy: credentialless`, `Cross-Origin-Opener-Policy: same-origin`), operates in a single tab due to OPFS limitations, and uses WebAssembly for performance.
+- **Agent Interaction:** The application communicates with an AI agent that requires specific XMTP Agent SDK configurations, including `ReplyCodec` registration, event listeners for incoming text messages, and an actively running service with a matching inbox ID.
+- **Deployment:** Optimized for Autoscale deployment on Replit, suitable for stateless web UI and supporting WebSockets for XMTP streaming. Builds are optimized with source maps and CSS optimization disabled for faster deployments.
+
+## External Dependencies
+- **Privy:** Authentication service (`@privy-io/react-auth`, `@privy-io/wagmi`).
+- **XMTP:** Decentralized messaging protocol (`@xmtp/xmtp-js`, `@xmtp/browser-sdk`).
+- **Wagmi:** React Hooks for Ethereum (`wagmi`).
+- **Viem:** TypeScript interface for Ethereum (`viem`).
+- **TanStack Query:** Data fetching library (`@tanstack/react-query`).
+- **Next.js:** Web framework.
+- **Tailwind CSS:** Utility-first CSS framework.
