@@ -152,11 +152,24 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       let conv = await (newClient.conversations as any).getDmByInboxId(AGENT_ADDRESS);
       
       if (conv) {
-        console.log('Found existing DM with agent');
+        console.log('✅ Found existing DM with agent');
+        console.log('📋 Conversation details:', {
+          id: conv.id,
+          peerInboxId: conv.peerInboxId,
+          createdAt: conv.createdAt,
+        });
       } else {
-        console.log('No existing DM found, creating new one...');
+        console.log('⚠️ No existing DM found, creating new one...');
         conv = await (newClient.conversations as any).newDm(AGENT_ADDRESS);
-        console.log('Created new DM with agent');
+        console.log('✅ Created new DM with agent');
+        console.log('📋 New conversation details:', {
+          id: conv.id,
+          peerInboxId: conv.peerInboxId,
+          createdAt: conv.createdAt,
+        });
+        
+        // After creating new DM, sync again to ensure it's registered
+        await (newClient.conversations as any).syncAll();
       }
       
       setConversation(conv);
@@ -350,6 +363,12 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
     try {
       console.log('📤 Sending message to agent:', content);
+      console.log('📋 Target conversation:', {
+        id: conversation.id,
+        peerInboxId: (conversation as any).peerInboxId,
+        expectedAgentInboxId: AGENT_ADDRESS,
+      });
+      
       const messageId = await conversation.send(content);
       console.log('✅ Message sent successfully! ID:', messageId);
       console.log('⏳ Waiting 2s for agent response...');
