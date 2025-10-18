@@ -10,12 +10,13 @@ import { TransactionModal } from '@/components/TransactionModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 function ChatContent() {
-  const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll } = useXMTP();
+  const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll, fixConversation } = useXMTP();
   const { logout } = usePrivy();
   const [showTxModal, setShowTxModal] = useState(false);
   const [currentTx, setCurrentTx] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showDebug, setShowDebug] = useState(true);
+  const [isFixing, setIsFixing] = useState(false);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -115,9 +116,12 @@ function ChatContent() {
                 <strong>Target Agent Inbox ID:</strong> {debugInfo.targetAgentInboxId}
               </div>
               <div className={`p-2 rounded ${debugInfo.conversationPeerInboxId === debugInfo.targetAgentInboxId ? 'bg-green-100' : 'bg-red-100'}`}>
-                <strong>Active Conv Peer Inbox ID:</strong> {debugInfo.conversationPeerInboxId || 'N/A'}
-                {debugInfo.conversationPeerInboxId === debugInfo.targetAgentInboxId && <span className="ml-2 text-green-700">✓ MATCH</span>}
-                {debugInfo.conversationPeerInboxId && debugInfo.conversationPeerInboxId !== debugInfo.targetAgentInboxId && <span className="ml-2 text-red-700">✗ MISMATCH!</span>}
+                <strong>Active Conv Peer Inbox ID:</strong>
+                <div className="break-all mt-1">{debugInfo.conversationPeerInboxId || 'N/A'}</div>
+                {debugInfo.conversationPeerInboxId === debugInfo.targetAgentInboxId && <span className="ml-2 text-green-700 font-bold">✓ MATCH</span>}
+                {debugInfo.conversationPeerInboxId && debugInfo.conversationPeerInboxId !== debugInfo.targetAgentInboxId && (
+                  <div className="mt-2 text-red-700 font-bold">✗ MISMATCH! Sending to wrong conversation!</div>
+                )}
               </div>
               <div>
                 <strong>Conversation ID:</strong> {debugInfo.conversationId || 'N/A'}
@@ -136,6 +140,20 @@ function ChatContent() {
                     </div>
                   ))}
                 </div>
+              )}
+              
+              {debugInfo.conversationPeerInboxId && debugInfo.conversationPeerInboxId !== debugInfo.targetAgentInboxId && (
+                <button 
+                  onClick={async () => {
+                    setIsFixing(true);
+                    await fixConversation();
+                    setIsFixing(false);
+                  }}
+                  disabled={isFixing}
+                  className="mt-3 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 w-full font-bold disabled:opacity-50"
+                >
+                  {isFixing ? '🔧 Fixing...' : '🔧 FIX CONVERSATION - Switch to Correct Agent'}
+                </button>
               )}
               
               <button 

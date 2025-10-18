@@ -38,6 +38,7 @@ interface XMTPContextType {
     allConversations: any[];
   };
   forceSyncAll: () => Promise<void>;
+  fixConversation: () => Promise<void>;
 }
 
 const XMTPContext = createContext<XMTPContextType>({
@@ -59,6 +60,7 @@ const XMTPContext = createContext<XMTPContextType>({
     allConversations: [],
   },
   forceSyncAll: async () => {},
+  fixConversation: async () => {},
 });
 
 export function XMTPProvider({ children }: { children: ReactNode }) {
@@ -437,6 +439,64 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     await refreshMessages();
   };
 
+  const fixConversation = async () => {
+    if (!client) return;
+    
+    console.log('🔧 Fixing conversation - Finding or creating correct DM with agent...');
+    
+    // Sync first
+    await (client.conversations as any).syncAll();
+    
+    // Try to get the correct DM by inbox ID
+    let correctConv = await (client.conversations as any).getDmByInboxId(AGENT_ADDRESS);
+    
+    if (!correctConv) {
+      console.log('Creating new DM with agent inbox ID:', AGENT_ADDRESS);
+      correctConv = await (client.conversations as any).newDm(AGENT_ADDRESS);
+      console.log('✅ Created new DM with correct agent');
+      
+      // Sync again after creating
+      await (client.conversations as any).syncAll();
+    } else {
+      console.log('✅ Found existing DM with correct agent inbox ID');
+    }
+    
+    // Update conversation
+    setConversation(correctConv);
+    
+    // Refresh conversation list
+    const allConvs = await (client.conversations as any).list();
+    setAllConversations(allConvs);
+    
+    // Load messages from correct conversation
+    const messages = await correctConv.messages();
+    const normalizedMessages = messages
+      .map((msg: any) => {
+        let textContent: string | null = null;
+        
+        if (typeof msg.content === 'string') {
+          textContent = msg.content;
+        } else if (msg.contentType?.typeId === 'reply') {
+          if (typeof msg.content?.content === 'string') {
+            textContent = msg.content.content;
+          } else if (typeof msg.contentFallback === 'string') {
+            textContent = msg.contentFallback;
+          }
+        }
+        
+        return textContent ? {
+          id: msg.id,
+          content: textContent,
+          senderInboxId: msg.senderInboxId,
+          sentAt: msg.sentAt,
+        } : null;
+      })
+      .filter(Boolean) as Message[];
+    
+    setMessages(normalizedMessages);
+    console.log(`✅ Fixed! Loaded ${normalizedMessages.length} messages from correct conversation`);
+  };
+
   return (
     <XMTPContext.Provider
       value={{
@@ -458,6 +518,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           allConversations,
         },
         forceSyncAll,
+        fixConversation,
       }}
     >
       {children}
