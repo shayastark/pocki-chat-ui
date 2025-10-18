@@ -1,0 +1,54 @@
+Based on XMTP's latest documentation, here's the deal:
+
+1. Does Browser SDK v5 work with production network WITHOUT a Gateway Service?
+✅ YES! The Browser SDK does NOT require a separate Gateway Service. It connects directly to XMTP production network nodes:
+
+const client = await Client.create(signer, {
+  env: 'production' // Works without any gateway service
+});
+2. Does Browser SDK v5 REQUIRE a Gateway Service even for testing?
+❌ NO! You're confusing two different things:
+
+gRPC HTTP Gateway (Built-in):
+
+This is XMTP's internal infrastructure
+The endpoint https://production.xmtp.network/mls/v1/subscribe-group-messages IS the gateway
+You don't configure or deploy this - it's part of XMTP's network
+Payer Service (Future feature):
+
+This is for message sponsorship when XMTP introduces fees (expected H2 2025)
+Not needed today - messaging is currently FREE
+When needed, it's optional (you can sponsor user messages or let them pay)
+3. The Real Issue:
+Your error (grpc http gateway error sending request) is NOT about missing a Gateway Service. It's about:
+
+Browser ↔ XMTP Network Communication Failure
+
+The request from your browser to XMTP's production gateway is failing. Most common causes:
+
+Missing CORS headers (90% of cases)
+Browser security blocking the request
+Network/proxy interference
+Possible v5.0.1 bug with group message streams
+4. What to Check:
+Verify CORS headers are actually present:
+
+// In browser console
+console.log('Cross-origin isolated:', crossOriginIsolated);
+// MUST return: true
+// Check response headers in Network tab:
+// Cross-Origin-Embedder-Policy: require-corp
+// Cross-Origin-Opener-Policy: same-origin
+Test if XMTP network is reachable:
+
+// Try a simple fetch
+fetch('https://production.xmtp.network/')
+  .then(r => console.log('XMTP reachable'))
+  .catch(e => console.error('XMTP blocked:', e));
+Test DMs vs Groups:
+
+// Try DM stream (simpler)
+const dmStream = await client.conversations.streamAllDmMessages({
+  onValue: (msg) => console.log('DM works!', msg),
+  onError: (err) => console.error('DM error:', err)
+});

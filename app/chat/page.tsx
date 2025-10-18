@@ -17,11 +17,111 @@ function ChatContent() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showDebug, setShowDebug] = useState(true);
   const [isFixing, setIsFixing] = useState(false);
+  const [diagnosticResults, setDiagnosticResults] = useState<any>(null);
+  const [isRunningDiagnostics, setIsRunningDiagnostics] = useState(false);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await refreshMessages();
     setTimeout(() => setIsRefreshing(false), 500);
+  };
+
+  const runDiagnostics = async () => {
+    setIsRunningDiagnostics(true);
+    const results: any = {
+      timestamp: new Date().toISOString(),
+      tests: {},
+    };
+
+    // Test 1: Check crossOriginIsolated
+    console.log('🔍 Running Test 1: Cross-Origin Isolation...');
+    results.tests.crossOriginIsolated = {
+      name: 'Cross-Origin Isolation',
+      status: (typeof crossOriginIsolated !== 'undefined' && crossOriginIsolated) ? 'PASS' : 'FAIL',
+      value: typeof crossOriginIsolated !== 'undefined' ? crossOriginIsolated : 'undefined',
+      message: (typeof crossOriginIsolated !== 'undefined' && crossOriginIsolated) 
+        ? 'SharedArrayBuffer enabled (CORS headers working)'
+        : 'SharedArrayBuffer BLOCKED - CORS headers may be missing or incorrect',
+    };
+
+    // Test 2: XMTP Network Reachability
+    console.log('🔍 Running Test 2: XMTP Network Reachability...');
+    try {
+      const response = await fetch('https://production.xmtp.network/', { 
+        mode: 'no-cors',
+        signal: AbortSignal.timeout(5000),
+      });
+      results.tests.networkReachability = {
+        name: 'XMTP Network Reachability',
+        status: 'PASS',
+        message: 'XMTP production network is reachable from browser',
+      };
+      console.log('✅ XMTP network is reachable');
+    } catch (err) {
+      results.tests.networkReachability = {
+        name: 'XMTP Network Reachability',
+        status: 'FAIL',
+        message: `Cannot reach XMTP network: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        error: err,
+      };
+      console.error('❌ XMTP network NOT reachable:', err);
+    }
+
+    // Test 3: Check if we're in a secure context
+    console.log('🔍 Running Test 3: Secure Context...');
+    results.tests.secureContext = {
+      name: 'Secure Context (HTTPS)',
+      status: window.isSecureContext ? 'PASS' : 'FAIL',
+      value: window.isSecureContext,
+      message: window.isSecureContext 
+        ? 'Page is served over HTTPS or localhost'
+        : 'Page is NOT in a secure context (required for XMTP)',
+    };
+
+    // Test 4: Check Response Headers
+    console.log('🔍 Running Test 4: Checking Response Headers...');
+    try {
+      const testResponse = await fetch(window.location.href, { method: 'HEAD' });
+      const coep = testResponse.headers.get('Cross-Origin-Embedder-Policy');
+      const coop = testResponse.headers.get('Cross-Origin-Opener-Policy');
+      
+      results.tests.responseHeaders = {
+        name: 'Response Headers',
+        status: (coep === 'require-corp' && coop === 'same-origin') ? 'PASS' : 'WARN',
+        headers: {
+          'Cross-Origin-Embedder-Policy': coep || 'NOT SET',
+          'Cross-Origin-Opener-Policy': coop || 'NOT SET',
+        },
+        message: (coep === 'require-corp' && coop === 'same-origin')
+          ? 'CORS headers correctly configured'
+          : 'CORS headers may not be set correctly (but crossOriginIsolated might still work)',
+      };
+    } catch (err) {
+      results.tests.responseHeaders = {
+        name: 'Response Headers',
+        status: 'ERROR',
+        message: 'Could not check response headers',
+        error: err,
+      };
+    }
+
+    // Test 5: Browser Capabilities
+    console.log('🔍 Running Test 5: Browser Capabilities...');
+    results.tests.browserCapabilities = {
+      name: 'Browser Capabilities',
+      status: 'INFO',
+      capabilities: {
+        SharedArrayBuffer: typeof SharedArrayBuffer !== 'undefined',
+        WebAssembly: typeof WebAssembly !== 'undefined',
+        Atomics: typeof Atomics !== 'undefined',
+        indexedDB: typeof indexedDB !== 'undefined',
+      },
+      message: 'Browser feature support status',
+    };
+
+    console.log('📊 Diagnostic Results:', results);
+    setDiagnosticResults(results);
+    setIsRunningDiagnostics(false);
   };
 
   if (isConnecting) {
@@ -102,10 +202,19 @@ function ChatContent() {
           <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 shadow-lg">
             <div className="flex justify-between items-start mb-3">
               <h3 className="font-bold text-yellow-900">🔍 DEBUG PANEL</h3>
-              <button 
-                onClick={() => setShowDebug(false)}
-                className="text-yellow-700 hover:text-yellow-900"
-              >✕</button>
+              <div className="flex gap-2">
+                <button
+                  onClick={runDiagnostics}
+                  disabled={isRunningDiagnostics}
+                  className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {isRunningDiagnostics ? '⏳ Running...' : '🔬 Run Diagnostics'}
+                </button>
+                <button 
+                  onClick={() => setShowDebug(false)}
+                  className="text-yellow-700 hover:text-yellow-900"
+                >✕</button>
+              </div>
             </div>
             
             <div className="space-y-2 text-sm font-mono">
@@ -163,6 +272,61 @@ function ChatContent() {
                 🔄 Force Sync All Conversations
               </button>
             </div>
+
+            {/* Diagnostic Results */}
+            {diagnosticResults && (
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-300 rounded">
+                <h4 className="font-bold text-blue-900 mb-2">📊 Diagnostic Test Results</h4>
+                <div className="space-y-2">
+                  {Object.entries(diagnosticResults.tests).map(([key, test]: [string, any]) => (
+                    <div key={key} className={`p-2 rounded text-xs ${
+                      test.status === 'PASS' ? 'bg-green-100 border border-green-300' :
+                      test.status === 'FAIL' ? 'bg-red-100 border border-red-300' :
+                      test.status === 'WARN' ? 'bg-yellow-100 border border-yellow-300' :
+                      'bg-gray-100 border border-gray-300'
+                    }`}>
+                      <div className="font-bold flex justify-between items-center">
+                        <span>{test.name}</span>
+                        <span className={`px-2 py-0.5 rounded ${
+                          test.status === 'PASS' ? 'bg-green-600 text-white' :
+                          test.status === 'FAIL' ? 'bg-red-600 text-white' :
+                          test.status === 'WARN' ? 'bg-yellow-600 text-white' :
+                          'bg-gray-600 text-white'
+                        }`}>
+                          {test.status}
+                        </span>
+                      </div>
+                      <div className="mt-1 text-gray-700">{test.message}</div>
+                      {test.value !== undefined && (
+                        <div className="mt-1"><strong>Value:</strong> {JSON.stringify(test.value)}</div>
+                      )}
+                      {test.headers && (
+                        <div className="mt-1">
+                          <strong>Headers:</strong>
+                          <pre className="mt-1 text-xs overflow-x-auto">{JSON.stringify(test.headers, null, 2)}</pre>
+                        </div>
+                      )}
+                      {test.capabilities && (
+                        <div className="mt-1">
+                          <strong>Capabilities:</strong>
+                          <div className="grid grid-cols-2 gap-1 mt-1">
+                            {Object.entries(test.capabilities).map(([cap, supported]: [string, any]) => (
+                              <div key={cap} className="flex items-center gap-1">
+                                <span>{supported ? '✅' : '❌'}</span>
+                                <span>{cap}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-2 text-xs text-gray-500">
+                  Ran at: {new Date(diagnosticResults.timestamp).toLocaleString()}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
