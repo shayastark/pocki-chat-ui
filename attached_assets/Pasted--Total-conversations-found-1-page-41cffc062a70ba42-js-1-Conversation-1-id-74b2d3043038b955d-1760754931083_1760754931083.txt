@@ -1,0 +1,55 @@
+📋 Total conversations found: 1
+page-41cffc062a70ba42.js:1   Conversation 1: {id: '74b2d3043038b955d03aa8032c6b6a37', createdAt: Thu Oct 16 2025 22:04:09 GMT-0700 (Pacific Daylight Time), matchesTarget: false, peerInboxId: ƒ}
+page-41cffc062a70ba42.js:1 ✅ Found existing DM with target inbox ID
+page-41cffc062a70ba42.js:1 📋 Conversation peer inbox ID: ƒ async peerInboxId(){return this.#n.sendMessage("dm.peerInboxId",{id:this.#d})}
+page-41cffc062a70ba42.js:1 📋 Conversation ID: 74b2d3043038b955d03aa8032c6b6a37
+2117-d83d1bfef3d0eb05.js:1 ❌ ERROR: Found conversation peerInboxId does NOT match target!
+window.console.error @ 2117-d83d1bfef3d0eb05.js:1
+L @ page-41cffc062a70ba42.js:1
+await in L
+onClick @ page-41cffc062a70ba42.js:1
+a_ @ fd9d1056-6843569259ae8de6.js:1
+aR @ fd9d1056-6843569259ae8de6.js:1
+(anonymous) @ fd9d1056-6843569259ae8de6.js:1
+sF @ fd9d1056-6843569259ae8de6.js:1
+sM @ fd9d1056-6843569259ae8de6.js:1
+(anonymous) @ fd9d1056-6843569259ae8de6.js:1
+o4 @ fd9d1056-6843569259ae8de6.js:1
+iV @ fd9d1056-6843569259ae8de6.js:1
+sU @ fd9d1056-6843569259ae8de6.js:1
+uR @ fd9d1056-6843569259ae8de6.js:1
+uM @ fd9d1056-6843569259ae8de6.js:1Understand this error
+2117-d83d1bfef3d0eb05.js:1   Expected: 046320945635c5a7b314bf268f77b0075fbf33599450615ea7f1a167d3ab4691
+window.console.error @ 2117-d83d1bfef3d0eb05.js:1
+L @ page-41cffc062a70ba42.js:1
+await in L
+onClick @ page-41cffc062a70ba42.js:1
+a_ @ fd9d1056-6843569259ae8de6.js:1
+aR @ fd9d1056-6843569259ae8de6.js:1
+(anonymous) @ fd9d1056-6843569259ae8de6.js:1
+sF @ fd9d1056-6843569259ae8de6.js:1
+sM @ fd9d1056-6843569259ae8de6.js:1
+(anonymous) @ fd9d1056-6843569259ae8de6.js:1
+o4 @ fd9d1056-6843569259ae8de6.js:1
+iV @ fd9d1056-6843569259ae8de6.js:1
+sU @ fd9d1056-6843569259ae8de6.js:1
+uR @ fd9d1056-6843569259ae8de6.js:1
+uM @ fd9d1056-6843569259ae8de6.js:1Understand this error
+2117-d83d1bfef3d0eb05.js:1   Got: ƒ async peerInboxId(){return this.#n.sendMessage("dm.peerInboxId",{id:this.#d})}
+window.console.error @ 2117-d83d1bfef3d0eb05.js:1
+L @ page-41cffc062a70ba42.js:1
+await in L
+onClick @ page-41cffc062a70ba42.js:1
+a_ @ fd9d1056-6843569259ae8de6.js:1
+aR @ fd9d1056-6843569259ae8de6.js:1
+(anonymous) @ fd9d1056-6843569259ae8de6.js:1
+sF @ fd9d1056-6843569259ae8de6.js:1
+sM @ fd9d1056-6843569259ae8de6.js:1
+(anonymous) @ fd9d1056-6843569259ae8de6.js:1
+o4 @ fd9d1056-6843569259ae8de6.js:1
+iV @ fd9d1056-6843569259ae8de6.js:1
+sU @ fd9d1056-6843569259ae8de6.js:1
+uR @ fd9d1056-6843569259ae8de6.js:1
+uM @ fd9d1056-6843569259ae8de6.js:1Understand this error
+page-41cffc062a70ba42.js:1 ✅ Fixed! Loaded 39 messages from correct conversation
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor

@@ -75,6 +75,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const [isAgentTyping, setIsAgentTyping] = useState(false);
   const [activeWalletAddress, setActiveWalletAddress] = useState<string | null>(null);
   const [allConversations, setAllConversations] = useState<any[]>([]);
+  const [conversationPeerInboxId, setConversationPeerInboxId] = useState<string | null>(null);
   const isInitializing = useRef(false);
   const hasInitialized = useRef(false);
   const isSyncing = useRef(false);
@@ -174,14 +175,15 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       // DEBUG: List all conversations to diagnose duplicates
       const allConvs = await (newClient.conversations as any).list();
       console.log(`📋 Total conversations: ${allConvs.length}`);
-      allConvs.forEach((c: any, idx: number) => {
+      for (const [idx, c] of allConvs.entries()) {
+        const peerInboxId = await c.peerInboxId();
         console.log(`Conversation ${idx + 1}:`, {
           id: c.id,
-          peerInboxId: c.peerInboxId,
+          peerInboxId,
           createdAt: c.createdAt,
           isGroup: c.isGroup,
         });
-      });
+      }
       setAllConversations(allConvs);
       
       // Try to get existing DM first, create new one if it doesn't exist
@@ -189,18 +191,20 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       
       if (conv) {
         console.log('✅ Found existing DM with agent');
+        const peerInboxId = await conv.peerInboxId();
         console.log('📋 Conversation details:', {
           id: conv.id,
-          peerInboxId: conv.peerInboxId,
+          peerInboxId,
           createdAt: conv.createdAt,
         });
       } else {
         console.log('⚠️ No existing DM found, creating new one...');
         conv = await (newClient.conversations as any).newDm(AGENT_ADDRESS);
         console.log('✅ Created new DM with agent');
+        const peerInboxId = await conv.peerInboxId();
         console.log('📋 New conversation details:', {
           id: conv.id,
-          peerInboxId: conv.peerInboxId,
+          peerInboxId,
           createdAt: conv.createdAt,
         });
         
@@ -271,6 +275,18 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       initializeClient();
     }
   }, [authenticated, ready, wallets, client, initializeClient]);
+
+  // Fetch peer inbox ID when conversation changes
+  useEffect(() => {
+    if (conversation) {
+      (async () => {
+        const peerInboxId = await (conversation as any).peerInboxId();
+        setConversationPeerInboxId(peerInboxId);
+      })();
+    } else {
+      setConversationPeerInboxId(null);
+    }
+  }, [conversation]);
 
   useEffect(() => {
     if (!conversation || !client) return;
@@ -399,9 +415,10 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
     try {
       console.log('📤 Sending message to agent:', content);
+      const peerInboxId = await (conversation as any).peerInboxId();
       console.log('📋 Target conversation:', {
         id: conversation.id,
-        peerInboxId: (conversation as any).peerInboxId,
+        peerInboxId,
         expectedAgentInboxId: AGENT_ADDRESS,
       });
       
@@ -451,14 +468,15 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     // List all conversations to debug
     const allConvs = await (client.conversations as any).list();
     console.log(`📋 Total conversations found: ${allConvs.length}`);
-    allConvs.forEach((c: any, idx: number) => {
+    for (const [idx, c] of allConvs.entries()) {
+      const peerInboxId = await c.peerInboxId();
       console.log(`  Conversation ${idx + 1}:`, {
         id: c.id,
-        peerInboxId: c.peerInboxId,
+        peerInboxId,
         createdAt: c.createdAt,
-        matchesTarget: c.peerInboxId === AGENT_ADDRESS,
+        matchesTarget: peerInboxId === AGENT_ADDRESS,
       });
-    });
+    }
     
     // Try to get the correct DM by inbox ID
     let correctConv = await (client.conversations as any).getDmByInboxId(AGENT_ADDRESS);
@@ -467,21 +485,24 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       console.log('⚠️ No DM found with target inbox ID, creating new one...');
       correctConv = await (client.conversations as any).newDm(AGENT_ADDRESS);
       console.log('✅ Created new DM');
-      console.log('📋 New conversation peer inbox ID:', correctConv.peerInboxId);
+      const newPeerInboxId = await correctConv.peerInboxId();
+      console.log('📋 New conversation peer inbox ID:', newPeerInboxId);
       
       // Sync again after creating
       await (client.conversations as any).syncAll();
     } else {
       console.log('✅ Found existing DM with target inbox ID');
-      console.log('📋 Conversation peer inbox ID:', correctConv.peerInboxId);
+      const existingPeerInboxId = await correctConv.peerInboxId();
+      console.log('📋 Conversation peer inbox ID:', existingPeerInboxId);
       console.log('📋 Conversation ID:', correctConv.id);
     }
     
     // Verify it matches
-    if (correctConv.peerInboxId !== AGENT_ADDRESS) {
+    const finalPeerInboxId = await correctConv.peerInboxId();
+    if (finalPeerInboxId !== AGENT_ADDRESS) {
       console.error('❌ ERROR: Found conversation peerInboxId does NOT match target!');
       console.error('  Expected:', AGENT_ADDRESS);
-      console.error('  Got:', correctConv.peerInboxId);
+      console.error('  Got:', finalPeerInboxId);
     } else {
       console.log('✅ VERIFIED: Conversation peerInboxId matches target!');
     }
@@ -538,7 +559,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         debugInfo: {
           clientInboxId: client?.inboxId || null,
           conversationId: conversation?.id || null,
-          conversationPeerInboxId: (conversation as any)?.peerInboxId || null,
+          conversationPeerInboxId,
           targetAgentInboxId: AGENT_ADDRESS,
           allConversations,
         },
