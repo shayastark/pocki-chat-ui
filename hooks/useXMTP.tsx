@@ -29,6 +29,15 @@ interface XMTPContextType {
   isAgentTyping: boolean;
   refreshMessages: () => Promise<void>;
   activeWalletAddress: string | null;
+  // Debug properties
+  debugInfo: {
+    clientInboxId: string | null;
+    conversationId: string | null;
+    conversationPeerInboxId: string | null;
+    targetAgentInboxId: string;
+    allConversations: any[];
+  };
+  forceSyncAll: () => Promise<void>;
 }
 
 const XMTPContext = createContext<XMTPContextType>({
@@ -42,6 +51,14 @@ const XMTPContext = createContext<XMTPContextType>({
   isAgentTyping: false,
   refreshMessages: async () => {},
   activeWalletAddress: null,
+  debugInfo: {
+    clientInboxId: null,
+    conversationId: null,
+    conversationPeerInboxId: null,
+    targetAgentInboxId: AGENT_ADDRESS,
+    allConversations: [],
+  },
+  forceSyncAll: async () => {},
 });
 
 export function XMTPProvider({ children }: { children: ReactNode }) {
@@ -55,6 +72,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [isAgentTyping, setIsAgentTyping] = useState(false);
   const [activeWalletAddress, setActiveWalletAddress] = useState<string | null>(null);
+  const [allConversations, setAllConversations] = useState<any[]>([]);
   const isInitializing = useRef(false);
   const hasInitialized = useRef(false);
   const isSyncing = useRef(false);
@@ -162,6 +180,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           isGroup: c.isGroup,
         });
       });
+      setAllConversations(allConvs);
       
       // Try to get existing DM first, create new one if it doesn't exist
       let conv = await (newClient.conversations as any).getDmByInboxId(AGENT_ADDRESS);
@@ -408,6 +427,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const forceSyncAll = async () => {
+    if (!client) return;
+    console.log('🔄 Force syncing all conversations...');
+    await (client.conversations as any).syncAll();
+    const allConvs = await (client.conversations as any).list();
+    setAllConversations(allConvs);
+    console.log(`✅ Synced! Total conversations: ${allConvs.length}`);
+    await refreshMessages();
+  };
+
   return (
     <XMTPContext.Provider
       value={{
@@ -421,6 +450,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         isAgentTyping,
         refreshMessages,
         activeWalletAddress,
+        debugInfo: {
+          clientInboxId: client?.inboxId || null,
+          conversationId: conversation?.id || null,
+          conversationPeerInboxId: (conversation as any)?.peerInboxId || null,
+          targetAgentInboxId: AGENT_ADDRESS,
+          allConversations,
+        },
+        forceSyncAll,
       }}
     >
       {children}

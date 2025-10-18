@@ -10,11 +10,12 @@ import { TransactionModal } from '@/components/TransactionModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 function ChatContent() {
-  const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress } = useXMTP();
+  const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll } = useXMTP();
   const { logout } = usePrivy();
   const [showTxModal, setShowTxModal] = useState(false);
   const [currentTx, setCurrentTx] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showDebug, setShowDebug] = useState(true);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -94,7 +95,61 @@ function ChatContent() {
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto p-4 h-[calc(100vh-80px)]">
+      {/* Debug Panel */}
+      {showDebug && (
+        <div className="max-w-6xl mx-auto px-4 pt-4">
+          <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 shadow-lg">
+            <div className="flex justify-between items-start mb-3">
+              <h3 className="font-bold text-yellow-900">🔍 DEBUG PANEL</h3>
+              <button 
+                onClick={() => setShowDebug(false)}
+                className="text-yellow-700 hover:text-yellow-900"
+              >✕</button>
+            </div>
+            
+            <div className="space-y-2 text-sm font-mono">
+              <div>
+                <strong>Client Inbox ID:</strong> {debugInfo.clientInboxId || 'N/A'}
+              </div>
+              <div>
+                <strong>Target Agent Inbox ID:</strong> {debugInfo.targetAgentInboxId}
+              </div>
+              <div className={`p-2 rounded ${debugInfo.conversationPeerInboxId === debugInfo.targetAgentInboxId ? 'bg-green-100' : 'bg-red-100'}`}>
+                <strong>Active Conv Peer Inbox ID:</strong> {debugInfo.conversationPeerInboxId || 'N/A'}
+                {debugInfo.conversationPeerInboxId === debugInfo.targetAgentInboxId && <span className="ml-2 text-green-700">✓ MATCH</span>}
+                {debugInfo.conversationPeerInboxId && debugInfo.conversationPeerInboxId !== debugInfo.targetAgentInboxId && <span className="ml-2 text-red-700">✗ MISMATCH!</span>}
+              </div>
+              <div>
+                <strong>Conversation ID:</strong> {debugInfo.conversationId || 'N/A'}
+              </div>
+              <div>
+                <strong>Total Conversations:</strong> {debugInfo.allConversations.length}
+              </div>
+              
+              {debugInfo.allConversations.length > 1 && (
+                <div className="mt-2 p-2 bg-orange-100 rounded">
+                  <strong className="text-orange-900">⚠️ Multiple Conversations Detected:</strong>
+                  {debugInfo.allConversations.map((conv: any, idx: number) => (
+                    <div key={idx} className="ml-4 mt-1 text-xs">
+                      {idx + 1}. Peer: {conv.peerInboxId || 'N/A'}
+                      {conv.peerInboxId === debugInfo.targetAgentInboxId && <span className="text-green-700"> ← TARGET</span>}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <button 
+                onClick={forceSyncAll}
+                className="mt-3 px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 w-full"
+              >
+                🔄 Force Sync All Conversations
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className={`max-w-6xl mx-auto p-4 ${showDebug ? 'h-[calc(100vh-360px)]' : 'h-[calc(100vh-80px)]'}`}>
         <div className="bg-white rounded-2xl shadow-xl h-full flex flex-col overflow-hidden">
           <MessageList />
           <MessageInput />
