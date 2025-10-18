@@ -115,15 +115,15 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         },
       };
 
+      // Import ReplyCodec before creating client
+      // CRITICAL: XMTP Browser SDK v5 requires codecs passed during creation
+      const { ReplyCodec } = await import('@xmtp/content-type-reply');
+
       const newClient = await Client.create(signer, {
         env: XMTP_ENV,
+        codecs: [new ReplyCodec()],
       });
-
-      // Register content type codecs for reply messages
-      // CRITICAL: XMTP v5.0.1 requires explicit codec registration
-      const { ReplyCodec } = await import('@xmtp/content-type-reply');
-      newClient.contentTypeManager.register(new ReplyCodec());
-      console.log('✅ Registered ReplyCodec for decoding agent responses');
+      console.log('✅ Created XMTP client with ReplyCodec for decoding agent responses');
 
       // Revoke all other installations to prevent hitting the 10 installation limit
       // This keeps only the current installation active
