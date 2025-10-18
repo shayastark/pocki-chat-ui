@@ -352,6 +352,22 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     }
   }, [conversation]);
 
+  // Periodic background syncing every 10 seconds while connected
+  useEffect(() => {
+    if (!isConnected || !client) return;
+
+    console.log('🔄 Starting periodic background sync (every 10s)');
+    const syncInterval = setInterval(async () => {
+      console.log('⏰ Background sync: Checking for new messages...');
+      await refreshMessages();
+    }, 10000); // 10 seconds
+
+    return () => {
+      console.log('🛑 Stopping periodic background sync');
+      clearInterval(syncInterval);
+    };
+  }, [isConnected, client, refreshMessages]);
+
   useEffect(() => {
     if (!conversation || !client) return;
 
