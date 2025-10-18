@@ -168,6 +168,19 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
       console.log('Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
 
+      // CRITICAL: Check if agent is reachable on XMTP first
+      console.log('🔍 Checking if agent is reachable on XMTP...');
+      const canMessageResponse = await Client.canMessage([{
+        identifier: AGENT_ADDRESS,
+        identifierKind: 'InboxId' as any,
+      }]);
+      console.log('📡 Agent reachability:', canMessageResponse);
+      
+      if (!canMessageResponse.get(AGENT_ADDRESS)) {
+        throw new Error('Agent is not reachable on XMTP network. Please verify the inbox ID is correct.');
+      }
+      console.log('✅ Agent IS reachable on XMTP');
+
       // Sync all conversations and messages first (v5.0.1 recommended approach)
       console.log('Syncing all conversations and messages (including all consent states)...');
       await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
@@ -175,15 +188,38 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       // DEBUG: List all conversations to diagnose duplicates
       const allConvs = await (newClient.conversations as any).list();
       console.log(`📋 Total conversations: ${allConvs.length}`);
+      
+      // Find ALL DMs with the agent
+      const agentDMs = [];
       for (const [idx, c] of allConvs.entries()) {
         const peerInboxId = await c.peerInboxId();
+        const isAgentDM = peerInboxId === AGENT_ADDRESS && !c.isGroup;
         console.log(`Conversation ${idx + 1}:`, {
           id: c.id,
           peerInboxId,
           createdAt: c.createdAt,
           isGroup: c.isGroup,
+          isAgentDM,
         });
+        if (isAgentDM) {
+          agentDMs.push(c);
+        }
       }
+      
+      console.log(`🚨 CRITICAL: Found ${agentDMs.length} DM conversation(s) with agent`);
+      if (agentDMs.length > 1) {
+        console.warn('⚠️ WARNING: Multiple DM conversations found with same agent! This may cause message delivery issues.');
+        console.warn('Listing all agent DMs:');
+        for (const [idx, dm] of agentDMs.entries()) {
+          const msgCount = (await dm.messages()).length;
+          console.warn(`  Agent DM ${idx + 1}:`, {
+            id: dm.id,
+            createdAt: dm.createdAt,
+            messageCount: msgCount,
+          });
+        }
+      }
+      
       setAllConversations(allConvs);
       
       // Try to get existing DM first, create new one if it doesn't exist
