@@ -302,7 +302,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             id: msg.id,
             content: textContent,
             senderInboxId: msg.senderAddress || msg.senderInboxId,
-            sentAt: msg.sent || msg.sentAt,
+            sentAt: new Date(msg.sent || msg.sentAt),
           } : null;
         })
         .filter((msg: Message | null): msg is Message => msg !== null);
@@ -457,7 +457,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             id: msg.id,
             content: textContent,
             senderInboxId: msg.senderAddress || msg.senderInboxId,
-            sentAt: msg.sent || msg.sentAt,
+            sentAt: new Date(msg.sent || msg.sentAt),
           } : null;
         })
         .filter((msg: Message | null): msg is Message => msg !== null);
@@ -613,7 +613,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           id: msg.id,
           content: textContent,
           senderInboxId: msg.senderInboxId,
-          sentAt: msg.sentAt,
+          sentAt: new Date(msg.sentAt),
         } : null;
       })
       .filter(Boolean) as Message[];
