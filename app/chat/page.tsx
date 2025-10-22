@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { XMTPProvider, useXMTP } from '@/hooks/useXMTP';
 import { MessageList } from '@/components/MessageList';
 import { MessageInput } from '@/components/MessageInput';
@@ -128,10 +129,18 @@ function ChatContent() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-pulse-gentle">🐼</div>
+          <div className="flex justify-center mb-6 animate-pulse-gentle">
+            <Image 
+              src="/pocki-logo.jpg" 
+              alt="Pocki" 
+              width={96} 
+              height={96} 
+              className="rounded-2xl shadow-xl"
+            />
+          </div>
           <LoadingSpinner size="lg" />
-          <p className="mt-4 text-gray-600">Connecting to XMTP...</p>
-          <p className="text-sm text-gray-400 mt-2">🎋 Setting up secure messaging</p>
+          <p className="mt-4 text-gray-600 font-medium">Connecting to XMTP...</p>
+          <p className="text-sm text-gray-500 mt-2">🎋 Setting up secure messaging</p>
         </div>
       </div>
     );
@@ -141,7 +150,15 @@ function ChatContent() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4">
-          <div className="text-6xl text-center mb-4">🐼</div>
+          <div className="flex justify-center mb-4">
+            <Image 
+              src="/pocki-logo.jpg" 
+              alt="Pocki" 
+              width={80} 
+              height={80} 
+              className="rounded-2xl shadow-lg"
+            />
+          </div>
           <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
             Connection Error
           </h2>
@@ -160,9 +177,15 @@ function ChatContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
       <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="text-3xl">🐼</div>
+            <Image 
+              src="/pocki-logo.jpg" 
+              alt="Pocki" 
+              width={48} 
+              height={48} 
+              className="rounded-xl shadow-md"
+            />
             <div>
               <h1 className="text-xl font-bold text-gray-900">Pocki Chat</h1>
               <p className="text-sm text-gray-500">AI Wallet Health Agent</p>
