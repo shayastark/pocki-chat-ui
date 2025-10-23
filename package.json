@@ -14,6 +14,7 @@
     "@tanstack/react-query": "^5.90.3",
     "@xmtp/browser-sdk": "^5.0.1",
     "@xmtp/content-type-reply": "^2.0.2",
+    "@xmtp/content-type-wallet-send-calls": "^2.0.0",
     "ethers": "^6.15.0",
     "next": "^14.2.15",
     "react": "^18.3.1",

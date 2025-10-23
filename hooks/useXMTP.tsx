@@ -9,6 +9,8 @@ interface Message {
   content: string;
   senderInboxId: string;
   sentAt: Date;
+  contentType?: 'text' | 'transaction';
+  transaction?: any; // WalletSendCallsParams
 }
 
 interface Conversation {
@@ -136,15 +138,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         },
       };
 
-      // Import ReplyCodec before creating client
+      // Import codecs before creating client
       // CRITICAL: XMTP Browser SDK v5 requires codecs passed during creation
       const { ReplyCodec } = await import('@xmtp/content-type-reply');
+      const { WalletSendCallsCodec } = await import('@xmtp/content-type-wallet-send-calls');
 
       const newClient = await Client.create(signer, {
         env: XMTP_ENV,
-        codecs: [new ReplyCodec()],
+        codecs: [new ReplyCodec(), new WalletSendCallsCodec()],
       });
-      console.log('✅ Created XMTP client with ReplyCodec for decoding agent responses');
+      console.log('✅ Created XMTP client with ReplyCodec and WalletSendCallsCodec');
       console.log('🌍 XMTP Environment:', XMTP_ENV);
       console.log('📬 Client Inbox ID:', newClient.inboxId);
       console.log('🎯 Target Agent Inbox ID:', AGENT_ADDRESS);
@@ -361,9 +364,26 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           onValue: (message: any) => {
             if (!streamActive) return;
             
-            // Only process text messages (filter out group membership changes, etc.)
-            if (typeof message.content !== 'string') {
-              console.log('Skipping non-text message:', message.contentType || 'unknown type');
+            console.log('📨 Stream message:', {
+              contentType: message.contentType?.typeId,
+              hasContent: !!message.content,
+            });
+
+            let textContent: string | null = null;
+            let messageType: 'text' | 'transaction' = 'text';
+            let transactionData: any = null;
+            
+            // Handle different content types
+            if (message.contentType?.typeId === 'xmtp.org/wallet_send_calls:1.0') {
+              // Transaction message
+              console.log('💸 Transaction message received:', message.content);
+              messageType = 'transaction';
+              transactionData = message.content;
+              textContent = message.contentFallback || 'Transaction Request';
+            } else if (typeof message.content === 'string') {
+              textContent = message.content;
+            } else {
+              console.log('Skipping non-text/non-transaction message:', message.contentType?.typeId || 'unknown');
               return;
             }
             
@@ -372,9 +392,11 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
               if (exists) return prev;
               return [...prev, {
                 id: message.id,
-                content: message.content as string,
+                content: textContent || '',
                 senderInboxId: message.senderAddress || message.senderInboxId,
                 sentAt: message.sent || message.sentAt,
+                contentType: messageType,
+                transaction: transactionData,
               }];
             });
 
@@ -417,9 +439,18 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         .map((msg: any) => {
           // Handle different content types using XMTP stable filter pattern
           let textContent: string | null = null;
+          let messageType: 'text' | 'transaction' = 'text';
+          let transactionData: any = null;
           
+          // Transaction message
+          if (msg.contentType?.typeId === 'xmtp.org/wallet_send_calls:1.0') {
+            console.log('💸 Found transaction message in history:', msg.content);
+            messageType = 'transaction';
+            transactionData = msg.content;
+            textContent = msg.contentFallback || 'Transaction Request';
+          }
           // Direct text content (regular messages)
-          if (typeof msg.content === 'string') {
+          else if (typeof msg.content === 'string') {
             textContent = msg.content;
           }
           // Text reply (Pocki's responses) - XMTP recommended pattern
@@ -448,9 +479,9 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
               console.log('❌ Reply has no extractable text content');
             }
           }
-          // Filter out non-text content types
+          // Filter out non-text/non-transaction content types
           else {
-            console.log('Filtering out non-text message:', msg.contentType?.typeId || 'unknown');
+            console.log('Filtering out unknown message type:', msg.contentType?.typeId || 'unknown');
           }
           
           return textContent ? {
@@ -458,12 +489,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             content: textContent,
             senderInboxId: msg.senderAddress || msg.senderInboxId,
             sentAt: msg.sent || msg.sentAt,
+            contentType: messageType,
+            transaction: transactionData,
           } : null;
         })
         .filter((msg: Message | null): msg is Message => msg !== null);
       
-      console.log(`Displaying ${normalizedMessages.length} text messages`);
-      setMessages(normalizedMessages);
+      console.log(`Displaying ${normalizedMessages.length} messages (text + transactions)`);
+      setMessages(normalizedMessages as Message[]);
     } catch (err) {
       console.error('Failed to refresh messages:', err);
     } finally {

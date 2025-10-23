@@ -1,10 +1,14 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useXMTP } from '@/hooks/useXMTP';
 import { usePrivy } from '@privy-io/react-auth';
 
-export function MessageList() {
+interface MessageListProps {
+  onTransactionRequest?: (transaction: any) => void;
+}
+
+export function MessageList({ onTransactionRequest }: MessageListProps = {}) {
   const { messages, isAgentTyping } = useXMTP();
   const { user } = usePrivy();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -34,6 +38,7 @@ export function MessageList() {
       {messages.map((message) => {
         const isOwn = isOwnMessage(message.senderInboxId);
         const hasBeenRead = !isOwn;
+        const isTransaction = message.contentType === 'transaction';
 
         return (
           <div
@@ -48,11 +53,48 @@ export function MessageList() {
                 <div
                   className={`message-bubble ${
                     isOwn ? 'message-bubble-sent' : 'message-bubble-received'
-                  }`}
+                  } ${isTransaction ? 'border-2 border-panda-green-500' : ''}`}
                 >
-                  <p className="whitespace-pre-wrap break-words">
-                    {typeof message.content === 'string' ? message.content : '[Unsupported message type]'}
-                  </p>
+                  {isTransaction && message.transaction ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 font-semibold text-panda-green-700">
+                        💸 Transaction Request
+                      </div>
+                      {message.transaction.calls && message.transaction.calls.length > 0 && (
+                        <div className="space-y-2 text-sm">
+                          {message.transaction.calls.map((call: any, idx: number) => (
+                            <div key={idx} className="bg-panda-green-50 rounded p-2">
+                              <div className="font-medium">
+                                {call.metadata?.description || `Call ${idx + 1}`}
+                              </div>
+                              {call.metadata?.transactionType && (
+                                <div className="text-xs text-gray-600">
+                                  Type: {call.metadata.transactionType}
+                                </div>
+                              )}
+                              {call.metadata?.amount && call.metadata?.currency && (
+                                <div className="text-xs text-gray-600">
+                                  Amount: {call.metadata.amount / Math.pow(10, call.metadata.decimals || 18)} {call.metadata.currency}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {onTransactionRequest && (
+                        <button
+                          onClick={() => onTransactionRequest(message.transaction)}
+                          className="w-full mt-2 bg-panda-green-600 hover:bg-panda-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                        >
+                          Execute Transaction
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="whitespace-pre-wrap break-words">
+                      {typeof message.content === 'string' ? message.content : '[Unsupported message type]'}
+                    </p>
+                  )}
                 </div>
                 <div className={`text-xs mt-1 ${isOwn ? 'text-right' : 'text-left'}`}>
                   <span className="text-gray-400">
