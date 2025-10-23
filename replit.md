@@ -1,7 +1,7 @@
-# Pocki Chat - AI Wallet Health Agent
+# Pocki Chat - Mindful AI Onchain Wallet Companion
 
 ## Overview
-Pocki Chat is a Next.js 14 web application enabling users to interact with an AI wallet health agent via the XMTP messaging protocol. The project aims to provide a secure and intuitive chat interface for managing wallet health, leveraging Web3 technologies. Its design features a unique panda-themed aesthetic with calm greens and bamboo accents. The application offers robust authentication, real-time messaging, and on-chain transaction capabilities on the Base network, designed for a smooth user experience and efficient AI interaction.
+Pocki Chat is a Next.js 14 web application enabling users to interact with an AI wallet health agent via the XMTP messaging protocol. Pocki is your Mindful AI Onchain Wallet Companion. The project aims to provide a secure and intuitive chat interface for managing wallet health, leveraging Web3 technologies. Its design features a unique panda-themed aesthetic with calm greens and bamboo accents. The application offers robust authentication, real-time messaging, and on-chain transaction capabilities on the Base network, designed for a smooth user experience and efficient AI interaction.
 
 ## User Preferences
 - Prefers comprehensive implementations with all requested features

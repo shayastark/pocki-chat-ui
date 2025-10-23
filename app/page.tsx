@@ -71,6 +71,9 @@ export default function LandingPage() {
             What is Pocki?
           </h2>
           <div className="space-y-4 text-gray-700">
+            <p className="text-center text-lg font-semibold text-panda-green-600 mb-4">
+              Mindful AI Onchain Wallet Companion
+            </p>
             <p className="leading-relaxed">
               Pocki is your calm, thoughtful companion for managing your wallet health. 
               Like a wise panda carefully selecting the best bamboo, Pocki helps you make 
