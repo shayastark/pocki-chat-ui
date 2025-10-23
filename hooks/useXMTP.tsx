@@ -302,7 +302,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             id: msg.id,
             content: textContent,
             senderInboxId: msg.senderAddress || msg.senderInboxId,
-            sentAt: new Date(msg.sent || msg.sentAt),
+            sentAt: msg.sent || msg.sentAt,
           } : null;
         })
         .filter((msg: Message | null): msg is Message => msg !== null);
@@ -374,7 +374,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
                 id: message.id,
                 content: message.content as string,
                 senderInboxId: message.senderAddress || message.senderInboxId,
-                sentAt: new Date(message.sent || message.sentAt),
+                sentAt: message.sent || message.sentAt,
               }];
             });
 
@@ -457,7 +457,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             id: msg.id,
             content: textContent,
             senderInboxId: msg.senderAddress || msg.senderInboxId,
-            sentAt: new Date(msg.sent || msg.sentAt),
+            sentAt: msg.sent || msg.sentAt,
           } : null;
         })
         .filter((msg: Message | null): msg is Message => msg !== null);
@@ -500,11 +500,6 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         peerInboxId,
         expectedAgentInboxId: AGENT_ADDRESS,
       });
-      
-      // CRITICAL: Sync conversation before sending to ensure it's up-to-date
-      console.log('🔄 Syncing conversation before send...');
-      await (conversation as any).sync();
-      console.log('✅ Conversation synced, now sending...');
       
       const messageId = await conversation.send(content);
       console.log('✅ Message sent successfully! ID:', messageId);
@@ -618,7 +613,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           id: msg.id,
           content: textContent,
           senderInboxId: msg.senderInboxId,
-          sentAt: new Date(msg.sentAt),
+          sentAt: msg.sentAt,
         } : null;
       })
       .filter(Boolean) as Message[];

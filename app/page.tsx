@@ -3,7 +3,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import Image from 'next/image';
 
 export default function LandingPage() {
   const { login, authenticated, ready } = usePrivy();
@@ -21,18 +20,10 @@ export default function LandingPage() {
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="flex justify-center mb-4 animate-pulse-gentle">
-            <Image 
-              src="/pocki-logo.jpg" 
-              alt="Pocki" 
-              width={96} 
-              height={96} 
-              className="rounded-2xl shadow-xl"
-            />
-          </div>
-          <p className="text-gray-600 font-medium">Loading...</p>
+          <div className="text-6xl mb-4 animate-pulse-gentle">🐼</div>
+          <p className="text-gray-600">Loading...</p>
           <p className="text-xs text-gray-400 mt-2">Initializing Privy...</p>
         </div>
       </div>
@@ -40,34 +31,26 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-12 animate-fade-in">
-          <div className="flex justify-center mb-6">
-            <Image 
-              src="/pocki-logo.jpg" 
-              alt="Pocki" 
-              width={160} 
-              height={160} 
-              className="rounded-3xl shadow-2xl"
-            />
-          </div>
+          <div className="text-8xl mb-6">🐼</div>
           <h1 className="text-5xl font-bold mb-4 text-gray-900">
             Welcome to Pocki Chat
           </h1>
           <p className="text-xl text-gray-600 mb-2">
             Your AI Wallet Health Agent
           </p>
-          <div className="flex items-center justify-center gap-2 text-panda-green-600">
+          <div className="flex items-center justify-center gap-2 text-panda-bamboo-600">
             <span className="text-2xl">🎋</span>
-            <span className="text-lg font-medium">Powered by XMTP</span>
+            <span className="text-lg">Powered by XMTP</span>
             <span className="text-2xl">🎋</span>
           </div>
         </div>
 
         <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-8 animate-slide-up">
           <h2 className="text-2xl font-semibold mb-6 text-center text-gray-900">
-            What is Pocki?
+            What is Pocki? 🐼
           </h2>
           <div className="space-y-4 text-gray-700">
             <p className="leading-relaxed">
