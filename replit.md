@@ -51,6 +51,25 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 
 ## Recent Updates
 
+### Oct 23, 2025 - XMTP Transaction Support (WalletSendCalls)
+- **Implemented XMTP WalletSendCalls content type** - Full support for on-chain transaction requests from Pocki AI agent
+  - Installed and integrated `@xmtp/content-type-wallet-send-calls` package
+  - Registered `WalletSendCallsCodec` alongside `ReplyCodec` in XMTP client initialization
+  - Updated message handlers to detect and parse transaction messages in both streaming and refresh flows
+  - Extended Message interface with `contentType` field ('text' | 'transaction') and `transaction` field for payload
+  - Enhanced MessageList component to display transaction requests with visual indicators and "Execute Transaction" button
+  - Completely rewrote TransactionModal to support XMTP multi-call format:
+    - Sequential execution of multiple calls (e.g., approve + swap flows)
+    - Uses `sendTransactionAsync` and `waitForTransactionReceipt` for proper async confirmation
+    - Validates `from` address matches connected wallet before execution
+    - Validates chain ID (Base network: 8453) before execution
+    - Per-call status tracking with distinct UI states: "Signing...", "Confirming...", "✅ Confirmed"
+    - Detects and surfaces reverted transactions as errors
+    - Graceful error handling with per-call error messages
+    - Only shows success banner when all calls are confirmed on-chain
+  - Maintains backward compatibility with legacy transaction format
+  - Full support for transaction metadata (description, type, amount, currency)
+
 ### Oct 23, 2025 - Pocki Logo Branding
 - **Added custom Pocki logo** - Replaced panda emoji (🐼) with custom Pocki logo image throughout the app
   - Created `/public` folder and added `pocki-logo.jpg` (panda holding wallet on green background)
