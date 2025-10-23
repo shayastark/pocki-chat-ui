@@ -46,6 +46,13 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 
 ## Recent Changes (Oct 22, 2025)
 
+### Critical Bugfix (Evening - Post UI Update)
+- **Fixed Message Sending Failure** - Resolved "Failed to send message" error introduced by incomplete timestamp fix
+  - Root cause: streamMessages handler wasn't converting timestamps to Date objects
+  - Created inconsistency where initial/refreshed messages had Date objects but streamed messages had raw timestamps
+  - Added missing `new Date()` conversion in streamMessages handler (line 380)
+  - Messages now send successfully again
+
 ### UI Improvements
 - **Pocki Logo Integration** - Replaced panda emojis with official Pocki logo throughout the app
   - Landing page now features large Pocki logo (160x160px) with rounded corners and shadow
