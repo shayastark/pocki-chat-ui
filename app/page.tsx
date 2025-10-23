@@ -3,6 +3,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import Image from 'next/image';
 
 export default function LandingPage() {
   const { login, authenticated, ready } = usePrivy();
@@ -22,7 +23,15 @@ export default function LandingPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4 animate-pulse-gentle">🐼</div>
+          <div className="mb-4 animate-pulse-gentle">
+            <Image 
+              src="/pocki-logo.jpg" 
+              alt="Pocki" 
+              width={120} 
+              height={120}
+              className="mx-auto rounded-2xl"
+            />
+          </div>
           <p className="text-gray-600">Loading...</p>
           <p className="text-xs text-gray-400 mt-2">Initializing Privy...</p>
         </div>
@@ -34,7 +43,16 @@ export default function LandingPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-12 animate-fade-in">
-          <div className="text-8xl mb-6">🐼</div>
+          <div className="mb-6 flex justify-center">
+            <Image 
+              src="/pocki-logo.jpg" 
+              alt="Pocki" 
+              width={200} 
+              height={200}
+              className="rounded-3xl shadow-lg"
+              priority
+            />
+          </div>
           <h1 className="text-5xl font-bold mb-4 text-gray-900">
             Welcome to Pocki Chat
           </h1>
@@ -50,7 +68,7 @@ export default function LandingPage() {
 
         <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-8 animate-slide-up">
           <h2 className="text-2xl font-semibold mb-6 text-center text-gray-900">
-            What is Pocki? 🐼
+            What is Pocki?
           </h2>
           <div className="space-y-4 text-gray-700">
             <p className="leading-relaxed">

@@ -14,6 +14,11 @@ Pocki Chat is a Next.js 14 web application enabling users to interact with an AI
 ### UI/UX Decisions
 The application features a panda-themed design with calm green and bamboo accents, utilizing Tailwind CSS for styling. Animations are gentle and smooth, including fade-in, slide-up, and pulse effects.
 
+**Branding:**
+- **Logo:** Custom Pocki logo image (`/public/pocki-logo.jpg`) featuring a panda holding a wallet on a green background
+- **Logo Usage:** Used throughout the app including landing page, chat header, loading states, and error states
+- **Logo Styling:** Rounded corners with shadow effects for a modern, friendly appearance
+
 ### Technical Implementations
 The core application is built with Next.js 14 (App Router), React, and TypeScript.
 - **Authentication:** Privy is used for secure wallet, email, and social logins.
@@ -43,3 +48,15 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 - **TanStack Query:** Data fetching library (`@tanstack/react-query`).
 - **Next.js:** Web framework.
 - **Tailwind CSS:** Utility-first CSS framework.
+
+## Recent Updates
+
+### Oct 23, 2025 - Pocki Logo Branding
+- **Added custom Pocki logo** - Replaced panda emoji (🐼) with custom Pocki logo image throughout the app
+  - Created `/public` folder and added `pocki-logo.jpg` (panda holding wallet on green background)
+  - Updated landing page hero section with 200x200px logo with rounded corners and shadow
+  - Updated chat page header with 48x48px logo
+  - Updated loading states with 120-150px logo
+  - Updated error states with 120px logo
+  - All logo instances use Next.js Image component for performance optimization
+  - Logo styling includes rounded corners for visual consistency with panda-themed design
