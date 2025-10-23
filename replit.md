@@ -47,11 +47,13 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 ## Recent Changes (Oct 22, 2025)
 
 ### Critical Bugfix (Evening - Post UI Update)
-- **Fixed Message Sending Failure** - Resolved "Failed to send message" error introduced by incomplete timestamp fix
-  - Root cause: streamMessages handler wasn't converting timestamps to Date objects
-  - Created inconsistency where initial/refreshed messages had Date objects but streamed messages had raw timestamps
-  - Added missing `new Date()` conversion in streamMessages handler (line 380)
-  - Messages now send successfully again
+- **Fixed Message Sending Failure** - Resolved "Failed to send message: Error: synced 1 messages, 0 failed 1 succeeded" WASM error
+  - Root cause: XMTP Browser SDK v5 requires conversations to be synced before sending messages
+  - The conversation object became stale between initialization and message sending
+  - Added `await conversation.sync()` before every `conversation.send()` call
+  - This ensures the conversation state is up-to-date before attempting to send
+  - Also fixed timestamp conversion in streamMessages handler (line 380)
+  - Messages now send successfully without WASM errors
 
 ### UI Improvements
 - **Pocki Logo Integration** - Replaced panda emojis with official Pocki logo throughout the app
