@@ -374,7 +374,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
                 id: message.id,
                 content: message.content as string,
                 senderInboxId: message.senderAddress || message.senderInboxId,
-                sentAt: message.sent || message.sentAt,
+                sentAt: new Date(message.sent || message.sentAt),
               }];
             });
 
