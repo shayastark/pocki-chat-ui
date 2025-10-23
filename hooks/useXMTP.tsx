@@ -157,6 +157,11 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       try {
         await newClient.revokeAllOtherInstallations();
         console.log('Successfully revoked old installations');
+        
+        // CRITICAL: After revoking installations, sync to update group membership
+        console.log('Syncing after installation revocation...');
+        await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
+        console.log('✅ Post-revocation sync completed');
       } catch (revokeErr) {
         console.warn('Could not revoke old installations:', revokeErr);
         // Continue anyway - this might fail on first installation
@@ -200,7 +205,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         // Continue anyway - this is just for diagnostics
       }
 
-      // Sync all conversations and messages first (v5.0.1 recommended approach)
+      // Sync all conversations and messages (v5.0.1 recommended approach)
       console.log('Syncing all conversations and messages (including all consent states)...');
       await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
       
@@ -247,6 +252,15 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       if (conv) {
         console.log('✅ Found existing DM with agent');
         const peerInboxId = await conv.peerInboxId();
+        
+        // CRITICAL: Sync the conversation to update group membership after installation revocation
+        console.log('Syncing conversation to update group membership...');
+        try {
+          await conv.sync();
+          console.log('✅ Conversation sync completed');
+        } catch (syncErr) {
+          console.warn('Could not sync conversation:', syncErr);
+        }
         
         // CRITICAL: Check conversation consent state
         const consentState = await conv.consentState();
