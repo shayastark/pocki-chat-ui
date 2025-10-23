@@ -301,6 +301,35 @@ function ChatContent() {
               >
                 🔄 Force Sync All Conversations
               </button>
+              
+              <button 
+                onClick={async () => {
+                  if (confirm('⚠️ This will clear all XMTP data and reload the page. You will need to log in again. Continue?')) {
+                    try {
+                      // Delete all XMTP databases
+                      const databases = await indexedDB.databases();
+                      for (const db of databases) {
+                        if (db.name?.includes('xmtp') || db.name?.includes('XMTP')) {
+                          console.log('Deleting database:', db.name);
+                          indexedDB.deleteDatabase(db.name);
+                        }
+                      }
+                      
+                      // Wait a moment for deletion to complete
+                      await new Promise(resolve => setTimeout(resolve, 500));
+                      
+                      // Reload the page to force fresh initialization
+                      window.location.reload();
+                    } catch (err) {
+                      console.error('Failed to clear XMTP database:', err);
+                      alert('Failed to clear database. Please try manually clearing browser data for this site.');
+                    }
+                  }
+                }}
+                className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 w-full font-bold"
+              >
+                🗑️ Clear XMTP Database (Fix Stuck States)
+              </button>
             </div>
 
             {/* Diagnostic Results */}

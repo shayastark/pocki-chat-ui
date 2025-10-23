@@ -1,0 +1,95 @@
+ERROR sync_with_conn: xmtp_mls::groups::mls_sync: Error validating commit for own message. Intent ID [324]: InboxValidationFailed("c91c08e6d05575bc1148967b16d8a5c3a9092fae2473c5848ec364a0968bf103") inbox_id="c91c08e6d05575bc1148967b16d8a5c3a9092fae2473c5848ec364a0968bf103" installation_id=94b23595748c5b262304f86f56eb0a0aae3f9fc45c978bf46164e9bd7b56c896 group_id="8a66ba537a6bddacd5bffcc9d3cd4279" cursor=54831144 intent.id=324 intent.kind=UpdateGroupMembership
+
+e.wbg.__wbg_error_51ecdd39ec054205 @ 05808931.2968652d066bae1f.js:1
+$func10288 @ bindings_wasm_bg.665c59bc.wasm:0x7274b5
+$func7461 @ bindings_wasm_bg.665c59bc.wasm:0x6d6f65
+$func1270 @ bindings_wasm_bg.665c59bc.wasm:0x3a8a4e
+$func7604 @ bindings_wasm_bg.665c59bc.wasm:0x6db53c
+$func11210 @ bindings_wasm_bg.665c59bc.wasm:0x73745d
+$func5674 @ bindings_wasm_bg.665c59bc.wasm:0x66f008
+$func242 @ bindings_wasm_bg.665c59bc.wasm:0x51a35
+$func254 @ bindings_wasm_bg.665c59bc.wasm:0x84800
+$func425 @ bindings_wasm_bg.665c59bc.wasm:0x1bdc25
+$func1402 @ bindings_wasm_bg.665c59bc.wasm:0x3ea4f6
+$func918 @ bindings_wasm_bg.665c59bc.wasm:0x340d3f
+$func328 @ bindings_wasm_bg.665c59bc.wasm:0x144de7
+$func441 @ bindings_wasm_bg.665c59bc.wasm:0x1dc1cd
+$func264 @ bindings_wasm_bg.665c59bc.wasm:0xbf748
+$func5302 @ bindings_wasm_bg.665c59bc.wasm:0x65284c
+$func1278 @ bindings_wasm_bg.665c59bc.wasm:0x3bde0a
+$func615 @ bindings_wasm_bg.665c59bc.wasm:0x281d55
+$func288 @ bindings_wasm_bg.665c59bc.wasm:0xeb225
+$func420 @ bindings_wasm_bg.665c59bc.wasm:0x1b983f
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1Understand this error
+05808931.2968652d066bae1f.js:1  INFO sync_with_conn: xmtp_mls::groups::mls_sync: calling update cursor for group 8a66ba537a6bddacd5bffcc9d3cd4279, with cursor 54831144, allow_cursor_increment is true
+
+05808931.2968652d066bae1f.js:1 ERROR sync_with_conn: xmtp_mls::groups::mls_sync: Intent [324] moved to error status
+
+e.wbg.__wbg_error_51ecdd39ec054205 @ 05808931.2968652d066bae1f.js:1
+$func10288 @ bindings_wasm_bg.665c59bc.wasm:0x7274b5
+$func7461 @ bindings_wasm_bg.665c59bc.wasm:0x6d6f65
+$func1270 @ bindings_wasm_bg.665c59bc.wasm:0x3a8a4e
+$func7604 @ bindings_wasm_bg.665c59bc.wasm:0x6db53c
+$func11210 @ bindings_wasm_bg.665c59bc.wasm:0x73745d
+$func5686 @ bindings_wasm_bg.665c59bc.wasm:0x66f737
+$func242 @ bindings_wasm_bg.665c59bc.wasm:0x558a6
+$func254 @ bindings_wasm_bg.665c59bc.wasm:0x84800
+$func425 @ bindings_wasm_bg.665c59bc.wasm:0x1bdc25
+$func1402 @ bindings_wasm_bg.665c59bc.wasm:0x3ea4f6
+$func918 @ bindings_wasm_bg.665c59bc.wasm:0x340d3f
+$func328 @ bindings_wasm_bg.665c59bc.wasm:0x144de7
+$func441 @ bindings_wasm_bg.665c59bc.wasm:0x1dc1cd
+$func264 @ bindings_wasm_bg.665c59bc.wasm:0xbf748
+$func5302 @ bindings_wasm_bg.665c59bc.wasm:0x65284c
+$func1278 @ bindings_wasm_bg.665c59bc.wasm:0x3bde0a
+$func615 @ bindings_wasm_bg.665c59bc.wasm:0x281d55
+$func288 @ bindings_wasm_bg.665c59bc.wasm:0xeb225
+$func420 @ bindings_wasm_bg.665c59bc.wasm:0x1b983f
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1Understand this error
+05808931.2968652d066bae1f.js:1  INFO sync_with_conn: xmtp_mls::groups::mls_sync: Transaction completed successfully: process for group [8a66ba537a6bddacd5bffcc9d3cd4279] envelope cursor[54831144]
+
+05808931.2968652d066bae1f.js:1  WARN xmtp_mls::groups::mls_sync: not retrying intent ID 324. since it is in state Error. synced 1 messages, 0 failed 1 succeeded from cursor Some(54831144)
+
+
+e.wbg.__wbg_warn_d89f6637da554c8d @ 05808931.2968652d066bae1f.js:1
+$func14824 @ bindings_wasm_bg.665c59bc.wasm:0x778cdf
+$func10291 @ bindings_wasm_bg.665c59bc.wasm:0x727561
+$func7461 @ bindings_wasm_bg.665c59bc.wasm:0x6d6f65
+$func1270 @ bindings_wasm_bg.665c59bc.wasm:0x3a8a4e
+$func7604 @ bindings_wasm_bg.665c59bc.wasm:0x6db53c
+$func11210 @ bindings_wasm_bg.665c59bc.wasm:0x73745d
+$func5594 @ bindings_wasm_bg.665c59bc.wasm:0x665ed7
+$func615 @ bindings_wasm_bg.665c59bc.wasm:0x2824c4
+$func288 @ bindings_wasm_bg.665c59bc.wasm:0xeb225
+$func420 @ bindings_wasm_bg.665c59bc.wasm:0x1b983f
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1Understand this warning
+05808931.2968652d066bae1f.js:1  WARN xmtp_mls::groups::welcome_sync: maybe_update_installations failed err=Sync(synced 1 messages, 0 failed 1 succeeded from cursor Some(54831144)
+)
+
+e.wbg.__wbg_warn_d89f6637da554c8d @ 05808931.2968652d066bae1f.js:1
+$func14824 @ bindings_wasm_bg.665c59bc.wasm:0x778cdf
+$func10291 @ bindings_wasm_bg.665c59bc.wasm:0x727561
+$func7461 @ bindings_wasm_bg.665c59bc.wasm:0x6d6f65
+$func1270 @ bindings_wasm_bg.665c59bc.wasm:0x3a8a4e
+$func7604 @ bindings_wasm_bg.665c59bc.wasm:0x6db53c
+$func11210 @ bindings_wasm_bg.665c59bc.wasm:0x73745d
+$func288 @ bindings_wasm_bg.665c59bc.wasm:0xeb3e9
+$func420 @ bindings_wasm_bg.665c59bc.wasm:0x1b983f
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1Understand this warning
+page-1cfce0f445934390.js:1 Fetched 0 total messages from DB
