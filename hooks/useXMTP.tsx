@@ -501,6 +501,11 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         expectedAgentInboxId: AGENT_ADDRESS,
       });
       
+      // CRITICAL: Sync conversation before sending to ensure it's up-to-date
+      console.log('🔄 Syncing conversation before send...');
+      await (conversation as any).sync();
+      console.log('✅ Conversation synced, now sending...');
+      
       const messageId = await conversation.send(content);
       console.log('✅ Message sent successfully! ID:', messageId);
       console.log('⏳ Waiting 5s for agent response...');
