@@ -4,6 +4,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Image from 'next/image';
+import { BaseAppBanner } from '@/components/BaseAppBanner';
 
 export default function LandingPage() {
   const { login, authenticated, ready } = usePrivy();
@@ -131,7 +132,11 @@ export default function LandingPage() {
           </p>
         </div>
 
-        <div className="mt-12 text-center text-gray-500 text-sm">
+        <div className="mt-12">
+          <BaseAppBanner />
+        </div>
+
+        <div className="mt-8 text-center text-gray-500 text-sm">
           <p className="flex items-center justify-center gap-2">
             <span>Built by</span>
             <a 
