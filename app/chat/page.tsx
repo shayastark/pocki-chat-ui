@@ -9,6 +9,7 @@ import { MessageList } from '@/components/MessageList';
 import { MessageInput } from '@/components/MessageInput';
 import { TransactionModal } from '@/components/TransactionModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { BaseAppBanner } from '@/components/BaseAppBanner';
 
 function ChatContent() {
   const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll, fixConversation } = useXMTP();
@@ -390,7 +391,7 @@ function ChatContent() {
         </div>
       )}
 
-      <div className={`max-w-6xl mx-auto p-4 ${showDebug ? 'h-[calc(100vh-360px)]' : 'h-[calc(100vh-80px)]'}`}>
+      <div className={`max-w-6xl mx-auto p-4 space-y-4 ${showDebug ? 'h-[calc(100vh-360px)]' : 'h-[calc(100vh-80px)]'}`}>
         <div className="bg-white rounded-2xl shadow-xl h-full flex flex-col overflow-hidden">
           <MessageList onTransactionRequest={(tx) => {
             console.log('Transaction requested:', tx);
@@ -399,6 +400,7 @@ function ChatContent() {
           }} />
           <MessageInput />
         </div>
+        <BaseAppBanner />
       </div>
 
       <TransactionModal
