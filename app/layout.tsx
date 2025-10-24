@@ -7,8 +7,8 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Pocki Chat - AI Wallet Health Agent',
-  description: 'Chat with your AI wallet health agent powered by XMTP',
+  title: 'Pocki Chat - Mindful AI Trading Companion',
+  description: 'Your mindful AI onchain wallet companion that helps you set alerts, journal trades, and pause before acting on impulse.',
 };
 
 export default function RootLayout({

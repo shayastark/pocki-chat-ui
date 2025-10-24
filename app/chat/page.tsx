@@ -188,7 +188,7 @@ function ChatContent() {
             />
             <div>
               <h1 className="text-xl font-bold text-gray-900">Pocki Chat</h1>
-              <p className="text-sm text-gray-500">AI Wallet Health Agent</p>
+              <p className="text-sm text-gray-500">Mindful AI Trading Companion</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
