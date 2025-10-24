@@ -51,6 +51,23 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 
 ## Recent Updates
 
+### Oct 24, 2025 - Landing Page Description Update
+- **Updated "What is Pocki?" section** - Refreshed landing page description text
+  - New description: "Pocki is your mindful AI onchain wallet companion. Like a wise panda who never rushes, Pocki helps you set alerts, journal your trades, and pause before acting on impulse. Trade with intention on Base."
+  - Better emphasizes mindfulness, specific features (alerts, journaling), and Base network focus
+
+### Oct 24, 2025 - Debug Tools Enhancement
+- **Added Clear XMTP Database tool** - New debug panel feature to fix stuck XMTP states
+  - Button to clear all XMTP IndexedDB databases and reload the page
+  - Helps resolve stuck Intent errors and installation conflicts
+  - Provides confirmation dialog to warn users before clearing data
+
+### Oct 23, 2025 - XMTP Sync Improvements
+- **Enhanced conversation sync strategy** - Improved reliability for message delivery
+  - Added post-revocation sync: After revoking old installations, immediately syncs all conversations
+  - Added conversation-specific sync: When getting existing conversations, syncs to ensure current group state
+  - Fixes inbox validation errors caused by stale group membership data
+
 ### Oct 23, 2025 - XMTP Transaction Support (WalletSendCalls)
 - **Implemented XMTP WalletSendCalls content type** - Full support for on-chain transaction requests from Pocki AI agent
   - Installed and integrated `@xmtp/content-type-wallet-send-calls` package

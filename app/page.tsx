@@ -75,9 +75,9 @@ export default function LandingPage() {
               Mindful AI Onchain Wallet Companion
             </p>
             <p className="leading-relaxed">
-              Pocki is your calm, thoughtful companion for managing your wallet health. 
-              Like a wise panda carefully selecting the best bamboo, Pocki helps you make 
-              informed decisions about your crypto assets.
+              Pocki is your mindful AI onchain wallet companion. Like a wise panda who never rushes, 
+              Pocki helps you set alerts, journal your trades, and pause before acting on impulse. 
+              Trade with intention on Base.
             </p>
             <div className="grid md:grid-cols-3 gap-6 mt-8">
               <div className="text-center p-4">
