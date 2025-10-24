@@ -105,9 +105,6 @@ export default function LandingPage() {
           >
             Connect Wallet to Start 🚀
           </button>
-          <p className="mt-4 text-sm text-gray-500">
-            Supports wallet, email, Google, and Twitter login
-          </p>
         </div>
 
         <div className="mt-12">
