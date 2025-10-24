@@ -41,29 +41,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative">
-      {/* Bottom Left Logo - Base */}
-      <div className="fixed bottom-4 left-4 z-10">
-        <Image 
-          src="/base-logo.png" 
-          alt="Base" 
-          width={120} 
-          height={40}
-          className="opacity-60 hover:opacity-100 transition-opacity"
-        />
-      </div>
-      
-      {/* Bottom Right Logo - XMTP */}
-      <div className="fixed bottom-4 right-4 z-10">
-        <Image 
-          src="/xmtp-logo.png" 
-          alt="XMTP" 
-          width={120} 
-          height={40}
-          className="opacity-60 hover:opacity-100 transition-opacity"
-        />
-      </div>
-      
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-12 animate-fade-in">
           <div className="mb-6 flex justify-center">
@@ -157,6 +135,24 @@ export default function LandingPage() {
               @zenshortz
             </a>
           </p>
+        </div>
+
+        {/* Bottom Logos - Base and XMTP */}
+        <div className="mt-12 flex items-center justify-between">
+          <Image 
+            src="/base-logo.png" 
+            alt="Base" 
+            width={120} 
+            height={40}
+            className="opacity-60 hover:opacity-100 transition-opacity"
+          />
+          <Image 
+            src="/xmtp-logo.png" 
+            alt="XMTP" 
+            width={120} 
+            height={40}
+            className="opacity-60 hover:opacity-100 transition-opacity"
+          />
         </div>
       </div>
     </div>
