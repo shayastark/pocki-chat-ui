@@ -57,7 +57,7 @@ export default function LandingPage() {
             Welcome to Pocki Chat
           </h1>
           <p className="text-xl text-gray-600 mb-2">
-            Your AI Wallet Health Agent
+            Your AI trading companion that helps you stick to your own rules.
           </p>
           <div className="flex items-center justify-center gap-2 text-panda-bamboo-600">
             <span className="text-2xl">🎋</span>
@@ -71,10 +71,7 @@ export default function LandingPage() {
             What is Pocki?
           </h2>
           <div className="space-y-4 text-gray-700">
-            <p className="text-center text-lg font-semibold text-panda-green-600 mb-4">
-              Mindful AI Onchain Wallet Companion
-            </p>
-            <p className="leading-relaxed">
+            <p className="leading-relaxed text-panda-green-600">
               Pocki is your mindful AI onchain wallet companion. Like a wise panda who never rushes, 
               Pocki helps you set alerts, journal your trades, and pause before acting on impulse. 
               Trade with intention on Base.
@@ -119,10 +116,24 @@ export default function LandingPage() {
 
         <div className="mt-12 text-center text-gray-500 text-sm">
           <p className="flex items-center justify-center gap-2">
-            <span>Built with</span>
-            <span className="text-panda-bamboo-600 font-semibold">🎋 calmness</span>
+            <span>Built by</span>
+            <a 
+              href="https://base.app/profile/shaya" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-panda-green-600 font-semibold hover:underline"
+            >
+              @shaya
+            </a>
             <span>and</span>
-            <span className="text-panda-green-600 font-semibold">💚 care</span>
+            <a 
+              href="https://base.app/profile/zenshortz" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-panda-green-600 font-semibold hover:underline"
+            >
+              @zenshortz
+            </a>
           </p>
         </div>
       </div>
