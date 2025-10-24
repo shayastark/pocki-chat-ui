@@ -144,14 +144,12 @@ export default function LandingPage() {
             alt="Base" 
             width={120} 
             height={40}
-            className="opacity-60 hover:opacity-100 transition-opacity"
           />
           <Image 
             src="/xmtp-logo.png" 
             alt="XMTP" 
             width={120} 
             height={40}
-            className="opacity-60 hover:opacity-100 transition-opacity"
           />
         </div>
       </div>
