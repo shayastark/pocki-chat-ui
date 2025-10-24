@@ -59,11 +59,6 @@ export default function LandingPage() {
           <p className="text-xl text-gray-600 mb-2">
             Your AI trading companion that helps you stick to your own rules.
           </p>
-          <div className="flex items-center justify-center gap-2 text-panda-bamboo-600">
-            <span className="text-2xl">🎋</span>
-            <span className="text-lg">Powered by XMTP</span>
-            <span className="text-2xl">🎋</span>
-          </div>
         </div>
 
         <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-8 animate-slide-up">
