@@ -51,6 +51,14 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 
 ## Recent Updates
 
+### Oct 24, 2025 - CRITICAL FIX: Transaction Message Detection
+- **Fixed wallet swap transactions not working** - Transaction approval requests now appear correctly
+  - Root cause: Code was checking `contentType.typeId` string instead of using XMTP recommended `.sameAs()` method
+  - Solution: Import `ContentTypeWalletSendCalls` and use `message.contentType.sameAs(ContentTypeWalletSendCalls)` for detection
+  - Updated both streaming and refresh message handlers to use proper XMTP content type comparison
+  - Fixes "Filtering out unknown message type: walletSendCalls" console error
+  - Transaction requests from Pocki AI now properly trigger the Execute Transaction modal
+
 ### Oct 24, 2025 - Landing Page Description Update
 - **Updated "What is Pocki?" section** - Refreshed landing page description text
   - New description: "Pocki is your mindful AI onchain wallet companion. Like a wise panda who never rushes, Pocki helps you set alerts, journal your trades, and pause before acting on impulse. Trade with intention on Base."
