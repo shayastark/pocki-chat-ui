@@ -51,6 +51,20 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 
 ## Recent Updates
 
+### Oct 25, 2025 - Performance Optimizations
+- **Optimized TransactionModal rendering** - Reduced React re-renders during multi-call transactions
+  - Changed status rendering to derive from `currentCallIndex` and `isExecuting` instead of intermediate state updates
+  - Previously: 2 state updates per call (hash received + confirmed) = 4 updates for 2-call swaps
+  - Now: 1 state update per call (only when confirmed) = 2 updates for 2-call swaps
+  - Shows combined "⏳ Signing & Confirming..." label during transaction execution
+  - Maintains good UX while reducing unnecessary component re-renders by 50%
+  - Applied to both XMTP and legacy transaction formats for consistency
+- **Added setTimeout cleanup in useXMTP hook** - Prevents memory leaks on component unmount
+  - Added `autoSyncTimeoutRef` to track auto-sync timeout ID
+  - Clears existing timeout before setting new one (prevents timeout buildup from rapid message sends)
+  - Added useEffect cleanup to cancel timeout when component unmounts
+  - Eliminates risk of dangling timers calling state updates after unmount
+
 ### Oct 25, 2025 - XMTP Rate Limit Fix
 - **Reduced XMTP API calls to prevent rate limiting** - Improved message reliability
   - Removed 10-second background sync that was causing HTTP 429 rate limit errors on `query_group_messages`
