@@ -103,9 +103,6 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
           });
 
           console.log(`Call ${i + 1} hash:`, hash);
-          results[i] = { hash, confirming: true };
-          setCallResults([...results]);
-
           console.log(`Waiting for confirmation of call ${i + 1}...`);
           
           const receipt = await publicClient.waitForTransactionReceipt({ 
@@ -149,8 +146,6 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
           value: legacyTx.type === 'transfer' ? parseEther(legacyTx.amount) : undefined,
           data: legacyTx.data,
         });
-        
-        setCallResults([{ hash, confirming: true }]);
         
         const receipt = await publicClient.waitForTransactionReceipt({ 
           hash,
@@ -216,16 +211,18 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
             <div className="mt-4 space-y-2">
               {xmtpTx.calls.map((call, idx) => {
                 const result = callResults[idx];
-                const isExecuting = currentCallIndex === idx && !result?.confirmed;
-                const isConfirming = result?.confirming && !result?.confirmed;
+                const isCurrent = currentCallIndex === idx;
                 const isConfirmed = result?.confirmed;
                 const hasError = result?.error;
+                // Derive status from currentCallIndex instead of intermediate state
+                const isSigning = isCurrent && !isConfirmed;
+                const isActive = isSigning || isConfirmed;
                 
                 return (
                   <div 
                     key={idx} 
                     className={`bg-white rounded-lg p-3 border ${
-                      isExecuting || isConfirming ? 'border-panda-green-500 border-2' : 
+                      isSigning ? 'border-panda-green-500 border-2' : 
                       isConfirmed ? 'border-green-500' :
                       hasError ? 'border-red-500' :
                       'border-gray-200'
@@ -235,8 +232,7 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
                       <div className="font-medium text-sm mb-1">
                         {call.metadata?.description || `Transaction ${idx + 1}`}
                       </div>
-                      {isExecuting && !result?.hash && <span className="text-xs text-panda-green-600">⏳ Signing...</span>}
-                      {isConfirming && <span className="text-xs text-yellow-600">⏳ Confirming...</span>}
+                      {isSigning && <span className="text-xs text-panda-green-600">⏳ Signing & Confirming...</span>}
                       {isConfirmed && <span className="text-xs text-green-600">✅</span>}
                       {hasError && <span className="text-xs text-red-600">❌</span>}
                     </div>
@@ -290,14 +286,14 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
               <span className="font-semibold">{legacyTx.amount} ETH</span>
             </div>
           )}
+          {isExecuting && !result?.confirmed && (
+            <div className="text-xs text-panda-green-600 mt-2">⏳ Signing & Confirming...</div>
+          )}
           {result?.hash && (
             <div className="mt-2">
               <div className="text-xs font-mono text-gray-600">
                 Hash: {result.hash.slice(0, 10)}...{result.hash.slice(-8)}
               </div>
-              {result.confirming && !result.confirmed && (
-                <div className="text-xs text-yellow-600 mt-1">⏳ Confirming...</div>
-              )}
               {result.confirmed && (
                 <div className="text-xs text-green-600 mt-1">✅ Confirmed</div>
               )}

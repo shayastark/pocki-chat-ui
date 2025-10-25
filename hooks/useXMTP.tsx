@@ -81,6 +81,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const isInitializing = useRef(false);
   const hasInitialized = useRef(false);
   const isSyncing = useRef(false);
+  const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const initializeClient = useCallback(async () => {
     // Prevent multiple simultaneous initialization attempts
@@ -548,10 +549,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       };
       setMessages(prev => [...prev, optimisticMessage]);
       
+      // Clear any existing auto-sync timeout
+      if (autoSyncTimeoutRef.current) {
+        clearTimeout(autoSyncTimeoutRef.current);
+      }
+      
       // Wait 5 seconds for agent to respond, then sync
-      setTimeout(async () => {
+      autoSyncTimeoutRef.current = setTimeout(async () => {
         console.log('🔄 Auto-syncing to fetch agent response...');
         await refreshMessages();
+        autoSyncTimeoutRef.current = null;
       }, 5000);
     } catch (err) {
       console.error('❌ Failed to send message:', err);
@@ -655,6 +662,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     setMessages(normalizedMessages);
     console.log(`✅ Fixed! Loaded ${normalizedMessages.length} messages from correct conversation`);
   };
+
+  // Cleanup: Clear auto-sync timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (autoSyncTimeoutRef.current) {
+        clearTimeout(autoSyncTimeoutRef.current);
+        autoSyncTimeoutRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <XMTPContext.Provider
