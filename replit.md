@@ -97,17 +97,17 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
   - Architecture: AllowanceHolder (`0x0000000000001ff3684f28c67538d4d072c22734`) pulls tokens and routes swaps
   - Note: Works correctly in Base App where users have likely pre-approved AllowanceHolder
 
-### Oct 25, 2025 - RPC Rate Limit Fix (Enhanced)
+### Oct 25, 2025 - RPC Rate Limit Fix (Enhanced v2)
 - **Fixed MetaMask RPC rate limiting during multi-call transactions** - Swap transactions now execute reliably
   - Root cause: MetaMask makes 5-10 RPC calls per transaction for gas estimation, balance checks, and simulation
   - Multi-call swaps (approve + swap) create burst of 10-20 requests in seconds, hitting public RPC rate limits
-  - App-side solution: Configured wagmi with Alchemy RPC (`NEXT_PUBLIC_ALCHEMY_API_KEY` secret) as primary endpoint
-  - **Increased delay to 10 seconds** between transaction calls to prevent MetaMask from hitting rate limits
-  - Uses Alchemy with 300M compute units/month and high per-second rate limits
-  - Falls back to DRPC, Ankr, and Base official RPC endpoints if Alchemy is unavailable
-  - Added informational banner in TransactionModal explaining the delay with link to configure MetaMask RPC
-  - **Recommended user action**: Configure MetaMask to use Alchemy RPC for permanent fix and instant swaps
-  - Note: Delay is temporary workaround; MetaMask RPC configuration is the permanent solution
+  - **Critical discovery**: MetaMask ignores dApp's RPC config for transaction signing, uses its own saved RPC settings
+  - **Solution**: Changed wagmi config to use `custom(window.ethereum)` instead of `fallback(http())` endpoints
+  - Now respects whatever RPC user has configured in MetaMask (e.g., Alchemy, QuickNode, etc.)
+  - Eliminates need for delays between transactions when user has premium RPC configured
+  - Falls back to Alchemy/public RPCs only in non-browser environments (SSR)
+  - **User action**: Add Alchemy or premium RPC to MetaMask for instant, reliable swaps
+  - Configuration: Settings → Networks → Base → Add RPC URL or use [ChainList](https://chainlist.org/chain/8453)
 
 ### Oct 24, 2025 - CRITICAL FIX: Transaction Message Detection
 - **Fixed wallet swap transactions not working** - Transaction approval requests now appear correctly
