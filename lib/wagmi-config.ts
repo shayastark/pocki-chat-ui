@@ -5,6 +5,6 @@ import { http } from 'viem';
 export const wagmiConfig = createConfig({
   chains: [base],
   transports: {
-    [base.id]: http(),
+    [base.id]: http('https://mainnet.base.org'),
   },
 });
