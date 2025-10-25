@@ -150,9 +150,6 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       console.log('✅ Created XMTP client with ReplyCodec and WalletSendCallsCodec');
       console.log('🌍 XMTP Environment:', XMTP_ENV);
       console.log('📬 Client Inbox ID:', newClient.inboxId);
-      
-      // Store ContentTypeWalletSendCalls for message detection
-      (newClient as any).contentTypeWalletSendCalls = ContentTypeWalletSendCalls;
       console.log('🎯 Target Agent Inbox ID:', AGENT_ADDRESS);
 
       // Revoke all other installations to prevent hitting the 10 installation limit
@@ -377,7 +374,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     let streamActive = true;
     const streamMessages = async () => {
       try {
-        const contentTypeWalletSendCalls = (client as any).contentTypeWalletSendCalls;
+        // Import content type for detection
+        const { ContentTypeWalletSendCalls } = await import('@xmtp/content-type-wallet-send-calls');
         
         const stream = await (client as any).conversations.streamAllMessages({
           onValue: (message: any) => {
@@ -393,7 +391,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             let transactionData: any = null;
             
             // Handle different content types using XMTP recommended sameAs() method
-            if (message.contentType && contentTypeWalletSendCalls && message.contentType.sameAs(contentTypeWalletSendCalls)) {
+            if (message.contentType && message.contentType.sameAs(ContentTypeWalletSendCalls)) {
               // Transaction message
               console.log('💸 Transaction message received:', message.content);
               messageType = 'transaction';
@@ -454,7 +452,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       const updatedMessages = await conversation.messages();
       console.log(`Fetched ${updatedMessages.length} total messages from DB`);
       
-      const contentTypeWalletSendCalls = (client as any).contentTypeWalletSendCalls;
+      // Import content type for detection
+      const { ContentTypeWalletSendCalls } = await import('@xmtp/content-type-wallet-send-calls');
       
       const normalizedMessages = updatedMessages
         .map((msg: any) => {
@@ -464,7 +463,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           let transactionData: any = null;
           
           // Transaction message using XMTP recommended sameAs() method
-          if (msg.contentType && contentTypeWalletSendCalls && msg.contentType.sameAs(contentTypeWalletSendCalls)) {
+          if (msg.contentType && msg.contentType.sameAs(ContentTypeWalletSendCalls)) {
             console.log('💸 Found transaction message in history:', msg.content);
             messageType = 'transaction';
             transactionData = msg.content;
