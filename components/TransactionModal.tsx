@@ -121,6 +121,11 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
           results[i] = { hash, confirmed: true };
           setCallResults([...results]);
           
+          if (i < xmtpTx.calls.length - 1) {
+            console.log('Waiting 2 seconds before next transaction to avoid rate limits...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+          
         } catch (err: any) {
           console.error(`Failed to execute call ${i + 1}:`, err);
           results[i] = { ...results[i], error: err.message || 'Transaction failed', confirming: false };
