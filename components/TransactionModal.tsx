@@ -122,8 +122,8 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
           setCallResults([...results]);
           
           if (i < xmtpTx.calls.length - 1) {
-            console.log('Waiting 2 seconds before next transaction to avoid rate limits...');
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            console.log('Waiting 4 seconds before next transaction to avoid rate limits...');
+            await new Promise(resolve => setTimeout(resolve, 4000));
           }
           
         } catch (err: any) {

@@ -51,14 +51,16 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 
 ## Recent Updates
 
-### Oct 25, 2025 - RPC Rate Limit Fix
-- **Fixed "Request is being rate limited" error during transaction execution** - Transactions now execute reliably
-  - Root cause: wagmi was using viem's default public RPC endpoint which has strict rate limits
-  - Solution: Configured fallback RPC transports in wagmi config with Alchemy as primary endpoint
-  - Uses Alchemy (`ALCHEMY_API_KEY` secret) as primary with 300M compute units/month and high rate limits
+### Oct 25, 2025 - RPC Rate Limit Fix (Enhanced)
+- **Fixed MetaMask RPC rate limiting during multi-call transactions** - Swap transactions now execute reliably
+  - Root cause: MetaMask makes 5-10 RPC calls per transaction for gas estimation, balance checks, and simulation
+  - Multi-call swaps (approve + swap) create burst of 10-20 requests in seconds, hitting public RPC rate limits
+  - App-side solution: Configured wagmi with Alchemy RPC (`NEXT_PUBLIC_ALCHEMY_API_KEY` secret) as primary endpoint
+  - Added 4-second delay between transaction calls to prevent MetaMask from hitting rate limits
+  - Uses Alchemy with 300M compute units/month and high per-second rate limits
   - Falls back to DRPC, Ankr, and Base official RPC endpoints if Alchemy is unavailable
-  - Multi-call transactions (approve + swap) no longer hit rate limits during execution
-  - Fallback configuration ensures high availability and automatic retry on rate limit errors
+  - **Recommended user action**: Configure MetaMask to use Alchemy RPC for permanent fix
+  - Note: Delay is temporary workaround; MetaMask RPC configuration is the permanent solution
 
 ### Oct 24, 2025 - CRITICAL FIX: Transaction Message Detection
 - **Fixed wallet swap transactions not working** - Transaction approval requests now appear correctly
