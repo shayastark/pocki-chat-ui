@@ -54,8 +54,10 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 ### Oct 25, 2025 - RPC Rate Limit Fix
 - **Fixed "Request is being rate limited" error during transaction execution** - Transactions now execute reliably
   - Root cause: wagmi was using viem's default public RPC endpoint which has strict rate limits
-  - Solution: Configured Base's official RPC endpoint (`https://mainnet.base.org`) in wagmi config
+  - Solution: Configured fallback RPC transports in wagmi config with multiple high-limit endpoints
+  - Uses DRPC (`https://base.drpc.org`) as primary, Ankr (`https://rpc.ankr.com/base`) as secondary, Base official as tertiary
   - Multi-call transactions (approve + swap) no longer hit rate limits during execution
+  - Fallback configuration ensures high availability and automatic retry on rate limit errors
 
 ### Oct 24, 2025 - CRITICAL FIX: Transaction Message Detection
 - **Fixed wallet swap transactions not working** - Transaction approval requests now appear correctly
