@@ -383,13 +383,28 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             }
             
             setMessages(prev => {
+              // Check if message already exists by ID
               const exists = prev.some((m: Message) => m.id === message.id);
               if (exists) return prev;
+              
+              // Normalize timestamp to Date object
+              let normalizedTimestamp: Date;
+              const rawTimestamp = message.sent || message.sentAt;
+              if (rawTimestamp instanceof Date) {
+                normalizedTimestamp = rawTimestamp;
+              } else if (typeof rawTimestamp === 'number') {
+                normalizedTimestamp = new Date(rawTimestamp);
+              } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
+                normalizedTimestamp = (rawTimestamp as any).toDate();
+              } else {
+                normalizedTimestamp = new Date();
+              }
+              
               return [...prev, {
                 id: message.id,
                 content: textContent || '',
                 senderInboxId: message.senderAddress || message.senderInboxId,
-                sentAt: message.sent || message.sentAt,
+                sentAt: normalizedTimestamp,
                 contentType: messageType,
                 transaction: transactionData,
               }];
@@ -496,14 +511,29 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             console.log('Filtering out unknown message type:', msg.contentType?.typeId || 'unknown');
           }
           
-          return textContent ? {
+          if (!textContent) return null;
+          
+          // Normalize timestamp to Date object
+          let normalizedTimestamp: Date;
+          const rawTimestamp = msg.sent || msg.sentAt;
+          if (rawTimestamp instanceof Date) {
+            normalizedTimestamp = rawTimestamp;
+          } else if (typeof rawTimestamp === 'number') {
+            normalizedTimestamp = new Date(rawTimestamp);
+          } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
+            normalizedTimestamp = (rawTimestamp as any).toDate();
+          } else {
+            normalizedTimestamp = new Date();
+          }
+          
+          return {
             id: msg.id,
             content: textContent,
             senderInboxId: msg.senderAddress || msg.senderInboxId,
-            sentAt: msg.sent || msg.sentAt,
+            sentAt: normalizedTimestamp,
             contentType: messageType,
             transaction: transactionData,
-          } : null;
+          };
         })
         .filter((msg: Message | null): msg is Message => msg !== null);
       
@@ -540,14 +570,21 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       console.log('✅ Message sent successfully! ID:', messageId);
       console.log('⏳ Waiting 5 seconds for Pocki to respond...');
       
-      // Immediately add optimistic message to UI
-      const optimisticMessage: Message = {
-        id: messageId || `temp-${Date.now()}`,
-        content,
-        senderInboxId: client.inboxId,
-        sentAt: new Date(),
-      };
-      setMessages(prev => [...prev, optimisticMessage]);
+      // Immediately add optimistic message to UI with the actual message ID
+      if (messageId) {
+        const optimisticMessage: Message = {
+          id: messageId,
+          content,
+          senderInboxId: client.inboxId,
+          sentAt: new Date(),
+        };
+        setMessages(prev => {
+          // Check if message already exists (from stream)
+          const exists = prev.some(m => m.id === messageId);
+          if (exists) return prev;
+          return [...prev, optimisticMessage];
+        });
+      }
       
       // Clear any existing auto-sync timeout
       if (autoSyncTimeoutRef.current) {
