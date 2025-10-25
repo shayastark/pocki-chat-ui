@@ -381,10 +381,15 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           onValue: (message: any) => {
             if (!streamActive) return;
             
-            console.log('📨 Stream message:', {
-              contentType: message.contentType?.typeId,
-              hasContent: !!message.content,
-            });
+            const senderInboxId = message.senderAddress || message.senderInboxId;
+            const isFromAgent = senderInboxId === AGENT_ADDRESS;
+            
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log(`📨 NEW MESSAGE ${isFromAgent ? 'FROM POCKI 🎋' : 'FROM YOU'}`);
+            console.log('Time:', new Date().toLocaleTimeString());
+            console.log('Sender:', senderInboxId);
+            console.log('Content Type:', message.contentType?.typeId);
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
             let textContent: string | null = null;
             let messageType: 'text' | 'transaction' = 'text';
@@ -393,7 +398,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             // Handle different content types using XMTP recommended sameAs() method
             if (message.contentType && message.contentType.sameAs(ContentTypeWalletSendCalls)) {
               // Transaction message
-              console.log('💸 Transaction message received:', message.content);
+              console.log('💸 TRANSACTION MESSAGE RECEIVED!');
               console.log('🔍 Transaction structure:', {
                 version: message.content?.version,
                 from: message.content?.from,
@@ -412,9 +417,10 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
               transactionData = message.content;
               textContent = message.contentFallback || 'Transaction Request';
             } else if (typeof message.content === 'string') {
+              console.log('📝 TEXT MESSAGE:', message.content.substring(0, 100) + (message.content.length > 100 ? '...' : ''));
               textContent = message.content;
             } else {
-              console.log('Skipping non-text/non-transaction message:', message.contentType?.typeId || 'unknown');
+              console.log('⚠️ Skipping non-text/non-transaction message:', message.contentType?.typeId || 'unknown');
               return;
             }
             
@@ -574,17 +580,23 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      console.log('📤 Sending message to agent:', content);
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('📤 SENDING MESSAGE TO POCKI 🎋');
+      console.log('Time:', new Date().toLocaleTimeString());
+      console.log('Message:', content);
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      
       const peerInboxId = await (conversation as any).peerInboxId();
       console.log('📋 Target conversation:', {
         id: conversation.id,
         peerInboxId,
         expectedAgentInboxId: AGENT_ADDRESS,
+        isCorrectPeer: peerInboxId === AGENT_ADDRESS,
       });
       
       const messageId = await conversation.send(content);
       console.log('✅ Message sent successfully! ID:', messageId);
-      console.log('⏳ Waiting 5s for agent response...');
+      console.log('⏳ Waiting 5 seconds for Pocki to respond...');
       
       // Immediately add optimistic message to UI
       const optimisticMessage: Message = {
