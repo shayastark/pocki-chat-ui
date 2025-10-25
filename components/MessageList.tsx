@@ -9,20 +9,19 @@ interface MessageListProps {
 }
 
 export function MessageList({ onTransactionRequest }: MessageListProps = {}) {
-  const { messages, isAgentTyping } = useXMTP();
-  const { user } = usePrivy();
+  const { messages, isAgentTyping, debugInfo } = useXMTP();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isAgentTyping]);
 
-  const isOwnMessage = (senderAddress: string) => {
-    return senderAddress?.toLowerCase() === user?.wallet?.address?.toLowerCase();
+  const isOwnMessage = (senderInboxId: string) => {
+    return senderInboxId?.toLowerCase() === debugInfo.clientInboxId?.toLowerCase();
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
       {messages.length === 0 && (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🐼</div>
@@ -45,11 +44,11 @@ export function MessageList({ onTransactionRequest }: MessageListProps = {}) {
             key={message.id}
             className={`flex ${isOwn ? 'justify-end' : 'justify-start'} animate-fade-in`}
           >
-            <div className={`flex items-end gap-2 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
-              <div className="text-2xl mb-1">
-                {isOwn ? '👤' : '🐼'}
+            <div className={`flex items-end gap-1.5 sm:gap-2 ${isOwn ? 'flex-row-reverse' : 'flex-row'} max-w-[85%] sm:max-w-[75%]`}>
+              <div className="text-xl sm:text-2xl mb-1 flex-shrink-0">
+                {isOwn ? '🎋' : '🐼'}
               </div>
-              <div>
+              <div className="min-w-0">
                 <div
                   className={`message-bubble ${
                     isOwn ? 'message-bubble-sent' : 'message-bubble-received'
@@ -61,10 +60,10 @@ export function MessageList({ onTransactionRequest }: MessageListProps = {}) {
                         💸 Transaction Request
                       </div>
                       {message.transaction.calls && message.transaction.calls.length > 0 && (
-                        <div className="space-y-2 text-sm">
+                        <div className="space-y-2 text-xs sm:text-sm">
                           {message.transaction.calls.map((call: any, idx: number) => (
                             <div key={idx} className="bg-panda-green-50 rounded p-2">
-                              <div className="font-medium">
+                              <div className="font-medium text-xs sm:text-sm">
                                 {call.metadata?.description || `Call ${idx + 1}`}
                               </div>
                               {call.metadata?.transactionType && (
@@ -73,7 +72,7 @@ export function MessageList({ onTransactionRequest }: MessageListProps = {}) {
                                 </div>
                               )}
                               {call.metadata?.amount && call.metadata?.currency && (
-                                <div className="text-xs text-gray-600">
+                                <div className="text-xs text-gray-600 break-all">
                                   Amount: {call.metadata.amount / Math.pow(10, call.metadata.decimals || 18)} {call.metadata.currency}
                                 </div>
                               )}
@@ -84,7 +83,7 @@ export function MessageList({ onTransactionRequest }: MessageListProps = {}) {
                       {onTransactionRequest && (
                         <button
                           onClick={() => onTransactionRequest(message.transaction)}
-                          className="w-full mt-2 bg-panda-green-600 hover:bg-panda-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors"
+                          className="w-full mt-2 bg-panda-green-600 hover:bg-panda-green-700 text-white font-semibold py-2 px-3 sm:px-4 rounded-lg transition-colors text-xs sm:text-sm"
                         >
                           Execute Transaction
                         </button>

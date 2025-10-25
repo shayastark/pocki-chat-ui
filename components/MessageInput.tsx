@@ -31,7 +31,7 @@ export function MessageInput() {
   };
 
   return (
-    <div className="border-t border-gray-200 bg-white p-4">
+    <div className="border-t border-gray-200 bg-white p-3 sm:p-4">
       <div className="flex gap-2">
         <textarea
           value={message}
@@ -39,26 +39,29 @@ export function MessageInput() {
           onKeyPress={handleKeyPress}
           placeholder={isConnected ? "Type your message... 🎋" : "Connecting..."}
           disabled={!isConnected || isSending}
-          className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-panda-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="flex-1 resize-none rounded-xl border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-panda-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
           rows={1}
-          style={{ minHeight: '48px', maxHeight: '120px' }}
+          style={{ minHeight: '44px', maxHeight: '120px' }}
         />
         <button
           onClick={handleSend}
           disabled={!message.trim() || !isConnected || isSending}
-          className="bg-panda-green-600 hover:bg-panda-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold px-6 rounded-xl transition-colors"
+          className="bg-panda-green-600 hover:bg-panda-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold px-4 sm:px-6 rounded-xl transition-colors text-sm sm:text-base min-w-[70px] sm:min-w-[90px]"
         >
           {isSending ? (
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-1 sm:gap-2 justify-center">
               <span className="animate-spin">⏳</span>
-              Sending
+              <span className="hidden sm:inline">Sending</span>
             </span>
           ) : (
-            '🚀 Send'
+            <>
+              <span className="sm:hidden">🚀</span>
+              <span className="hidden sm:inline">🚀 Send</span>
+            </>
           )}
         </button>
       </div>
-      <p className="text-xs text-gray-400 mt-2">
+      <p className="text-xs text-gray-400 mt-2 hidden sm:block">
         Press Enter to send • Shift+Enter for new line
       </p>
     </div>

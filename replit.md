@@ -46,6 +46,19 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Oct 25, 2025 - Avatar Fix & Mobile-Responsive UI
+- **Fixed user/Pocki avatar identification** - User messages now correctly show 🎋 bamboo emoji
+  - Fixed `isOwnMessage` logic to compare XMTP inbox IDs instead of wallet addresses
+  - User messages now display 🎋 (bamboo) avatar, Pocki messages display 🐼 (panda) avatar
+  - Used `debugInfo.clientInboxId` from XMTP context for proper message ownership detection
+- **Made chat UI mobile-responsive** - Optimized for phones and tablets
+  - Responsive header: smaller logo on mobile, condensed button text, icon-only layout on small screens
+  - Responsive message bubbles: adjusted padding, font sizes, and max-width for mobile (85% width on mobile, 75% on desktop)
+  - Responsive message input: smaller touch targets, icon-only send button on mobile
+  - Responsive debug panel: smaller fonts, better text wrapping, horizontal scroll for long addresses
+  - Mobile-first Tailwind breakpoints (sm:, md:, lg:) used throughout for adaptive layouts
+  - Transaction cards optimized with break-all for long amounts and smaller text on mobile
+
 ### Oct 25, 2025 - Force Sync Conversation Refresh Fix
 - **Fixed "message failed to send" error after Force Sync All Conversations** - Prevents stale conversation reference errors
   - Root cause: `forceSyncAll()` synced data but didn't refresh the active conversation object

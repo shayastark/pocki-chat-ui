@@ -178,68 +178,74 @@ function ChatContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
       <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Image 
-              src="/pocki-logo.jpg" 
-              alt="Pocki" 
-              width={48} 
-              height={48}
-              className="rounded-lg"
-            />
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Pocki Chat</h1>
-              <p className="text-sm text-gray-500">Mindful AI Trading Companion</p>
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Image 
+                src="/pocki-logo.jpg" 
+                alt="Pocki" 
+                width={40} 
+                height={40}
+                className="rounded-lg sm:w-12 sm:h-12"
+              />
+              <div>
+                <h1 className="text-base sm:text-xl font-bold text-gray-900">Pocki Chat</h1>
+                <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">Mindful AI Trading Companion</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-300'}`} />
-              <span className="text-sm text-gray-600">
-                {isConnected ? 'Connected' : 'Disconnected'}
-              </span>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-300'}`} />
+                <span className="text-xs sm:text-sm text-gray-600 hidden sm:inline">
+                  {isConnected ? 'Connected' : 'Disconnected'}
+                </span>
+              </div>
+              <button
+                onClick={handleRefresh}
+                disabled={isRefreshing}
+                className="text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-lg bg-panda-green-100 text-panda-green-700 hover:bg-panda-green-200 transition-colors disabled:opacity-50"
+                title="Refresh messages"
+              >
+                {isRefreshing ? '🔄' : '🔄'}
+                <span className="hidden sm:inline ml-1">{isRefreshing ? 'Syncing...' : 'Refresh'}</span>
+              </button>
+              <button
+                onClick={() => setShowDebug(!showDebug)}
+                className="text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-lg bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors"
+                title="Toggle debug panel"
+              >
+                🔍
+                <span className="hidden md:inline ml-1">{showDebug ? 'Hide' : 'Debug'}</span>
+              </button>
+              <div className="text-xs sm:text-sm text-gray-600 hidden md:block" title={activeWalletAddress || 'No wallet connected'}>
+                {activeWalletAddress ? `${activeWalletAddress.slice(0, 6)}...${activeWalletAddress.slice(-4)}` : 'No wallet'}
+              </div>
+              <button
+                onClick={logout}
+                className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <span className="sm:hidden">↗</span>
+                <span className="hidden sm:inline">Logout</span>
+              </button>
             </div>
-            <button
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="text-sm px-3 py-1 rounded-lg bg-panda-green-100 text-panda-green-700 hover:bg-panda-green-200 transition-colors disabled:opacity-50"
-              title="Refresh messages"
-            >
-              {isRefreshing ? '🔄 Syncing...' : '🔄 Refresh'}
-            </button>
-            <button
-              onClick={() => setShowDebug(!showDebug)}
-              className="text-sm px-3 py-1 rounded-lg bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors"
-              title="Toggle debug panel"
-            >
-              {showDebug ? '🔍 Hide Debug' : '🔍 Debug'}
-            </button>
-            <div className="text-sm text-gray-600" title={activeWalletAddress || 'No wallet connected'}>
-              {activeWalletAddress ? `${activeWalletAddress.slice(0, 6)}...${activeWalletAddress.slice(-4)}` : 'No wallet'}
-            </div>
-            <button
-              onClick={logout}
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Logout
-            </button>
           </div>
         </div>
       </header>
 
       {/* Debug Panel */}
       {showDebug && (
-        <div className="max-w-6xl mx-auto px-4 pt-4">
-          <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 shadow-lg">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 pt-4">
+          <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-3 sm:p-4 shadow-lg overflow-hidden">
             <div className="flex justify-between items-start mb-3">
-              <h3 className="font-bold text-yellow-900">🔍 DEBUG PANEL</h3>
-              <div className="flex gap-2">
+              <h3 className="font-bold text-yellow-900 text-sm sm:text-base">🔍 DEBUG PANEL</h3>
+              <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={runDiagnostics}
                   disabled={isRunningDiagnostics}
-                  className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50"
+                  className="px-2 sm:px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 disabled:opacity-50 whitespace-nowrap"
                 >
-                  {isRunningDiagnostics ? '⏳ Running...' : '🔬 Run Diagnostics'}
+                  {isRunningDiagnostics ? '⏳' : '🔬'}
+                  <span className="hidden sm:inline ml-1">{isRunningDiagnostics ? 'Running...' : 'Diagnostics'}</span>
                 </button>
                 <button 
                   onClick={() => setShowDebug(false)}
@@ -248,16 +254,16 @@ function ChatContent() {
               </div>
             </div>
             
-            <div className="space-y-2 text-sm font-mono">
+            <div className="space-y-2 text-xs sm:text-sm font-mono overflow-x-auto">
               <div>
-                <strong>Client Inbox ID:</strong> {debugInfo.clientInboxId || 'N/A'}
+                <strong>Client Inbox ID:</strong> <span className="break-all">{debugInfo.clientInboxId || 'N/A'}</span>
               </div>
               <div>
-                <strong>Target Agent Inbox ID:</strong> {debugInfo.targetAgentInboxId}
+                <strong>Target Agent Inbox ID:</strong> <span className="break-all">{debugInfo.targetAgentInboxId}</span>
               </div>
               <div className={`p-2 rounded ${debugInfo.conversationPeerInboxId === debugInfo.targetAgentInboxId ? 'bg-green-100' : 'bg-red-100'}`}>
                 <strong>Active Conv Peer Inbox ID:</strong>
-                <div className="break-all mt-1">{debugInfo.conversationPeerInboxId || 'N/A'}</div>
+                <div className="break-all mt-1 text-xs">{debugInfo.conversationPeerInboxId || 'N/A'}</div>
                 {debugInfo.conversationPeerInboxId === debugInfo.targetAgentInboxId && <span className="ml-2 text-green-700 font-bold">✓ MATCH</span>}
                 {debugInfo.conversationPeerInboxId && debugInfo.conversationPeerInboxId !== debugInfo.targetAgentInboxId && (
                   <div className="mt-2 text-red-700 font-bold">✗ MISMATCH! Sending to wrong conversation!</div>
