@@ -394,6 +394,20 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             if (message.contentType && message.contentType.sameAs(ContentTypeWalletSendCalls)) {
               // Transaction message
               console.log('💸 Transaction message received:', message.content);
+              console.log('🔍 Transaction structure:', {
+                version: message.content?.version,
+                from: message.content?.from,
+                chainId: message.content?.chainId,
+                callsCount: message.content?.calls?.length,
+                calls: message.content?.calls?.map((call: any, idx: number) => ({
+                  index: idx,
+                  to: call.to,
+                  value: call.value,
+                  hasData: !!call.data,
+                  dataLength: call.data?.length,
+                  metadata: call.metadata
+                }))
+              });
               messageType = 'transaction';
               transactionData = message.content;
               textContent = message.contentFallback || 'Transaction Request';
@@ -465,6 +479,20 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           // Transaction message using XMTP recommended sameAs() method
           if (msg.contentType && msg.contentType.sameAs(ContentTypeWalletSendCalls)) {
             console.log('💸 Found transaction message in history:', msg.content);
+            console.log('🔍 Transaction structure:', {
+              version: msg.content?.version,
+              from: msg.content?.from,
+              chainId: msg.content?.chainId,
+              callsCount: msg.content?.calls?.length,
+              calls: msg.content?.calls?.map((call: any, idx: number) => ({
+                index: idx,
+                to: call.to,
+                value: call.value,
+                hasData: !!call.data,
+                dataLength: call.data?.length,
+                metadata: call.metadata
+              }))
+            });
             messageType = 'transaction';
             transactionData = msg.content;
             textContent = msg.contentFallback || 'Transaction Request';
