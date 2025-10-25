@@ -51,6 +51,16 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 
 ## Recent Updates
 
+### Oct 25, 2025 - Real-Time Reply Message Support
+- **Added reply content type handling to message stream** - Pocki's responses now appear instantly without manual refresh
+  - Installed `@xmtp/content-type-reply` package for proper reply detection
+  - Added `ContentTypeReply` import to stream handler alongside `ContentTypeWalletSendCalls`
+  - Implemented reply message detection using XMTP recommended `.sameAs()` method
+  - Extracts text from nested `message.content.content` structure with fallback to `contentFallback`
+  - Stream now handles three content types: transactions, replies, and plain text
+  - No rate limiting impact since stream uses persistent WebSocket connection (no additional API calls)
+  - Users see agent responses immediately without clicking manual refresh button
+
 ### Oct 25, 2025 - Performance Optimizations
 - **Optimized TransactionModal rendering** - Reduced React re-renders during multi-call transactions
   - Changed status rendering to derive from `currentCallIndex` and `isExecuting` instead of intermediate state updates

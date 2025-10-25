@@ -332,8 +332,9 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     let streamActive = true;
     const streamMessages = async () => {
       try {
-        // Import content type for detection
+        // Import content types for detection
         const { ContentTypeWalletSendCalls } = await import('@xmtp/content-type-wallet-send-calls');
+        const { ContentTypeReply } = await import('@xmtp/content-type-reply');
         
         const stream = await (client as any).conversations.streamAllMessages({
           onValue: (message: any) => {
@@ -374,11 +375,26 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
               messageType = 'transaction';
               transactionData = message.content;
               textContent = message.contentFallback || 'Transaction Request';
+            } else if (message.contentType && message.contentType.sameAs(ContentTypeReply)) {
+              // Reply message (Pocki's responses)
+              console.log('💬 REPLY MESSAGE RECEIVED!');
+              if (typeof message.content?.content === 'string') {
+                textContent = message.content.content;
+                const preview = message.content.content.substring(0, 100) + (message.content.content.length > 100 ? '...' : '');
+                console.log('📝 Reply text:', preview);
+              } else if (typeof message.contentFallback === 'string') {
+                textContent = message.contentFallback;
+                const preview = message.contentFallback.substring(0, 100) + (message.contentFallback.length > 100 ? '...' : '');
+                console.log('📝 Reply fallback:', preview);
+              } else {
+                console.log('⚠️ Reply has no extractable text content');
+                return;
+              }
             } else if (typeof message.content === 'string') {
               console.log('📝 TEXT MESSAGE:', message.content.substring(0, 100) + (message.content.length > 100 ? '...' : ''));
               textContent = message.content;
             } else {
-              console.log('⚠️ Skipping non-text/non-transaction message:', message.contentType?.typeId || 'unknown');
+              console.log('⚠️ Skipping unsupported message type:', message.contentType?.typeId || 'unknown');
               return;
             }
             
@@ -445,8 +461,9 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       const updatedMessages = await conversation.messages();
       console.log(`Fetched ${updatedMessages.length} total messages from DB`);
       
-      // Import content type for detection
+      // Import content types for detection
       const { ContentTypeWalletSendCalls } = await import('@xmtp/content-type-wallet-send-calls');
+      const { ContentTypeReply } = await import('@xmtp/content-type-reply');
       
       const normalizedMessages = updatedMessages
         .map((msg: any) => {
@@ -476,12 +493,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             transactionData = msg.content;
             textContent = msg.contentFallback || 'Transaction Request';
           }
-          // Direct text content (regular messages)
-          else if (typeof msg.content === 'string') {
-            textContent = msg.content;
-          }
           // Text reply (Pocki's responses) - XMTP recommended pattern
-          else if (msg.contentType?.typeId === 'reply') {
+          else if (msg.contentType && msg.contentType.sameAs(ContentTypeReply)) {
             console.log('🔍 DEBUG Reply message:', {
               id: String(msg.id),
               senderInboxId: String(msg.senderInboxId),
@@ -506,7 +519,11 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
               console.log('❌ Reply has no extractable text content');
             }
           }
-          // Filter out non-text/non-transaction content types
+          // Direct text content (regular messages)
+          else if (typeof msg.content === 'string') {
+            textContent = msg.content;
+          }
+          // Filter out non-text/non-transaction/non-reply content types
           else {
             console.log('Filtering out unknown message type:', msg.contentType?.typeId || 'unknown');
           }
