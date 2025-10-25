@@ -119,8 +119,8 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
           setCallResults([...results]);
           
           if (i < xmtpTx.calls.length - 1) {
-            console.log('Waiting 4 seconds before next transaction to avoid rate limits...');
-            await new Promise(resolve => setTimeout(resolve, 4000));
+            console.log('Waiting 10 seconds before next transaction to avoid rate limits...');
+            await new Promise(resolve => setTimeout(resolve, 10000));
           }
           
         } catch (err: any) {
@@ -179,6 +179,20 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
       
       return (
         <div className="space-y-4 mb-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-3">
+            <div className="flex items-start gap-2">
+              <div className="text-blue-600 text-lg">ℹ️</div>
+              <div className="flex-1">
+                <div className="font-semibold text-blue-800 mb-1">Multi-Transaction Swap</div>
+                <div className="text-sm text-blue-700">
+                  This swap requires {xmtpTx.calls.length} transactions to complete. There's a <span className="font-semibold">10-second delay</span> between transactions to prevent rate limiting.
+                  {xmtpTx.calls.length > 1 && (
+                    <span> For instant swaps, <a href="https://chainlist.org/chain/8453" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-900">add Alchemy RPC to MetaMask</a>.</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
           {isAllowanceHolderTx && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
               <div className="flex items-start gap-2">

@@ -1,0 +1,52 @@
+Executing call 2/2: {to: '0x0000000000001ff3684f28c67538d4d072c22734', data: '0x2213bc0b000000000000000000000000ea758cac6115309b…0000000000000000000000000000000000000000000000000', value: '0x0', metadata: {…}}
+inpage.js:1 MetaMask - RPC Error: Request is being rate limited. {code: -32603, message: 'Request is being rate limited.', stack: '{\n  "code": -32603,\n  "message": "Request is being…ihfbeogaeaoehlefnkodbefgpgknn/common-1.js:3:79085'}
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+p @ inpage.js:1
+f @ inpage.js:1
+await in f
+l @ inpage.js:1
+handle @ inpage.js:1
+_rpcRequest @ inpage.js:1
+(anonymous) @ inpage.js:1
+request @ inpage.js:1
+request @ 7373-51245f51f4367882.js:23
+delay.count @ 2504-f91f2ad8a585ffa5.js:4
+s @ 2504-f91f2ad8a585ffa5.js:31
+(anonymous) @ 2504-f91f2ad8a585ffa5.js:31
+i @ 2504-f91f2ad8a585ffa5.js:31
+enabled @ 2504-f91f2ad8a585ffa5.js:4
+(anonymous) @ 2504-f91f2ad8a585ffa5.js:4
+(anonymous) @ 2504-f91f2ad8a585ffa5.js:4
+g @ 2504-f91f2ad8a585ffa5.js:1
+await in g
+(anonymous) @ page-fdd401f5d2a6edb8.js:1
+S @ page-fdd401f5d2a6edb8.js:1
+await in S
+mutationFn @ page-fdd401f5d2a6edb8.js:1
+fn @ 2504-f91f2ad8a585ffa5.js:1
+y @ 2504-f91f2ad8a585ffa5.js:1
+start @ 2504-f91f2ad8a585ffa5.js:1
+execute @ 2504-f91f2ad8a585ffa5.js:1
+await in execute
+mutate @ 2504-f91f2ad8a585ffa5.js:1
+C @ page-fdd401f5d2a6edb8.js:1
+await in C
+a_ @ fd9d1056-6843569259ae8de6.js:1
+aR @ fd9d1056-6843569259ae8de6.js:1
+(anonymous) @ fd9d1056-6843569259ae8de6.js:1
+sF @ fd9d1056-6843569259ae8de6.js:1
+sM @ fd9d1056-6843569259ae8de6.js:1
+(anonymous) @ fd9d1056-6843569259ae8de6.js:1
+o4 @ fd9d1056-6843569259ae8de6.js:1
+iV @ fd9d1056-6843569259ae8de6.js:1
+sU @ fd9d1056-6843569259ae8de6.js:1
+uR @ fd9d1056-6843569259ae8de6.js:1
+uM @ fd9d1056-6843569259ae8de6.js:1Understand this warning
+2117-d83d1bfef3d0eb05.js:1 Failed to execute call 2: TransactionExecutionError: An internal error was received.
+
+Request Arguments:
+  from:   0xA2Eae178F372220FF6C6D8CACD63EfE4e4b44525
+  to:     0x0000000000001ff3684f28c67538d4d072c22734
+  value:  0 ETH
+  data:   0x2213bc0b000000000000000000000000ea758cac6115309b325c582fd0782d79e350217700

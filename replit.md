@@ -102,10 +102,11 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
   - Root cause: MetaMask makes 5-10 RPC calls per transaction for gas estimation, balance checks, and simulation
   - Multi-call swaps (approve + swap) create burst of 10-20 requests in seconds, hitting public RPC rate limits
   - App-side solution: Configured wagmi with Alchemy RPC (`NEXT_PUBLIC_ALCHEMY_API_KEY` secret) as primary endpoint
-  - Added 4-second delay between transaction calls to prevent MetaMask from hitting rate limits
+  - **Increased delay to 10 seconds** between transaction calls to prevent MetaMask from hitting rate limits
   - Uses Alchemy with 300M compute units/month and high per-second rate limits
   - Falls back to DRPC, Ankr, and Base official RPC endpoints if Alchemy is unavailable
-  - **Recommended user action**: Configure MetaMask to use Alchemy RPC for permanent fix
+  - Added informational banner in TransactionModal explaining the delay with link to configure MetaMask RPC
+  - **Recommended user action**: Configure MetaMask to use Alchemy RPC for permanent fix and instant swaps
   - Note: Delay is temporary workaround; MetaMask RPC configuration is the permanent solution
 
 ### Oct 24, 2025 - CRITICAL FIX: Transaction Message Detection
