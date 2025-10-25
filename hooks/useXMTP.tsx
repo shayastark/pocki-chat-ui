@@ -627,7 +627,74 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     const allConvs = await (client.conversations as any).list();
     setAllConversations(allConvs);
     console.log(`✅ Synced! Total conversations: ${allConvs.length}`);
-    await refreshMessages();
+    
+    // CRITICAL: Refresh the conversation object after sync to prevent stale reference
+    // This fixes "message failed to send" errors after force sync
+    console.log('🔄 Refreshing active conversation object...');
+    const refreshedConv = await (client.conversations as any).getDmByInboxId(AGENT_ADDRESS);
+    if (refreshedConv) {
+      console.log('✅ Refreshed conversation object');
+      setConversation(refreshedConv);
+      const peerInboxId = await refreshedConv.peerInboxId();
+      setConversationPeerInboxId(peerInboxId);
+      
+      // Load messages directly from refreshed conversation to avoid closure stale reference
+      const { ContentTypeWalletSendCalls } = await import('@xmtp/content-type-wallet-send-calls');
+      const { ContentTypeReply } = await import('@xmtp/content-type-reply');
+      const updatedMessages = await refreshedConv.messages();
+      console.log(`Fetched ${updatedMessages.length} total messages from refreshed conversation`);
+      
+      const normalizedMessages = updatedMessages
+        .map((msg: any) => {
+          let textContent: string | null = null;
+          let messageType: 'text' | 'transaction' = 'text';
+          let transactionData: any = null;
+          
+          if (msg.contentType && msg.contentType.sameAs(ContentTypeWalletSendCalls)) {
+            messageType = 'transaction';
+            transactionData = msg.content;
+            textContent = msg.contentFallback || 'Transaction Request';
+          } else if (msg.contentType && msg.contentType.sameAs(ContentTypeReply)) {
+            if (typeof msg.content?.content === 'string') {
+              textContent = msg.content.content;
+            } else if (typeof msg.contentFallback === 'string') {
+              textContent = msg.contentFallback;
+            }
+          } else if (typeof msg.content === 'string') {
+            textContent = msg.content;
+          }
+          
+          if (!textContent) return null;
+          
+          // Normalize timestamp to Date object
+          let normalizedTimestamp: Date;
+          const rawTimestamp = msg.sent || msg.sentAt;
+          if (rawTimestamp instanceof Date) {
+            normalizedTimestamp = rawTimestamp;
+          } else if (typeof rawTimestamp === 'number') {
+            normalizedTimestamp = new Date(rawTimestamp);
+          } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
+            normalizedTimestamp = (rawTimestamp as any).toDate();
+          } else {
+            normalizedTimestamp = new Date();
+          }
+          
+          return {
+            id: msg.id,
+            content: textContent,
+            senderInboxId: msg.senderAddress || msg.senderInboxId,
+            sentAt: normalizedTimestamp,
+            contentType: messageType,
+            transaction: transactionData,
+          };
+        })
+        .filter((msg: any): msg is Message => msg !== null);
+      
+      setMessages(normalizedMessages);
+      console.log(`✅ Force sync complete! Loaded ${normalizedMessages.length} messages`);
+    } else {
+      console.warn('⚠️ Could not find conversation after sync');
+    }
   };
 
   const fixConversation = async () => {
