@@ -51,6 +51,16 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 
 ## Recent Updates
 
+### Oct 25, 2025 - Enhanced Debug Logging for Message Flow
+- **Added comprehensive message flow logging** - Improved debugging visibility for XMTP messaging
+  - Added visual separators (━━━) to clearly distinguish message send/receive events in console
+  - Message receipts now show "FROM POCKI 🎋" vs "FROM YOU" labels for easy identification
+  - Added timestamps to all message events for debugging timing issues
+  - Text message previews (first 100 chars) logged for quick content verification
+  - Transaction messages highlighted with prominent "TRANSACTION MESSAGE RECEIVED!" logs
+  - Peer inbox ID validation logged to verify messages sent to correct agent
+  - Helps diagnose message delivery issues and agent response timing
+
 ### Oct 25, 2025 - 0x AllowanceHolder Transaction Support
 - **Added 0x AllowanceHolder swap detection and user guidance** - Improved UX for DEX swap transactions
   - Root cause of "insufficient funds": Pocki AI sends swaps via 0x AllowanceHolder (single-call architecture)
