@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useAccount, useSendTransaction, useWaitForTransactionReceipt, usePublicClient } from 'wagmi';
-import { parseEther, type Address } from 'viem';
+import { useState, useEffect } from 'react';
+import { useAccount, useSendTransaction, useWaitForTransactionReceipt, usePublicClient, useReadContract } from 'wagmi';
+import { parseEther, type Address, erc20Abi } from 'viem';
 
 interface TransactionCall {
   to: Address;
@@ -176,74 +176,97 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
       const xmtpTx = transaction as XMTPWalletSendCallsParams;
       const chainIdDecimal = parseInt(xmtpTx.chainId, 16);
       
+      // Check if this is a 0x AllowanceHolder transaction
+      const zeroXAllowanceHolder = '0x0000000000001ff3684f28c67538d4d072c22734';
+      const isAllowanceHolderTx = xmtpTx.calls.some(call => 
+        call.to.toLowerCase() === zeroXAllowanceHolder.toLowerCase()
+      );
+      
       return (
-        <div className="bg-panda-green-50 rounded-xl p-4 mb-6 space-y-3">
-          <div className="flex justify-between">
-            <span className="text-gray-600">From:</span>
-            <span className="font-mono text-sm">{xmtpTx.from.slice(0, 6)}...{xmtpTx.from.slice(-4)}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Chain:</span>
-            <span className="font-semibold">{chainIdDecimal === 8453 ? 'Base' : `Chain ${chainIdDecimal}`}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">Calls:</span>
-            <span className="font-semibold">{xmtpTx.calls.length} transaction{xmtpTx.calls.length > 1 ? 's' : ''}</span>
-          </div>
-          
-          <div className="mt-4 space-y-2">
-            {xmtpTx.calls.map((call, idx) => {
-              const result = callResults[idx];
-              const isExecuting = currentCallIndex === idx && !result?.confirmed;
-              const isConfirming = result?.confirming && !result?.confirmed;
-              const isConfirmed = result?.confirmed;
-              const hasError = result?.error;
-              
-              return (
-                <div 
-                  key={idx} 
-                  className={`bg-white rounded-lg p-3 border ${
-                    isExecuting || isConfirming ? 'border-panda-green-500 border-2' : 
-                    isConfirmed ? 'border-green-500' :
-                    hasError ? 'border-red-500' :
-                    'border-gray-200'
-                  }`}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="font-medium text-sm mb-1">
-                      {call.metadata?.description || `Transaction ${idx + 1}`}
-                    </div>
-                    {isExecuting && !result?.hash && <span className="text-xs text-panda-green-600">⏳ Signing...</span>}
-                    {isConfirming && <span className="text-xs text-yellow-600">⏳ Confirming...</span>}
-                    {isConfirmed && <span className="text-xs text-green-600">✅</span>}
-                    {hasError && <span className="text-xs text-red-600">❌</span>}
+        <div className="space-y-4 mb-6">
+          {isAllowanceHolderTx && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+              <div className="flex items-start gap-2">
+                <div className="text-yellow-600 text-lg">⚠️</div>
+                <div className="flex-1">
+                  <div className="font-semibold text-yellow-800 mb-1">Token Approval Required</div>
+                  <div className="text-sm text-yellow-700">
+                    This swap uses the 0x AllowanceHolder. If MetaMask shows "insufficient funds" or high gas fees, 
+                    you need to <span className="font-semibold">approve the token first</span>. 
+                    The transaction will fail if you haven't approved {xmtpTx.calls[0]?.metadata?.currency || 'the token'} spending.
                   </div>
-                  {call.metadata?.transactionType && (
-                    <div className="text-xs text-gray-600">
-                      Type: {call.metadata.transactionType}
-                    </div>
-                  )}
-                  {call.metadata?.amount && call.metadata?.currency && (
-                    <div className="text-xs text-gray-600">
-                      Amount: {call.metadata.amount} {call.metadata.currency}
-                    </div>
-                  )}
-                  <div className="text-xs text-gray-600 font-mono mt-1">
-                    To: {call.to.slice(0, 6)}...{call.to.slice(-4)}
-                  </div>
-                  {result?.hash && (
-                    <div className="text-xs text-green-600 font-mono mt-1">
-                      Hash: {result.hash.slice(0, 10)}...{result.hash.slice(-8)}
-                    </div>
-                  )}
-                  {result?.error && (
-                    <div className="text-xs text-red-600 mt-1">
-                      Error: {result.error}
-                    </div>
-                  )}
                 </div>
-              );
-            })}
+              </div>
+            </div>
+          )}
+          <div className="bg-panda-green-50 rounded-xl p-4 space-y-3">
+            <div className="flex justify-between">
+              <span className="text-gray-600">From:</span>
+              <span className="font-mono text-sm">{xmtpTx.from.slice(0, 6)}...{xmtpTx.from.slice(-4)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Chain:</span>
+              <span className="font-semibold">{chainIdDecimal === 8453 ? 'Base' : `Chain ${chainIdDecimal}`}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Calls:</span>
+              <span className="font-semibold">{xmtpTx.calls.length} transaction{xmtpTx.calls.length > 1 ? 's' : ''}</span>
+            </div>
+          
+            <div className="mt-4 space-y-2">
+              {xmtpTx.calls.map((call, idx) => {
+                const result = callResults[idx];
+                const isExecuting = currentCallIndex === idx && !result?.confirmed;
+                const isConfirming = result?.confirming && !result?.confirmed;
+                const isConfirmed = result?.confirmed;
+                const hasError = result?.error;
+                
+                return (
+                  <div 
+                    key={idx} 
+                    className={`bg-white rounded-lg p-3 border ${
+                      isExecuting || isConfirming ? 'border-panda-green-500 border-2' : 
+                      isConfirmed ? 'border-green-500' :
+                      hasError ? 'border-red-500' :
+                      'border-gray-200'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="font-medium text-sm mb-1">
+                        {call.metadata?.description || `Transaction ${idx + 1}`}
+                      </div>
+                      {isExecuting && !result?.hash && <span className="text-xs text-panda-green-600">⏳ Signing...</span>}
+                      {isConfirming && <span className="text-xs text-yellow-600">⏳ Confirming...</span>}
+                      {isConfirmed && <span className="text-xs text-green-600">✅</span>}
+                      {hasError && <span className="text-xs text-red-600">❌</span>}
+                    </div>
+                    {call.metadata?.transactionType && (
+                      <div className="text-xs text-gray-600">
+                        Type: {call.metadata.transactionType}
+                      </div>
+                    )}
+                    {call.metadata?.amount && call.metadata?.currency && (
+                      <div className="text-xs text-gray-600">
+                        Amount: {call.metadata.amount} {call.metadata.currency}
+                      </div>
+                    )}
+                    <div className="text-xs text-gray-600 font-mono mt-1">
+                      To: {call.to.slice(0, 6)}...{call.to.slice(-4)}
+                    </div>
+                    {result?.hash && (
+                      <div className="text-xs text-green-600 font-mono mt-1">
+                        Hash: {result.hash.slice(0, 10)}...{result.hash.slice(-8)}
+                      </div>
+                    )}
+                    {result?.error && (
+                      <div className="text-xs text-red-600 mt-1">
+                        Error: {result.error}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       );

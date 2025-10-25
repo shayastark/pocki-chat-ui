@@ -51,6 +51,17 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 
 ## Recent Updates
 
+### Oct 25, 2025 - 0x AllowanceHolder Transaction Support
+- **Added 0x AllowanceHolder swap detection and user guidance** - Improved UX for DEX swap transactions
+  - Root cause of "insufficient funds": Pocki AI sends swaps via 0x AllowanceHolder (single-call architecture)
+  - Unlike traditional approve + swap (2 calls), AllowanceHolder requires ONE-TIME token approval beforehand
+  - If user hasn't approved the token yet, MetaMask gas estimation fails showing misleading errors
+  - Added yellow warning banner in TransactionModal detecting AllowanceHolder transactions
+  - Warning explains token approval requirement and why MetaMask shows "insufficient funds"
+  - Added debug logging to track transaction structure (version, from, chainId, callsCount, calls array)
+  - Architecture: AllowanceHolder (`0x0000000000001ff3684f28c67538d4d072c22734`) pulls tokens and routes swaps
+  - Note: Works correctly in Base App where users have likely pre-approved AllowanceHolder
+
 ### Oct 25, 2025 - RPC Rate Limit Fix (Enhanced)
 - **Fixed MetaMask RPC rate limiting during multi-call transactions** - Swap transactions now execute reliably
   - Root cause: MetaMask makes 5-10 RPC calls per transaction for gas estimation, balance checks, and simulation
