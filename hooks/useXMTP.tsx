@@ -157,11 +157,6 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       try {
         await newClient.revokeAllOtherInstallations();
         console.log('Successfully revoked old installations');
-        
-        // CRITICAL: After revoking installations, sync to update group membership
-        console.log('Syncing after installation revocation...');
-        await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
-        console.log('✅ Post-revocation sync completed');
       } catch (revokeErr) {
         console.warn('Could not revoke old installations:', revokeErr);
         // Continue anyway - this might fail on first installation
@@ -176,36 +171,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
       console.log('Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
 
-      // CRITICAL: Verify the agent's inbox ID by querying inbox state
-      try {
-        console.log('🔍 Verifying agent inbox ID by querying XMTP network...');
-        const agentInboxStates = await Client.inboxStateFromInboxIds([AGENT_ADDRESS], XMTP_ENV as any);
-        if (agentInboxStates && agentInboxStates.length > 0) {
-          const agentState = agentInboxStates[0];
-          console.log('✅ Agent inbox state found:', {
-            inboxId: agentState.inboxId,
-            identifiers: agentState.identifiers.map((id: any) => ({
-              identifier: id.identifier,
-              kind: id.identifierKind,
-            })),
-            installationIds: agentState.installations.map((i: any) => i.id),
-          });
-          
-          // Verify the inbox ID matches
-          if (agentState.inboxId.toLowerCase() !== AGENT_ADDRESS.toLowerCase()) {
-            console.error('❌ CRITICAL: Inbox ID mismatch!');
-            console.error('Expected:', AGENT_ADDRESS);
-            console.error('Got:', agentState.inboxId);
-          }
-        } else {
-          console.warn('⚠️ WARNING: Could not find inbox state for agent. Agent might not be registered on XMTP.');
-        }
-      } catch (verifyErr) {
-        console.warn('Could not verify agent inbox ID:', verifyErr);
-        // Continue anyway - this is just for diagnostics
-      }
-
-      // Sync all conversations and messages (v5.0.1 recommended approach)
+      // Sync all conversations and messages once (v5.0.1 recommended approach)
       console.log('Syncing all conversations and messages (including all consent states)...');
       await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
       
@@ -253,16 +219,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         console.log('✅ Found existing DM with agent');
         const peerInboxId = await conv.peerInboxId();
         
-        // CRITICAL: Sync the conversation to update group membership after installation revocation
-        console.log('Syncing conversation to update group membership...');
-        try {
-          await conv.sync();
-          console.log('✅ Conversation sync completed');
-        } catch (syncErr) {
-          console.warn('Could not sync conversation:', syncErr);
-        }
-        
-        // CRITICAL: Check conversation consent state
+        // Check conversation consent state
         const consentState = await conv.consentState();
         console.log('📋 Conversation details:', {
           id: conv.id,

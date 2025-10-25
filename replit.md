@@ -52,12 +52,15 @@ The core application is built with Next.js 14 (App Router), React, and TypeScrip
 ## Recent Updates
 
 ### Oct 25, 2025 - XMTP Rate Limit Fix
-- **Removed periodic background sync to prevent XMTP rate limiting** - Improved message reliability
-  - Removed 10-second background sync that was causing HTTP 429 rate limit errors
+- **Reduced XMTP API calls to prevent rate limiting** - Improved message reliability
+  - Removed 10-second background sync that was causing HTTP 429 rate limit errors on `query_group_messages`
+  - Removed agent inbox verification call that was hitting rate-limited `get_identity_updates_v2` endpoint
+  - Consolidated multiple `syncAll()` calls during client initialization into single sync operation
+  - Removed redundant conversation-specific sync after global sync
   - Relies on real-time message stream for incoming messages (doesn't count against rate limits)
   - Still syncs after sending messages to fetch agent responses
   - Manual refresh button still available for on-demand syncing
-  - Fixes "retrying function that failed with error=api client... exceeds rate limit" errors
+  - Fixes "api client... exceeds rate limit" errors during initialization and message sending
 
 ### Oct 25, 2025 - Enhanced Debug Logging for Message Flow
 - **Added comprehensive message flow logging** - Improved debugging visibility for XMTP messaging
