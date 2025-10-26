@@ -426,10 +426,10 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
               }];
             });
 
+            // Turn off typing indicator when Pocki's response arrives
             const wallet = wallets[0];
             if (wallet && message.senderInboxId !== wallet.address) {
-              setIsAgentTyping(true);
-              setTimeout(() => setIsAgentTyping(false), 1000);
+              setIsAgentTyping(false);
             }
           },
           onError: (err: any) => {
@@ -585,7 +585,10 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       
       const messageId = await conversation.send(content);
       console.log('✅ Message sent successfully! ID:', messageId);
-      console.log('⏳ Waiting 5 seconds for Pocki to respond...');
+      console.log('⏳ Waiting for Pocki to respond...');
+      
+      // Show typing indicator while waiting for Pocki's response
+      setIsAgentTyping(true);
       
       // Immediately add optimistic message to UI with the actual message ID
       if (messageId) {

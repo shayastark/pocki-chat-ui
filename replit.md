@@ -46,6 +46,14 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Oct 26, 2025 - Typing Indicator Timing Fix
+- **Fixed typing indicator to show while Pocki is thinking** - Three-bubble animation now appears for full duration of AI response time
+  - Previously: Typing indicator appeared briefly AFTER Pocki's response arrived (backwards logic)
+  - Now: Typing indicator turns ON when user sends message, turns OFF when Pocki's response arrives
+  - Changed `sendMessage()` to set `isAgentTyping = true` immediately after sending
+  - Changed stream handler to set `isAgentTyping = false` when agent message is received
+  - Users now see accurate "Pocki is thinking..." state during entire wait time (can be several seconds)
+
 ### Oct 25, 2025 - Avatar Fix & Mobile-Responsive UI
 - **Fixed user/Pocki avatar identification** - User messages now correctly show 🎋 bamboo emoji
   - Fixed `isOwnMessage` logic to compare XMTP inbox IDs instead of wallet addresses
