@@ -46,6 +46,18 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Oct 26, 2025 - Gas Estimate Fix for 0x Swaps
+- **Fixed inflated gas estimates for 0x AllowanceHolder transactions** - No more huge gas fees shown in MetaMask
+  - Problem: Wagmi's automatic gas estimation would simulate the transaction, fail if token wasn't approved, and show inflated gas estimates as safety measure
+  - Solution: Smart gas estimation with fallback strategy
+    - First attempts automatic gas estimation
+    - If estimation fails (missing approval), falls back to conservative 1.5M gas limit
+    - If estimation succeeds (approved), uses accurate estimated amount
+  - 1.5M fallback safely handles complex multi-hop swaps and permit2 flows
+  - Transactions now show reasonable gas estimates even when token approval is pending
+  - AllowanceHolder address: `0x0000000000001ff3684f28c67538d4d072c22734`
+  - Warning message still shown to guide users through token approval process
+
 ### Oct 26, 2025 - Typing Indicator Timing Fix
 - **Fixed typing indicator to show while Pocki is thinking** - Three-bubble animation now appears for full duration of AI response time
   - Previously: Typing indicator appeared briefly AFTER Pocki's response arrived (backwards logic)

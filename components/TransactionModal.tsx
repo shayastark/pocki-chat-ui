@@ -89,6 +89,9 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
       const results: CallResult[] = new Array(xmtpTx.calls.length).fill({});
       setCallResults(results);
 
+      // Check if any call uses 0x AllowanceHolder
+      const zeroXAllowanceHolder = '0x0000000000001ff3684f28c67538d4d072c22734';
+      
       for (let i = 0; i < xmtpTx.calls.length; i++) {
         setCurrentCallIndex(i);
         const call = xmtpTx.calls[i];
@@ -96,10 +99,35 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
         try {
           console.log(`Executing call ${i + 1}/${xmtpTx.calls.length}:`, call);
           
+          // For 0x AllowanceHolder transactions, try automatic estimation first
+          // If estimation fails (likely due to missing approval), use high fallback
+          const isAllowanceHolderCall = call.to.toLowerCase() === zeroXAllowanceHolder.toLowerCase();
+          let gasLimit: bigint | undefined = undefined;
+          
+          if (isAllowanceHolderCall) {
+            try {
+              // Attempt automatic gas estimation
+              const estimated = await publicClient.estimateGas({
+                account: address,
+                to: call.to as Address,
+                value: call.value ? BigInt(call.value) : undefined,
+                data: call.data,
+              });
+              gasLimit = estimated;
+              console.log('✅ Gas estimation succeeded:', estimated.toString());
+            } catch (estimationError: any) {
+              // Estimation failed (likely missing approval), use high conservative fallback
+              gasLimit = BigInt(1500000); // 1.5M should cover complex multi-hop + permit2
+              console.log('⚠️ Gas estimation failed (likely missing approval), using fallback:', gasLimit.toString());
+              console.log('Estimation error:', estimationError.message);
+            }
+          }
+          
           const hash = await sendTransactionAsync({
             to: call.to as Address,
             value: call.value ? BigInt(call.value) : undefined,
             data: call.data,
+            gas: gasLimit,
           });
 
           console.log(`Call ${i + 1} hash:`, hash);
