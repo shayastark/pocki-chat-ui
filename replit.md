@@ -46,6 +46,17 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Oct 27, 2025 - Multiple Conversations Fix
+- **Fixed broken chat caused by duplicate XMTP conversations** - Chat now works reliably after republishing
+  - Problem: XMTP could create multiple conversations with Pocki, causing messages to go to the wrong conversation
+  - Root cause: Conversations are stored on XMTP network, not locally - clearing database didn't fix duplicates
+  - Solution: Smart conversation selection logic
+    - Detects when multiple conversations with Pocki exist
+    - Automatically chooses the conversation with the most messages (the active one)
+    - Uses that specific conversation instead of random duplicate
+  - Clear logging shows which conversation was selected and why
+  - Fixes issue for all users going forward, even after republishing or clearing local storage
+
 ### Oct 26, 2025 - Gas Estimate Fix for 0x Swaps
 - **Fixed inflated gas estimates for 0x AllowanceHolder transactions** - No more huge gas fees shown in MetaMask
   - Problem: Wagmi's automatic gas estimation would simulate the transaction, fail if token wasn't approved, and show inflated gas estimates as safety measure

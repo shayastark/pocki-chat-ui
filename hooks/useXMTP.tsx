@@ -198,44 +198,52 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       }
       
       console.log(`🚨 CRITICAL: Found ${agentDMs.length} DM conversation(s) with agent`);
+      
+      let conv = null;
+      
       if (agentDMs.length > 1) {
-        console.warn('⚠️ WARNING: Multiple DM conversations found with same agent! This may cause message delivery issues.');
-        console.warn('Listing all agent DMs:');
-        for (const [idx, dm] of agentDMs.entries()) {
-          const msgCount = (await dm.messages()).length;
-          console.warn(`  Agent DM ${idx + 1}:`, {
-            id: dm.id,
-            createdAt: dm.createdAt,
-            messageCount: msgCount,
-          });
-        }
+        console.warn('⚠️ WARNING: Multiple DM conversations found with same agent!');
+        console.warn('📊 Analyzing conversations to choose the active one...');
+        
+        // Get message counts for all duplicates
+        const conversationsWithCounts = await Promise.all(
+          agentDMs.map(async (dm, idx) => {
+            const messages = await dm.messages();
+            return {
+              conversation: dm,
+              messageCount: messages.length,
+              index: idx + 1,
+              id: dm.id,
+              createdAt: dm.createdAt,
+            };
+          })
+        );
+        
+        // Log all duplicates
+        console.warn('All agent DM conversations:');
+        conversationsWithCounts.forEach(c => {
+          console.warn(`  DM ${c.index}: ${c.messageCount} messages, created ${c.createdAt}, id: ${c.id}`);
+        });
+        
+        // Choose the conversation with the most messages (the active one)
+        const activeConv = conversationsWithCounts.reduce((prev, current) => 
+          current.messageCount > prev.messageCount ? current : prev
+        );
+        
+        conv = activeConv.conversation;
+        console.log(`✅ CHOSE DM ${activeConv.index} with ${activeConv.messageCount} messages as the active conversation`);
+        console.log(`📋 Active conversation ID: ${activeConv.id}`);
+      } else if (agentDMs.length === 1) {
+        // Only one conversation found, use it
+        conv = agentDMs[0];
+        const msgCount = (await conv.messages()).length;
+        console.log(`✅ Found single DM with agent (${msgCount} messages)`);
       }
       
       setAllConversations(allConvs);
       
-      // Try to get existing DM first, create new one if it doesn't exist
-      let conv = await (newClient.conversations as any).getDmByInboxId(AGENT_ADDRESS);
-      
-      if (conv) {
-        console.log('✅ Found existing DM with agent');
-        const peerInboxId = await conv.peerInboxId();
-        
-        // Check conversation consent state
-        const consentState = await conv.consentState();
-        console.log('📋 Conversation details:', {
-          id: conv.id,
-          peerInboxId,
-          createdAt: conv.createdAt,
-          consentState,
-        });
-        
-        // If consent is denied or unknown, allow it
-        if (consentState !== 'allowed') {
-          console.warn(`⚠️ WARNING: Conversation consent is "${consentState}", setting to "allowed"...`);
-          await conv.updateConsentState('allowed');
-          console.log('✅ Updated conversation consent to "allowed"');
-        }
-      } else {
+      // If no existing conversation found, create new one
+      if (!conv) {
         console.log('⚠️ No existing DM found, creating new one...');
         conv = await (newClient.conversations as any).newDm(AGENT_ADDRESS);
         console.log('✅ Created new DM with agent');
@@ -248,6 +256,23 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         
         // After creating new DM, sync again to ensure it's registered
         await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
+      }
+      
+      // Check and update consent state for the active conversation
+      const peerInboxId = await conv.peerInboxId();
+      const consentState = await conv.consentState();
+      console.log('📋 Active conversation details:', {
+        id: conv.id,
+        peerInboxId,
+        createdAt: conv.createdAt,
+        consentState,
+      });
+      
+      // If consent is denied or unknown, allow it
+      if (consentState !== 'allowed') {
+        console.warn(`⚠️ WARNING: Conversation consent is "${consentState}", setting to "allowed"...`);
+        await conv.updateConsentState('allowed');
+        console.log('✅ Updated conversation consent to "allowed"');
       }
       
       setConversation(conv);
