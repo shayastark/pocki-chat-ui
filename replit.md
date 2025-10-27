@@ -46,6 +46,17 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Oct 27, 2025 - Swap Transaction Reliability Fix
+- **Fixed swap transactions failing with "internal error" in Pocki Chat** - Swaps now work as reliably as in Base app
+  - Problem: Transactions to 0x AllowanceHolder would fail with "transaction likely to fail" or "internal error from 0xA2Eae..." 
+  - Root cause: Using `custom(window.ethereum)` routed all transactions through MetaMask's default RPC, which can have rate limits and reliability issues with complex AllowanceHolder swaps
+  - Solution: Switched to HTTP transports with fallback strategy
+    - Now uses Base's official RPC (https://mainnet.base.org) as primary
+    - Fallback to drpc.org and ankr.com for redundancy
+    - Alchemy RPC prioritized if API key is available
+  - HTTP transports provide better retry logic, faster propagation, and handle complex multi-call transactions reliably
+  - Users will now see swap transactions succeed consistently, matching Base app experience
+
 ### Oct 27, 2025 - Multiple Conversations Fix
 - **Fixed broken chat caused by duplicate XMTP conversations** - Chat now works reliably after republishing
   - Problem: XMTP could create multiple conversations with Pocki, causing messages to go to the wrong conversation
