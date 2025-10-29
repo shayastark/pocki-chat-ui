@@ -46,6 +46,18 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Oct 29, 2025 - XMTP Inactive Group Fix
+- **Fixed "Group is inactive" error preventing messages to Pocki** - Chat now works reliably in our UI
+  - Problem: Users saw "Unable to send a message on an inactive group" error when sending messages to Pocki, even though chat worked in Base app
+  - Root cause: XMTP Browser SDK v5 requires conversations to be synced before use, otherwise they become "inactive"
+  - Solution: Added conversation sync calls at critical points
+    - Sync conversation during initialization after selection/creation
+    - Sync conversation before every message send
+    - Check `isActive()` status and throw clear error if inactive
+  - Per XMTP v5 docs, `conversation.sync()` pulls latest state from network and ensures conversation is ready for messages
+  - Minimal performance impact - sync is fast and only happens on send (not on receive)
+  - Users can now reliably send messages to Pocki without "inactive group" errors
+
 ### Oct 27, 2025 - Swap Transaction Reliability Fix
 - **Fixed swap transactions failing with "internal error" in Pocki Chat** - Swaps now work as reliably as in Base app
   - Problem: Transactions to 0x AllowanceHolder would fail with "transaction likely to fail" or "internal error from 0xA2Eae..." 
