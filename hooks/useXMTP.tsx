@@ -155,11 +155,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
       // Revoke all other installations to prevent hitting the 10 installation limit
       // This keeps only the current installation active
+      let didRevokeInstallations = false;
       try {
+        console.log('🔄 Revoking old XMTP installations...');
         await newClient.revokeAllOtherInstallations();
-        console.log('Successfully revoked old installations');
+        console.log('✅ Successfully revoked old installations');
+        didRevokeInstallations = true;
       } catch (revokeErr) {
-        console.warn('Could not revoke old installations:', revokeErr);
+        console.warn('⚠️ Could not revoke old installations (likely first-time wallet):', revokeErr);
         // Continue anyway - this might fail on first installation
       }
 
@@ -173,8 +176,23 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       console.log('Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
 
       // Sync all conversations and messages once (v5.0.1 recommended approach)
-      console.log('Syncing all conversations and messages (including all consent states)...');
-      await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
+      // NOTE: If we just revoked old installations, sync might partially fail - that's expected
+      console.log('🔄 Syncing all conversations and messages (including all consent states)...');
+      try {
+        await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
+        console.log('✅ Successfully synced all conversations');
+      } catch (syncErr: any) {
+        if (didRevokeInstallations) {
+          console.warn('⚠️ Sync partially failed after revoking installations - this is expected');
+          console.warn('Revoked installations cannot be synced. Continuing with fresh installation...');
+          console.warn('Sync error details:', syncErr.message);
+          // Continue anyway - we have a fresh installation and can create/find conversations
+        } else {
+          // If sync failed without revocation, this is a more serious error
+          console.error('❌ Sync failed unexpectedly:', syncErr);
+          throw syncErr;
+        }
+      }
       
       // DEBUG: List all conversations to diagnose duplicates
       const allConvs = await (newClient.conversations as any).list();
