@@ -153,18 +153,9 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       console.log('📬 Client Inbox ID:', newClient.inboxId);
       console.log('🎯 Target Agent Inbox ID:', AGENT_ADDRESS);
 
-      // Revoke all other installations to prevent hitting the 10 installation limit
-      // This keeps only the current installation active
+      // NOTE: Removed auto-revocation of old installations as it causes "Unknown signer" errors
+      // Users can manually clear XMTP data if needed by clearing browser storage
       let didRevokeInstallations = false;
-      try {
-        console.log('🔄 Revoking old XMTP installations...');
-        await newClient.revokeAllOtherInstallations();
-        console.log('✅ Successfully revoked old installations');
-        didRevokeInstallations = true;
-      } catch (revokeErr) {
-        console.warn('⚠️ Could not revoke old installations (likely first-time wallet):', revokeErr);
-        // Continue anyway - this might fail on first installation
-      }
 
       setClient(newClient);
 
@@ -288,16 +279,6 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         console.warn(`⚠️ WARNING: Conversation consent is "${consentState}", setting to "allowed"...`);
         await conv.updateConsentState('allowed');
         console.log('✅ Updated conversation consent to "allowed"');
-      }
-      
-      // CRITICAL: Sync conversation to ensure it's active before using
-      console.log('🔄 Syncing conversation to ensure active state...');
-      await conv.sync();
-      const isActive = await conv.isActive();
-      console.log('📊 Conversation active status:', isActive);
-      
-      if (!isActive) {
-        throw new Error('Selected conversation is inactive. Cannot proceed.');
       }
       
       setConversation(conv);

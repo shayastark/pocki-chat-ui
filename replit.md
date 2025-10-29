@@ -58,17 +58,16 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
   - Minimal performance impact - sync is fast and only happens on send (not on receive)
   - Users can now reliably send messages to Pocki without "inactive group" errors
 
-### Oct 29, 2025 - Previously-Used Wallet Fix
+### Oct 29, 2025 - Previously-Used Wallet Fix  
 - **Fixed "Errors Occurred During Sync" preventing previously-used wallets from signing in**
-  - Problem: Wallets that had been used before would fail initialization with sync errors after trying to clear storage
-  - Root cause: After revoking old XMTP installations, `syncAll()` attempts to sync from revoked installations, causing expected failures
-  - Solution: Added graceful error handling for post-revocation sync
-    - Track whether installations were revoked with `didRevokeInstallations` flag
-    - If sync fails after revocation, treat as expected and continue with fresh installation
-    - If sync fails without revocation, throw error as it's unexpected
-    - Clear logging explains revocation and sync process
+  - Problem: Wallets that had been used before would fail initialization with "Group is inactive" error
+  - Root cause: Syncing inactive conversations and then trying to sync them individually caused errors
+  - Solution: Removed problematic sync calls during initialization
+    - Removed auto-revocation of old installations (caused "Unknown signer" errors)
+    - Removed conversation.sync() during initialization (caused "Group is inactive" on stale conversations)
+    - Keep only the sync before sending messages (where it's actually needed)
   - Previously-used wallets now work just like new wallets
-  - Auto-revocation keeps XMTP installations clean and prevents hitting the 10 installation limit
+  - Users can manually clear XMTP data by clearing browser storage if needed
 
 ### Oct 27, 2025 - Swap Transaction Reliability Fix
 - **Fixed swap transactions failing with "internal error" in Pocki Chat** - Swaps now work as reliably as in Base app
