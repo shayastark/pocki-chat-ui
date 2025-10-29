@@ -275,6 +275,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         console.log('✅ Updated conversation consent to "allowed"');
       }
       
+      // CRITICAL: Sync conversation to ensure it's active before using
+      console.log('🔄 Syncing conversation to ensure active state...');
+      await conv.sync();
+      const isActive = await conv.isActive();
+      console.log('📊 Conversation active status:', isActive);
+      
+      if (!isActive) {
+        throw new Error('Selected conversation is inactive. Cannot proceed.');
+      }
+      
       setConversation(conv);
 
       const existingMessages = await conv.messages();
@@ -599,6 +609,18 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       console.log('Time:', new Date().toLocaleTimeString());
       console.log('Message:', content);
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      
+      // CRITICAL: Sync conversation before sending to prevent "Group is inactive" error
+      console.log('🔄 Syncing conversation state before sending...');
+      await (conversation as any).sync();
+      
+      // Check if conversation is still active
+      const isActive = await (conversation as any).isActive();
+      console.log('📊 Conversation active status:', isActive);
+      
+      if (!isActive) {
+        throw new Error('Conversation is inactive. Please refresh and try again.');
+      }
       
       const peerInboxId = await (conversation as any).peerInboxId();
       console.log('📋 Target conversation:', {
