@@ -1,0 +1,28 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "baseBuilder": {
+    "ownerAddress": "0x5EcE0015F728fA35941cf362f4c3273076A1A35b"
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "Pocki",
+    "homeUrl": "https://pocki-chat.replit.app",
+    "iconUrl": "https://pocki-chat.replit.app/images/pocki-square.png",
+    "splashImageUrl": "https://pocki-chat.replit.app/images/pocki-square.png",
+    "splashBackgroundColor": "#1DB574",
+    "subtitle": "mindful AI onchain companion",
+    "description": "Your AI trading companion that helps you stick to your own rules",
+    "primaryCategory": "finance",
+    "tags": ["trade", "trading", "assistant", "ai", "agent"],
+    "heroImageUrl": "https://pocki-chat.replit.app/images/pocki-wide.png",
+    "tagline": "Trade with intention on Base",
+    "ogTitle": "Pocki",
+    "ogDescription": "Your AI trading companion that helps you stick to your own rules",
+    "ogImageUrl": "https://pocki-chat.replit.app/images/pocki-wide.png",
+    "noindex": false
+  }
+}
