@@ -1,15 +1,27 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { sdk } from '@farcaster/miniapp-sdk';
 
 export function BaseAppBanner() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem('baseAppBannerDismissed');
-    if (!dismissed) {
-      setIsVisible(true);
-    }
+    const checkVisibility = async () => {
+      const isInMiniApp = await sdk.isInMiniApp();
+      
+      if (isInMiniApp) {
+        setIsVisible(false);
+        return;
+      }
+      
+      const dismissed = localStorage.getItem('baseAppBannerDismissed');
+      if (!dismissed) {
+        setIsVisible(true);
+      }
+    };
+    
+    checkVisibility();
   }, []);
 
   const handleDismiss = () => {
