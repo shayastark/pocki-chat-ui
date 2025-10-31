@@ -53,7 +53,8 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
   - Created Farcaster manifest at `/public/.well-known/farcaster.json` with:
     - App metadata (name, description, category, domain)
     - Image assets (icon 1024x1024, splash 200x200, hero/OG 1200x630)
-    - accountAssociation fields (empty until post-deployment setup via Base Build tool)
+    - accountAssociation credentials (FID 8637) successfully published to production
+    - homeUrl points to `/chat` route (where SDK initialization lives) for proper splash screen dismissal
   - Added `fc:miniapp` embed metadata to `app/layout.tsx` for rich social previews when shared
   - Implemented SDK initialization in chat page:
     - Calls `sdk.actions.ready()` on mount to hide mini app splash screen
@@ -68,7 +69,7 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
     - Users can recover from stuck states using Force Sync and Fix Conversation buttons
     - Both Farcaster and Base App provide native "Refresh" options in their 3-dot menus
     - Prevents accidental loss of valuable conversation history and journal data
-  - Next steps: After deployment, generate accountAssociation credentials using Base Build tool and update manifest
+  - **Fixed splash screen persistence issue** - homeUrl now points to `/chat` where SDK code lives, ensuring `sdk.actions.ready()` gets called
 
 ### Oct 29, 2025 - XMTP Inactive Group Fix
 - **Fixed "Group is inactive" error preventing messages to Pocki** - Chat now works reliably in our UI
