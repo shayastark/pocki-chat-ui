@@ -39,6 +39,12 @@ function ChatContent() {
         }
       } catch (error) {
         console.error('Mini App initialization error:', error);
+        try {
+          await sdk.actions.ready();
+          console.log('⚠️ Called ready() as fallback despite detection error');
+        } catch (readyError) {
+          console.error('Failed to call ready() as fallback:', readyError);
+        }
       }
     };
 
@@ -429,7 +435,7 @@ function ChatContent() {
           }} />
           <MessageInput />
         </div>
-        <BaseAppBanner />
+        {!isInMiniApp && <BaseAppBanner />}
       </div>
 
       <TransactionModal
