@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { sdk } from '@farcaster/miniapp-sdk';
 import { XMTPProvider, useXMTP } from '@/hooks/useXMTP';
 import { MessageList } from '@/components/MessageList';
 import { MessageInput } from '@/components/MessageInput';
@@ -21,6 +22,28 @@ function ChatContent() {
   const [isFixing, setIsFixing] = useState(false);
   const [diagnosticResults, setDiagnosticResults] = useState<any>(null);
   const [isRunningDiagnostics, setIsRunningDiagnostics] = useState(false);
+  const [isInMiniApp, setIsInMiniApp] = useState(false);
+
+  useEffect(() => {
+    const initializeMiniApp = async () => {
+      try {
+        const miniAppStatus = await sdk.isInMiniApp();
+        setIsInMiniApp(miniAppStatus);
+        
+        if (miniAppStatus) {
+          console.log('🎯 Running as Farcaster/Base App Mini App');
+          await sdk.actions.ready();
+          console.log('✅ Mini App splash screen hidden, app is ready');
+        } else {
+          console.log('🌐 Running as standalone web app');
+        }
+      } catch (error) {
+        console.error('Mini App initialization error:', error);
+      }
+    };
+
+    initializeMiniApp();
+  }, []);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
