@@ -43,8 +43,27 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 - **TanStack Query:** Data fetching library (`@tanstack/react-query`).
 - **Next.js:** Web framework.
 - **Tailwind CSS:** Utility-first CSS framework.
+- **Farcaster Mini App SDK:** Base App/Farcaster integration (`@farcaster/miniapp-sdk`).
 
 ## Recent Updates
+
+### Oct 31, 2025 - Farcaster/Base App Mini App Integration
+- **Added Farcaster Mini App support** - Pocki Chat now runs as a mini app in Base App and Farcaster while maintaining full standalone browser functionality
+  - Installed `@farcaster/miniapp-sdk` package for mini app integration
+  - Created Farcaster manifest at `/public/.well-known/farcaster.json` with:
+    - App metadata (name, description, category, domain)
+    - Image assets (icon 1024x1024, splash 200x200, hero/OG 1200x630)
+    - accountAssociation fields (empty until post-deployment setup via Base Build tool)
+  - Added `fc:miniapp` embed metadata to `app/layout.tsx` for rich social previews when shared
+  - Implemented SDK initialization in chat page:
+    - Calls `sdk.actions.ready()` on mount to hide mini app splash screen
+    - Detects mini app context using `sdk.isInMiniApp()` for conditional rendering
+    - Logs context (mini app vs standalone) for debugging
+  - Updated BaseAppBanner to hide when running as mini app (users already in Base App)
+  - App architecture supports both contexts:
+    - Standalone browser: Full authentication flow, visible banner, regular links
+    - Mini app: Base Account authentication, hidden banner, optimized UX
+  - Next steps: After deployment, generate accountAssociation credentials using Base Build tool and update manifest
 
 ### Oct 29, 2025 - XMTP Inactive Group Fix
 - **Fixed "Group is inactive" error preventing messages to Pocki** - Chat now works reliably in our UI
