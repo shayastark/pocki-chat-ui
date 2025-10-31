@@ -12,7 +12,7 @@ import { TransactionModal } from '@/components/TransactionModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { BaseAppBanner } from '@/components/BaseAppBanner';
 
-function ChatContent() {
+function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll, fixConversation } = useXMTP();
   const { logout } = usePrivy();
   const [showTxModal, setShowTxModal] = useState(false);
@@ -22,24 +22,6 @@ function ChatContent() {
   const [isFixing, setIsFixing] = useState(false);
   const [diagnosticResults, setDiagnosticResults] = useState<any>(null);
   const [isRunningDiagnostics, setIsRunningDiagnostics] = useState(false);
-  const [isInMiniApp, setIsInMiniApp] = useState(false);
-
-  useEffect(() => {
-    const initializeMiniApp = async () => {
-      try {
-        await sdk.actions.ready();
-        console.log('✅ Called sdk.actions.ready()');
-        
-        const miniAppStatus = await sdk.isInMiniApp();
-        setIsInMiniApp(miniAppStatus);
-        console.log(miniAppStatus ? '🎯 Running as Farcaster/Base App Mini App' : '🌐 Running as standalone web app');
-      } catch (error) {
-        console.error('Mini App initialization error:', error);
-      }
-    };
-
-    initializeMiniApp();
-  }, []);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -411,6 +393,24 @@ function ChatContent() {
 export default function ChatPage() {
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
+  const [isInMiniApp, setIsInMiniApp] = useState(false);
+
+  useEffect(() => {
+    const initializeMiniApp = async () => {
+      try {
+        await sdk.actions.ready();
+        console.log('✅ Called sdk.actions.ready()');
+        
+        const miniAppStatus = await sdk.isInMiniApp();
+        setIsInMiniApp(miniAppStatus);
+        console.log(miniAppStatus ? '🎯 Running as Farcaster/Base App Mini App' : '🌐 Running as standalone web app');
+      } catch (error) {
+        console.error('Mini App initialization error:', error);
+      }
+    };
+
+    initializeMiniApp();
+  }, []);
 
   useEffect(() => {
     if (ready && !authenticated) {
@@ -431,7 +431,7 @@ export default function ChatPage() {
 
   return (
     <XMTPProvider>
-      <ChatContent />
+      <ChatContent isInMiniApp={isInMiniApp} />
     </XMTPProvider>
   );
 }
