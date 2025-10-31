@@ -69,7 +69,12 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
     - Users can recover from stuck states using Force Sync and Fix Conversation buttons
     - Both Farcaster and Base App provide native "Refresh" options in their 3-dot menus
     - Prevents accidental loss of valuable conversation history and journal data
-  - **Fixed splash screen persistence issue** - homeUrl now points to `/chat` where SDK code lives, ensuring `sdk.actions.ready()` gets called
+  - **Fixed splash screen persistence issue** - Multiple fixes applied:
+    - homeUrl now points to `/chat` where SDK code lives
+    - Moved `sdk.actions.ready()` from ChatContent to ChatPage component (top-level)
+    - SDK initialization now runs immediately on page load, before authentication checks
+    - Ensures splash screen dismisses even for unauthenticated users visiting /chat
+    - ChatContent receives isInMiniApp as prop for conditional UI rendering
 
 ### Oct 29, 2025 - XMTP Inactive Group Fix
 - **Fixed "Group is inactive" error preventing messages to Pocki** - Chat now works reliably in our UI
