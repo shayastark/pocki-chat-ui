@@ -59,10 +59,15 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
     - Calls `sdk.actions.ready()` on mount to hide mini app splash screen
     - Detects mini app context using `sdk.isInMiniApp()` for conditional rendering
     - Logs context (mini app vs standalone) for debugging
-  - Updated BaseAppBanner to hide when running as mini app (users already in Base App)
+    - Includes defensive fallback to call `ready()` even if detection fails
+  - Updated BaseAppBanner to conditionally hide when running as mini app (users already in Base App)
   - App architecture supports both contexts:
     - Standalone browser: Full authentication flow, visible banner, regular links
     - Mini app: Base Account authentication, hidden banner, optimized UX
+  - **Removed "Clear XMTP Database" button** - Nuclear option that deleted all user data including journal entries
+    - Users can recover from stuck states using Force Sync and Fix Conversation buttons
+    - Both Farcaster and Base App provide native "Refresh" options in their 3-dot menus
+    - Prevents accidental loss of valuable conversation history and journal data
   - Next steps: After deployment, generate accountAssociation credentials using Base Build tool and update manifest
 
 ### Oct 29, 2025 - XMTP Inactive Group Fix
