@@ -57,10 +57,10 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
     - homeUrl points to `/chat` route (where SDK initialization lives) for proper splash screen dismissal
   - Added `fc:miniapp` embed metadata to `app/layout.tsx` for rich social previews when shared
   - Implemented SDK initialization in chat page:
-    - Calls `sdk.actions.ready()` on mount to hide mini app splash screen
-    - Detects mini app context using `sdk.isInMiniApp()` for conditional rendering
+    - Calls `sdk.actions.ready()` immediately on mount to hide splash screen (before any context detection)
+    - Detects mini app context using `sdk.isInMiniApp()` for conditional UI rendering
+    - Calling `ready()` unconditionally is safe - it's a no-op outside mini app contexts
     - Logs context (mini app vs standalone) for debugging
-    - Includes defensive fallback to call `ready()` even if detection fails
   - Updated BaseAppBanner to conditionally hide when running as mini app (users already in Base App)
   - App architecture supports both contexts:
     - Standalone browser: Full authentication flow, visible banner, regular links

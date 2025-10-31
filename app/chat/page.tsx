@@ -27,24 +27,14 @@ function ChatContent() {
   useEffect(() => {
     const initializeMiniApp = async () => {
       try {
+        await sdk.actions.ready();
+        console.log('✅ Called sdk.actions.ready()');
+        
         const miniAppStatus = await sdk.isInMiniApp();
         setIsInMiniApp(miniAppStatus);
-        
-        if (miniAppStatus) {
-          console.log('🎯 Running as Farcaster/Base App Mini App');
-          await sdk.actions.ready();
-          console.log('✅ Mini App splash screen hidden, app is ready');
-        } else {
-          console.log('🌐 Running as standalone web app');
-        }
+        console.log(miniAppStatus ? '🎯 Running as Farcaster/Base App Mini App' : '🌐 Running as standalone web app');
       } catch (error) {
         console.error('Mini App initialization error:', error);
-        try {
-          await sdk.actions.ready();
-          console.log('⚠️ Called ready() as fallback despite detection error');
-        } catch (readyError) {
-          console.error('Failed to call ready() as fallback:', readyError);
-        }
       }
     };
 
