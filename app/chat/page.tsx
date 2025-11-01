@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePrivy, useLoginToMiniApp } from '@privy-io/react-auth';
+import { usePrivy } from '@privy-io/react-auth';
+import { useLoginToMiniApp } from '@privy-io/react-auth/farcaster';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { sdk } from '@farcaster/miniapp-sdk';
