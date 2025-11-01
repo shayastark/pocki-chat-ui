@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
-import { useLoginToFrame } from '@privy-io/react-auth/farcaster';
+import { usePrivy, useLoginToMiniApp } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { sdk } from '@farcaster/miniapp-sdk';
@@ -393,7 +392,7 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
 
 export default function ChatPage() {
   const { authenticated, ready } = usePrivy();
-  const { initLoginToFrame, loginToFrame } = useLoginToFrame();
+  const { initLoginToMiniApp, loginToMiniApp } = useLoginToMiniApp();
   const router = useRouter();
   const [isInMiniApp, setIsInMiniApp] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -413,13 +412,13 @@ export default function ChatPage() {
           setIsAuthenticating(true);
           
           try {
-            const { nonce } = await initLoginToFrame();
+            const { nonce } = await initLoginToMiniApp();
             console.log('📝 Got nonce for SIWF:', nonce);
             
             const signInResult = await sdk.actions.signIn({ nonce });
             console.log('✍️ Got SIWF signature from Farcaster/Base App');
             
-            await loginToFrame({
+            await loginToMiniApp({
               message: signInResult.message,
               signature: signInResult.signature,
             });
@@ -435,7 +434,7 @@ export default function ChatPage() {
     };
 
     initializeMiniApp();
-  }, [ready, authenticated, isAuthenticating, initLoginToFrame, loginToFrame]);
+  }, [ready, authenticated, isAuthenticating, initLoginToMiniApp, loginToMiniApp]);
 
   useEffect(() => {
     if (ready && !authenticated && !isInMiniApp && !isAuthenticating) {
