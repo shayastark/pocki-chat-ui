@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
-import { useLoginToMiniApp } from '@privy-io/react-auth/farcaster';
+import { useLoginToFrame } from '@privy-io/react-auth/farcaster';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { sdk } from '@farcaster/miniapp-sdk';
@@ -393,7 +393,7 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
 
 export default function ChatPage() {
   const { authenticated, ready } = usePrivy();
-  const { initLoginToMiniApp, loginToMiniApp } = useLoginToMiniApp();
+  const { initLoginToFrame, loginToFrame } = useLoginToFrame();
   const router = useRouter();
   const [isInMiniApp, setIsInMiniApp] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -413,15 +413,15 @@ export default function ChatPage() {
           setIsAuthenticating(true);
           
           try {
-            const { nonce } = await initLoginToMiniApp();
+            const { nonce } = await initLoginToFrame();
             console.log('📝 Got nonce for SIWF:', nonce);
             
-            const result = await sdk.actions.signIn({ nonce });
+            const signInResult = await sdk.actions.signIn({ nonce });
             console.log('✍️ Got SIWF signature from Farcaster/Base App');
             
-            await loginToMiniApp({
-              message: result.message,
-              signature: result.signature,
+            await loginToFrame({
+              message: signInResult.message,
+              signature: signInResult.signature,
             });
             console.log('✅ Authenticated with Privy using SIWF');
           } catch (authError) {
@@ -435,7 +435,7 @@ export default function ChatPage() {
     };
 
     initializeMiniApp();
-  }, [ready, authenticated, isAuthenticating, initLoginToMiniApp, loginToMiniApp]);
+  }, [ready, authenticated, isAuthenticating, initLoginToFrame, loginToFrame]);
 
   useEffect(() => {
     if (ready && !authenticated && !isInMiniApp && !isAuthenticating) {

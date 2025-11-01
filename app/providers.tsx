@@ -28,7 +28,9 @@ export function Providers({ children }: { children: ReactNode }) {
           logo: undefined,
         },
         embeddedWallets: {
-          createOnLogin: 'users-without-wallets',
+          ethereum: {
+            createOnLogin: 'users-without-wallets',
+          },
         },
       }}
     >
