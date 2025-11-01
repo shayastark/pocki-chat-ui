@@ -45,3 +45,28 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 - **Next.js:** Web framework.
 - **Tailwind CSS:** Utility-first CSS framework.
 - **Farcaster Mini App SDK:** Base App/Farcaster integration (`@farcaster/miniapp-sdk`).
+
+## Recent Updates
+
+### Nov 1, 2025 - Browser Extension Wallet Detection Fix
+- **Fixed "No wallet" issue with desktop browser extensions** - Chrome with Rainbow/Coinbase extensions now works
+  - Problem: Desktop browser extensions (Rainbow, Coinbase Wallet) inject wallets after Privy authentication completes, causing "No wallet" error and stuck "Connecting..." state
+  - Root cause: Race condition where Privy says "ready" but wallets array is still empty because extensions inject providers asynchronously
+  - Solution: Added retry logic in useXMTP hook
+    - Polls for wallet availability up to 10 times with 500ms delays (5 seconds total)
+    - Detailed debug logging shows wallet detection state and retry attempts
+    - Removed `wallets.length > 0` requirement from useEffect trigger
+    - Graceful fallback with clear error message after timeout
+  - Mobile wallet browsers (Rainbow, Coinbase Wallet app) continue to work instantly as before
+  - Desktop extensions now have 5 seconds to inject their wallet providers before timeout
+
+### Nov 1, 2025 - Privy SDK v2.0 Migration
+- **Migrated Privy SDK from 1.99.1 to 2.25.0** - Upgraded to stable v2 API with improved TypeScript support
+  - Updated `@privy-io/react-auth` from 1.99.1 to 2.25.0
+  - Updated `@privy-io/wagmi` from 0.2.13 to 1.0.6
+  - Code already followed v2.0 patterns (embeddedWallets.createOnLogin, wagmi sendTransactionAsync)
+  - No breaking changes required - existing implementation was v2-compatible
+  - Fixed missing `styled-jsx` peer dependency for Next.js
+  - Migration strategy: Staged approach (1.x → 2.0 complete, 2.0 → 3.0 deferred)
+  - App runs successfully with Privy 2.0 authentication working correctly
+  - Used `npm install --legacy-peer-deps` to handle peer dependency conflicts

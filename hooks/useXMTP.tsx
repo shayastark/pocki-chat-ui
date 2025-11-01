@@ -82,6 +82,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const hasInitialized = useRef(false);
   const isSyncing = useRef(false);
   const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const walletRetryCountRef = useRef(0);
 
   const initializeClient = useCallback(async () => {
     // Prevent multiple simultaneous initialization attempts
@@ -92,19 +93,47 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
     // Wait for wallets to be ready
     if (!authenticated || !ready) {
+      console.log('🔍 Waiting for auth/ready:', { authenticated, ready });
       return;
     }
+
+    // Log wallet detection state
+    console.log('🔍 WALLET DETECTION:', {
+      authenticated,
+      ready,
+      walletsCount: wallets.length,
+      walletTypes: wallets.map(w => ({ type: w.walletClientType, address: w.address })),
+      retryCount: walletRetryCountRef.current,
+    });
 
     // Find embedded wallet or use first available
     const wallet = wallets.find(w => w.walletClientType === 'privy') || wallets[0];
     
     if (!wallet) {
-      console.error('No wallet found');
-      setError('No wallet available. Please connect a wallet.');
-      return;
+      walletRetryCountRef.current += 1;
+      console.warn(`⚠️ No wallet found (attempt ${walletRetryCountRef.current}/10)`);
+      console.warn('This can happen with browser extensions that inject wallets after page load');
+      
+      // Retry up to 10 times with 500ms delay (5 seconds total)
+      if (walletRetryCountRef.current < 10) {
+        console.log('⏳ Retrying wallet detection in 500ms...');
+        setIsConnecting(true);
+        setTimeout(() => {
+          initializeClient();
+        }, 500);
+        return;
+      } else {
+        console.error('❌ No wallet found after 10 retries');
+        setError('No wallet available. Please connect a wallet and refresh the page.');
+        setIsConnecting(false);
+        return;
+      }
     }
 
-    console.log('Initializing XMTP with wallet:', wallet.address);
+    // Wallet found! Reset retry counter
+    walletRetryCountRef.current = 0;
+    console.log('✅ Wallet found! Initializing XMTP with wallet:', wallet.address);
+    console.log('Wallet type:', wallet.walletClientType);
     setActiveWalletAddress(wallet.address);
 
     isInitializing.current = true;
@@ -340,7 +369,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   }, [authenticated, ready, wallets]);
 
   useEffect(() => {
-    if (authenticated && ready && wallets.length > 0 && !client && !hasInitialized.current) {
+    // Trigger initialization when authenticated and ready
+    // Even if wallets.length is 0, the retry logic in initializeClient will handle waiting
+    if (authenticated && ready && !client && !hasInitialized.current) {
+      console.log('🚀 Triggering XMTP initialization:', { 
+        authenticated, 
+        ready, 
+        walletsCount: wallets.length,
+        hasClient: !!client,
+        hasInitialized: hasInitialized.current 
+      });
       initializeClient();
     }
   }, [authenticated, ready, wallets, client, initializeClient]);
