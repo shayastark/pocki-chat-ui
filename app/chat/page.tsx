@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
+import { useLoginToMiniApp } from '@privy-io/react-auth/farcaster';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { sdk } from '@farcaster/miniapp-sdk';
@@ -392,8 +393,10 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
 
 export default function ChatPage() {
   const { authenticated, ready } = usePrivy();
+  const { initLoginToMiniApp, loginToMiniApp } = useLoginToMiniApp();
   const router = useRouter();
   const [isInMiniApp, setIsInMiniApp] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   useEffect(() => {
     const initializeMiniApp = async () => {
@@ -404,19 +407,41 @@ export default function ChatPage() {
         const miniAppStatus = await sdk.isInMiniApp();
         setIsInMiniApp(miniAppStatus);
         console.log(miniAppStatus ? '🎯 Running as Farcaster/Base App Mini App' : '🌐 Running as standalone web app');
+        
+        if (miniAppStatus && ready && !authenticated && !isAuthenticating) {
+          console.log('🔐 Starting Farcaster Mini App authentication...');
+          setIsAuthenticating(true);
+          
+          try {
+            const { nonce } = await initLoginToMiniApp();
+            console.log('📝 Got nonce for SIWF:', nonce);
+            
+            const result = await sdk.actions.signIn({ nonce });
+            console.log('✍️ Got SIWF signature from Farcaster/Base App');
+            
+            await loginToMiniApp({
+              message: result.message,
+              signature: result.signature,
+            });
+            console.log('✅ Authenticated with Privy using SIWF');
+          } catch (authError) {
+            console.error('❌ Mini App authentication failed:', authError);
+            setIsAuthenticating(false);
+          }
+        }
       } catch (error) {
         console.error('Mini App initialization error:', error);
       }
     };
 
     initializeMiniApp();
-  }, []);
+  }, [ready, authenticated, isAuthenticating, initLoginToMiniApp, loginToMiniApp]);
 
   useEffect(() => {
-    if (ready && !authenticated) {
+    if (ready && !authenticated && !isInMiniApp && !isAuthenticating) {
       router.push('/');
     }
-  }, [ready, authenticated, router]);
+  }, [ready, authenticated, isInMiniApp, isAuthenticating, router]);
 
   if (!ready || !authenticated) {
     return (
