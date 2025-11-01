@@ -21,16 +21,14 @@ export function Providers({ children }: { children: ReactNode }) {
     <PrivyProvider
       appId={PRIVY_APP_ID}
       config={{
-        loginMethods: ['farcaster', 'wallet', 'email', 'google', 'twitter'],
+        loginMethods: ['wallet', 'email', 'google', 'twitter'],
         appearance: {
           theme: 'light',
           accentColor: '#16a34a',
           logo: undefined,
         },
         embeddedWallets: {
-          ethereum: {
-            createOnLogin: 'users-without-wallets',
-          },
+          createOnLogin: 'users-without-wallets',
         },
       }}
     >
