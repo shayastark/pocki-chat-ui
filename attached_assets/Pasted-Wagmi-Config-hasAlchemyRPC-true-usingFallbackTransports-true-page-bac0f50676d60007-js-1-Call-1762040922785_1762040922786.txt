@@ -1,0 +1,97 @@
+Wagmi Config: {hasAlchemyRPC: true, usingFallbackTransports: true}
+page-bac0f50676d60007.js:1 ✅ Called sdk.actions.ready()
+page-bac0f50676d60007.js:1 🌐 Running as standalone web app
+favicon.ico:1  GET https://pocki-chat.replit.app/favicon.ico 404 (Not Found)Understand this error
+2b873d2b-ac82d47b2ae19d3f.js:23 Base Account SDK Initialized
+21The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.Understand this warning
+page-285608adcc475924.js:1 Privy state: {ready: true, authenticated: false}
+page-285608adcc475924.js:1 Privy state: {ready: true, authenticated: true}
+page-bac0f50676d60007.js:1 ✅ Called sdk.actions.ready()
+page-bac0f50676d60007.js:1 🌐 Running as standalone web app
+2b873d2b-ac82d47b2ae19d3f.js:23 Privy iframe failed to load:  Error: Exceeded max attempts before resolving function
+    at 2b873d2b-ac82d47b2ae19d3f.js:23:7603
+(anonymous) @ 2b873d2b-ac82d47b2ae19d3f.js:23
+Promise.then
+(anonymous) @ 2b873d2b-ac82d47b2ae19d3f.js:23
+aW @ fd9d1056-78bbd36dda77d9e8.js:1
+oe @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+id @ fd9d1056-78bbd36dda77d9e8.js:1
+o @ fd9d1056-78bbd36dda77d9e8.js:1
+M @ 2117-ae22d5005721c73b.js:1Understand this warning
+page-285608adcc475924.js:1 Privy state: {ready: true, authenticated: false}
+page-285608adcc475924.js:1 Privy state: {ready: true, authenticated: true}
+page-bac0f50676d60007.js:1 ✅ Called sdk.actions.ready()
+page-bac0f50676d60007.js:1 🌐 Running as standalone web ap
