@@ -184,6 +184,25 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
+      // Authenticate external wallets with SIWE signature if needed
+      // Embedded wallets (privy) are already authenticated
+      if (wallet.walletClientType !== 'privy' && typeof wallet.loginOrLink === 'function') {
+        console.log('🔐 Authenticating wallet with SIWE signature...');
+        try {
+          await wallet.loginOrLink();
+          console.log('✅ Wallet authenticated successfully');
+        } catch (authErr: any) {
+          // If wallet is already linked/authenticated, loginOrLink might throw
+          // We can continue if the error is about already being authenticated
+          if (authErr.message && authErr.message.includes('already')) {
+            console.log('ℹ️ Wallet already authenticated, continuing...');
+          } else {
+            console.error('Failed to authenticate wallet:', authErr);
+            throw authErr;
+          }
+        }
+      }
+
       // Dynamically import XMTP Browser SDK and ethers to avoid SWC compilation crash
       const { Client } = await import('@xmtp/browser-sdk');
       const { ethers } = await import('ethers');
