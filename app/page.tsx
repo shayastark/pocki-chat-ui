@@ -16,14 +16,23 @@ export default function LandingPage() {
   const [quickAuthError, setQuickAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    const context = miniappSdk?.context;
-    const inMiniApp = context?.client?.clientFid !== undefined;
-    setIsMiniApp(inMiniApp);
-    console.log('🔍 Environment detection:', { inMiniApp, context });
+    const detectMiniApp = async () => {
+      try {
+        const context = await miniappSdk?.context;
+        const inMiniApp = context?.client?.clientFid !== undefined;
+        setIsMiniApp(inMiniApp);
+        console.log('🔍 Environment detection:', { inMiniApp, context });
+      } catch (error) {
+        console.log('🔍 Not in Mini App environment');
+        setIsMiniApp(false);
+      }
+    };
+    
+    detectMiniApp();
   }, []);
 
   useEffect(() => {
-    if (isMiniApp && quickAuthToken) {
+    if (isMiniApp && quickAuthToken && authenticated) {
       sessionStorage.setItem('quickAuthToken', quickAuthToken);
       router.push('/chat');
     } else if (!isMiniApp && ready && authenticated) {
@@ -68,6 +77,9 @@ export default function LandingPage() {
       console.log('✅ Quick Auth verified:', data);
       
       setQuickAuthToken(token);
+      
+      console.log('🔌 Connecting wallet via Privy...');
+      await login();
     } catch (error) {
       console.error('❌ Quick Auth failed:', error);
       setQuickAuthError(error instanceof Error ? error.message : 'Authentication failed');

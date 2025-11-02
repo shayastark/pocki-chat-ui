@@ -16,7 +16,7 @@ The application uses a panda-themed design with a calming green and bamboo aesth
 
 ### Technical Implementations
 The application is built with Next.js 14 (App Router), React, and TypeScript.
-- **Authentication:** Privy is used for secure wallet, email, and social logins.
+- **Authentication:** Dual authentication strategy - Quick Auth (`@farcaster/quick-auth`) for Farcaster/Base App Mini Apps with JWT verification, and Privy (v3.5.0) for standalone browser users with wallet, email, and social logins.
 - **Messaging:** XMTP Browser SDK (v5.0.1) facilitates real-time, secure messaging.
 - **Web3:** Wagmi and Viem are used for Ethereum interactions, specifically targeting the Base network (chainId: 8453). RPC calls are configured with a fallback strategy for reliability.
 - **State Management:** TanStack Query manages data fetching and caching.
@@ -37,6 +37,7 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 - **Deployment:** Optimized for Autoscale deployment on Replit, supporting WebSockets for XMTP streaming and optimized builds.
 
 ## External Dependencies
+- **Quick Auth:** Farcaster authentication service (`@farcaster/quick-auth`) for Mini App JWT verification.
 - **Privy:** Authentication service v3.5.0 (`@privy-io/react-auth@3.5.0`, `@privy-io/wagmi@2.0.2`).
 - **XMTP:** Decentralized messaging protocol (`@xmtp/xmtp-js`, `@xmtp/browser-sdk`, `@xmtp/content-type-reply`, `@xmtp/content-type-wallet-send-calls`).
 - **Wagmi:** React Hooks for Ethereum (`wagmi`).
@@ -47,6 +48,32 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 - **Farcaster Mini App SDK:** Base App/Farcaster integration (`@farcaster/miniapp-sdk`).
 
 ## Recent Updates
+
+### Nov 2, 2025 - Implemented Dual Authentication Strategy with Quick Auth ✅
+- **Added Quick Auth for Farcaster/Base App Mini Apps** - Native authentication flow for Mini App users
+  - **Problem:** Privy authentication was causing complications in Mini App context (Farcaster/Base App)
+  - **Solution: Implemented dual authentication strategy**
+    - **Quick Auth for Mini Apps:** Uses `@farcaster/quick-auth` SDK with JWT-based authentication
+      - Frontend: `sdk.quickAuth.getToken()` obtains JWT token from Farcaster
+      - Backend: `/api/auth` route verifies JWT using `@farcaster/quick-auth` server package
+      - Token stored in sessionStorage for session persistence
+      - After Quick Auth, triggers Privy `login()` to connect wallet for XMTP
+      - Cleaner, native authentication experience in Mini App context
+    - **Privy for Browsers:** Existing Privy flow maintained for standalone browser users
+      - Wallet, email, and social login options
+      - Full Web3 wallet integration
+    - **Smart Context Detection:** Landing page auto-detects Mini App vs Browser context
+      - Checks `miniappSdk.context.client.clientFid` to determine environment
+      - Shows appropriate button ("Sign In" for Mini App, "Connect Wallet" for Browser)
+    - **XMTP Compatibility:** Updated useXMTP hook to accept both authentication methods
+      - Checks for either `authenticated` (Privy) or `hasQuickAuth` (sessionStorage token)
+      - Both methods provide wallets needed for XMTP initialization
+  - **Benefits:**
+    - Eliminates Privy interference in Mini App context
+    - Native, streamlined authentication for Farcaster/Base App users
+    - Maintains full browser functionality with Privy
+    - Single codebase supports both environments seamlessly
+  - **Next Step:** Debug Privy wallet detection for Chrome Desktop browsers with diagnostic logs
 
 ### Nov 2, 2025 - Fixed XMTP Wallet Initialization with Viem ✅
 - **Migrated XMTP signer to use viem wallet client** - Fixed "No wallet" error in chat by following Privy v3.5.0 documentation

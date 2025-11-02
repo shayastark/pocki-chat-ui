@@ -83,6 +83,21 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const isSyncing = useRef(false);
   const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const walletRetryCountRef = useRef(0);
+  const [hasQuickAuth, setHasQuickAuth] = useState(false);
+
+  // Check for Quick Auth token on mount and when sessionStorage changes
+  useEffect(() => {
+    const checkQuickAuth = () => {
+      const token = typeof window !== 'undefined' ? sessionStorage.getItem('quickAuthToken') : null;
+      setHasQuickAuth(!!token);
+    };
+    
+    checkQuickAuth();
+    
+    // Listen for storage changes (in case token is added/removed)
+    window.addEventListener('storage', checkQuickAuth);
+    return () => window.removeEventListener('storage', checkQuickAuth);
+  }, []);
 
   // DIAGNOSTIC: Log useWallets state whenever it changes
   useEffect(() => {
@@ -106,9 +121,17 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    // Check authentication state - either Privy OR Quick Auth
+    const isAuthenticated = authenticated || hasQuickAuth;
+    
     // Wait for wallets to be ready
-    if (!authenticated || !ready) {
-      console.log('🔍 Waiting for auth/ready:', { authenticated, ready });
+    if (!isAuthenticated || !ready) {
+      console.log('🔍 Waiting for auth/ready:', { 
+        authenticated, 
+        hasQuickAuth, 
+        isAuthenticated, 
+        ready 
+      });
       return;
     }
 
@@ -445,25 +468,31 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       setIsConnecting(false);
       isInitializing.current = false;
     }
-  }, [authenticated, ready, wallets]);
+  }, [authenticated, hasQuickAuth, ready, wallets]);
 
   useEffect(() => {
+    const isAuthenticated = authenticated || hasQuickAuth;
+    
     // DIAGNOSTIC: Always log the state, regardless of whether we initialize
     console.log('🔍 useXMTP DIAGNOSTIC - Initialization Effect Triggered:', {
       authenticated,
+      hasQuickAuth,
+      isAuthenticated,
       ready,
       walletsCount: wallets.length,
       hasClient: !!client,
       hasInitialized: hasInitialized.current,
-      willInitialize: authenticated && ready && !client && !hasInitialized.current,
+      willInitialize: isAuthenticated && ready && !client && !hasInitialized.current,
       timestamp: new Date().toISOString(),
     });
 
-    // Trigger initialization when authenticated and ready
+    // Trigger initialization when authenticated (Privy or Quick Auth) and ready
     // Even if wallets.length is 0, the retry logic in initializeClient will handle waiting
-    if (authenticated && ready && !client && !hasInitialized.current) {
+    if (isAuthenticated && ready && !client && !hasInitialized.current) {
       console.log('🚀 Triggering XMTP initialization:', { 
-        authenticated, 
+        authenticated,
+        hasQuickAuth,
+        isAuthenticated, 
         ready, 
         walletsCount: wallets.length,
         hasClient: !!client,
@@ -472,13 +501,13 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       initializeClient();
     } else {
       console.log('⏸️ Skipping XMTP initialization because:', {
-        authenticated: !authenticated ? 'NOT AUTHENTICATED' : 'OK',
+        authenticated: !authenticated && !hasQuickAuth ? 'NOT AUTHENTICATED (neither Privy nor Quick Auth)' : 'OK',
         ready: !ready ? 'NOT READY' : 'OK',
         client: client ? 'CLIENT ALREADY EXISTS' : 'OK',
         hasInitialized: hasInitialized.current ? 'ALREADY INITIALIZED' : 'OK',
       });
     }
-  }, [authenticated, ready, wallets, client, initializeClient]);
+  }, [authenticated, hasQuickAuth, ready, wallets, client, initializeClient]);
 
   // Fetch peer inbox ID when conversation changes
   useEffect(() => {
