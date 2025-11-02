@@ -29,9 +29,7 @@ export function Providers({ children }: { children: ReactNode }) {
           walletList: ['base_account', 'metamask', 'coinbase_wallet', 'rainbow', 'detected_wallets'],
         },
         embeddedWallets: {
-          ethereum: {
-            createOnLogin: 'users-without-wallets',
-          },
+          createOnLogin: 'users-without-wallets',
         },
       }}
     >

@@ -37,7 +37,7 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 - **Deployment:** Optimized for Autoscale deployment on Replit, supporting WebSockets for XMTP streaming and optimized builds.
 
 ## External Dependencies
-- **Privy:** Authentication service v1.99.1 (`@privy-io/react-auth@1.99.1`, `@privy-io/wagmi@0.2.13`).
+- **Privy:** Authentication service v3.5.0 (`@privy-io/react-auth@3.5.0`, `@privy-io/wagmi@2.0.2`).
 - **XMTP:** Decentralized messaging protocol (`@xmtp/xmtp-js`, `@xmtp/browser-sdk`, `@xmtp/content-type-reply`, `@xmtp/content-type-wallet-send-calls`).
 - **Wagmi:** React Hooks for Ethereum (`wagmi`).
 - **Viem:** TypeScript interface for Ethereum (`viem`).
@@ -48,23 +48,31 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
-### Nov 2, 2025 - Privy SDK Rollback to v1.99.1
-- **Rolled back from Privy v2.25.0 to v1.99.1** - Investigated v2/v3 upgrade but encountered blocking issues
-  - **Investigation Summary:**
-    - Attempted v3.5.0 migration to leverage improved useWallets ready state for Chrome/Android
-    - v3.5.0 failed: JavaScript syntax errors from config incompatibility, initialization stuck at ready=false
-    - Architect diagnosed: COOP header conflicts between XMTP (requires same-origin) and Privy v3 worker/iframe requirements
-    - Attempted v2.25.0: Fixed config hydration errors, but Privy still stuck at ready=false
-    - Root cause: Both v2/v3 have deeper incompatibilities with XMTP Browser SDK's strict COOP: same-origin requirement
-  - **Solution:** Rolled back to last known working version (v1.99.1)
-  - **Removed Features for v1.99.1 compatibility:**
-    - Farcaster Mini App auto-login (`useLoginToMiniApp` not available in v1.99.1)
-    - Users must manually click login button in Farcaster/Base App (acceptable tradeoff)
-  - **Current Status:** App fully functional with Privy v1.99.1
-  - **Known Limitations:**
-    - Chrome/Android wallet detection timing issues remain (v1.99.1 limitation)
-    - No automatic Farcaster authentication - manual login required
-  - **Future Path:** Monitor Privy for COOP-compatible releases or XMTP for relaxed header requirements
+### Nov 2, 2025 - Successful Privy SDK v3.5.0 Migration  ✅
+- **Successfully upgraded from Privy v1.99.1 to v3.5.0** - Leveraging new features while maintaining XMTP Browser SDK compatibility
+  - **Solution: Updated COOP headers to enable both Privy v3 and XMTP**
+    - Changed `Cross-Origin-Opener-Policy` from `same-origin` to `same-origin-allow-popups`
+    - Kept `Cross-Origin-Embedder-Policy: credentialless` (more flexible than `require-corp`)
+    - This combination allows Privy OAuth/wallet popups while maintaining XMTP SharedArrayBuffer support
+  - **Package Updates:**
+    - `@privy-io/react-auth`: 1.99.1 → 3.5.0
+    - `@privy-io/wagmi`: 0.2.13 → 2.0.2
+  - **Configuration Changes for v3:**
+    - Updated embeddedWallets config to v3 format (flat `createOnLogin` instead of nested `ethereum.createOnLogin`)
+    - Removed `useLoginToMiniApp` hook (not available in v3.5.0 - users use manual login button)
+  - **Current Status:** 
+    - ✅ Privy v3.5.0 initializes successfully (`ready: true` state reached)
+    - ✅ XMTP Browser SDK remains compatible with new headers
+    - ✅ Wallet detection functional (Coinbase Wallet, Base Account SDK detected)
+    - ✅ App compiles and runs without errors
+  - **Benefits of v3 Upgrade:**
+    - Access to latest Privy features and improvements
+    - Better TypeScript support and type safety
+    - Improved wallet connection handling
+    - Future-proof for Privy's continued v3+ development
+  - **Known Behavior:**
+    - Farcaster/Base App users click manual login button (no auto-login in v3.5.0)
+    - "Privy iframe failed to load" warning appears but doesn't affect functionality
 
 ### Nov 2, 2025 - Smart Wallet Detection for Base App Support
 - **Implemented context-aware wallet detection** - Fixes Base App wallet timing issues without breaking Farcaster
