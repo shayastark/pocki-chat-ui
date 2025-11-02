@@ -11,12 +11,25 @@ export default function LandingPage() {
   const { login, authenticated, ready } = usePrivy();
   const router = useRouter();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
+  const [isMiniApp, setIsMiniApp] = useState(false);
+  const [quickAuthToken, setQuickAuthToken] = useState<string | null>(null);
+  const [quickAuthError, setQuickAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (ready && authenticated) {
+    const context = miniappSdk?.context;
+    const inMiniApp = context?.client?.clientFid !== undefined;
+    setIsMiniApp(inMiniApp);
+    console.log('🔍 Environment detection:', { inMiniApp, context });
+  }, []);
+
+  useEffect(() => {
+    if (isMiniApp && quickAuthToken) {
+      sessionStorage.setItem('quickAuthToken', quickAuthToken);
+      router.push('/chat');
+    } else if (!isMiniApp && ready && authenticated) {
       router.push('/chat');
     }
-  }, [ready, authenticated, router]);
+  }, [isMiniApp, quickAuthToken, ready, authenticated, router]);
 
   // Ensure Mini App SDK is ready
   useEffect(() => {
@@ -31,7 +44,37 @@ export default function LandingPage() {
     console.log('Privy state:', { ready, authenticated });
   }, [ready, authenticated]);
 
-  if (!ready) {
+  const handleQuickAuth = async () => {
+    try {
+      setQuickAuthError(null);
+      console.log('🔐 Starting Quick Auth...');
+      
+      const { token } = await miniappSdk.quickAuth.getToken();
+      console.log('✅ Got Quick Auth token');
+
+      const backendUrl = typeof window !== 'undefined' 
+        ? `${window.location.origin}/api/auth`
+        : '/api/auth';
+
+      const response = await fetch(backendUrl, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to verify authentication');
+      }
+
+      const data = await response.json();
+      console.log('✅ Quick Auth verified:', data);
+      
+      setQuickAuthToken(token);
+    } catch (error) {
+      console.error('❌ Quick Auth failed:', error);
+      setQuickAuthError(error instanceof Error ? error.message : 'Authentication failed');
+    }
+  };
+
+  if (!isMiniApp && !ready) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -45,7 +88,7 @@ export default function LandingPage() {
             />
           </div>
           <p className="text-gray-600">Loading...</p>
-          <p className="text-xs text-gray-400 mt-2">Initializing Privy...</p>
+          <p className="text-xs text-gray-400 mt-2">Initializing authentication...</p>
         </div>
       </div>
     );
@@ -114,12 +157,28 @@ export default function LandingPage() {
         </div>
 
         <div className="text-center">
-          <button
-            onClick={login}
-            className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-          >
-            Connect Wallet to Start 🎋
-          </button>
+          {isMiniApp ? (
+            <>
+              <button
+                onClick={handleQuickAuth}
+                className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+              >
+                Sign In to Start 🎋
+              </button>
+              {quickAuthError && (
+                <p className="mt-3 text-sm text-red-500">
+                  {quickAuthError}
+                </p>
+              )}
+            </>
+          ) : (
+            <button
+              onClick={login}
+              className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+            >
+              Connect Wallet to Start 🎋
+            </button>
+          )}
           <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
             Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
           </p>
