@@ -79,7 +79,7 @@ export default function LandingPage() {
           </h2>
           <div className="space-y-4 text-gray-700">
             <p className="leading-relaxed text-gray-900">
-              Pocki helps you trade tokens, journal your trades, set alerts and gaurdrails, track social sentiment and monitor portfolio health, giving you clarity and control for onchain tasks. <span className="text-panda-green-600 font-semibold">Trade mindfully. Intention is everything.</span>
+              Pocki helps you trade tokens, journal your trades, set alerts and guardrails, track social sentiment and monitor portfolio health, giving you clarity and control for onchain tasks. <span className="text-panda-green-600 font-semibold">Trade mindfully. Intention is everything.</span>
             </p>
             <div className="grid md:grid-cols-3 gap-6 mt-8">
               <div className="text-center p-4">
