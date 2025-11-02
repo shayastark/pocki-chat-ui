@@ -1,6 +1,6 @@
 'use client';
 
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy, useConnectOrCreateWallet } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -8,7 +8,8 @@ import { BaseAppBanner } from '@/components/BaseAppBanner';
 import miniappSdk from '@farcaster/miniapp-sdk';
 
 export default function LandingPage() {
-  const { login, authenticated, ready } = usePrivy();
+  const { authenticated, ready } = usePrivy();
+  const { connectOrCreateWallet } = useConnectOrCreateWallet();
   const router = useRouter();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
 
@@ -118,7 +119,7 @@ export default function LandingPage() {
 
         <div className="text-center">
           <button
-            onClick={login}
+            onClick={connectOrCreateWallet}
             className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
           >
             Connect Wallet to Start 🚀
