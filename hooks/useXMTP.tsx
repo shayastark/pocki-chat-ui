@@ -84,6 +84,21 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const walletRetryCountRef = useRef(0);
 
+  // DIAGNOSTIC: Log useWallets state whenever it changes
+  useEffect(() => {
+    console.log('🔍 useXMTP DIAGNOSTIC - useWallets() State:', {
+      ready,
+      walletsCount: wallets.length,
+      wallets: wallets.map(w => ({
+        address: w.address,
+        walletClientType: w.walletClientType,
+        chainId: w.chainId,
+      })),
+      authenticated,
+      timestamp: new Date().toISOString(),
+    });
+  }, [ready, wallets, authenticated]);
+
   const initializeClient = useCallback(async () => {
     // Prevent multiple simultaneous initialization attempts
     if (isInitializing.current) {
@@ -433,6 +448,17 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   }, [authenticated, ready, wallets]);
 
   useEffect(() => {
+    // DIAGNOSTIC: Always log the state, regardless of whether we initialize
+    console.log('🔍 useXMTP DIAGNOSTIC - Initialization Effect Triggered:', {
+      authenticated,
+      ready,
+      walletsCount: wallets.length,
+      hasClient: !!client,
+      hasInitialized: hasInitialized.current,
+      willInitialize: authenticated && ready && !client && !hasInitialized.current,
+      timestamp: new Date().toISOString(),
+    });
+
     // Trigger initialization when authenticated and ready
     // Even if wallets.length is 0, the retry logic in initializeClient will handle waiting
     if (authenticated && ready && !client && !hasInitialized.current) {
@@ -444,6 +470,13 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         hasInitialized: hasInitialized.current 
       });
       initializeClient();
+    } else {
+      console.log('⏸️ Skipping XMTP initialization because:', {
+        authenticated: !authenticated ? 'NOT AUTHENTICATED' : 'OK',
+        ready: !ready ? 'NOT READY' : 'OK',
+        client: client ? 'CLIENT ALREADY EXISTS' : 'OK',
+        hasInitialized: hasInitialized.current ? 'ALREADY INITIALIZED' : 'OK',
+      });
     }
   }, [authenticated, ready, wallets, client, initializeClient]);
 

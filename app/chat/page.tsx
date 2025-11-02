@@ -14,7 +14,7 @@ import { BaseAppBanner } from '@/components/BaseAppBanner';
 
 function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll, fixConversation } = useXMTP();
-  const { logout } = usePrivy();
+  const { logout, authenticated, ready } = usePrivy();
   const [showTxModal, setShowTxModal] = useState(false);
   const [currentTx, setCurrentTx] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -22,6 +22,25 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   const [isFixing, setIsFixing] = useState(false);
   const [diagnosticResults, setDiagnosticResults] = useState<any>(null);
   const [isRunningDiagnostics, setIsRunningDiagnostics] = useState(false);
+
+  // DIAGNOSTIC: Log Privy and wallet state on chat page load
+  useEffect(() => {
+    console.log('🔍 CHAT PAGE DIAGNOSTIC - Privy State:', {
+      authenticated,
+      ready,
+      timestamp: new Date().toISOString(),
+    });
+  }, [authenticated, ready]);
+
+  useEffect(() => {
+    console.log('🔍 CHAT PAGE DIAGNOSTIC - XMTP State:', {
+      isConnected,
+      isConnecting,
+      error,
+      activeWalletAddress,
+      timestamp: new Date().toISOString(),
+    });
+  }, [isConnected, isConnecting, error, activeWalletAddress]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
