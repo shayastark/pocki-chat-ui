@@ -78,10 +78,8 @@ export default function LandingPage() {
             What is Pocki?
           </h2>
           <div className="space-y-4 text-gray-700">
-            <p className="leading-relaxed text-panda-green-600">
-              Pocki is your mindful AI onchain wallet companion. Like a wise panda who never rushes, 
-              Pocki helps you set alerts, journal your trades, and pause before acting on impulse. 
-              Trade with intention on Base.
+            <p className="leading-relaxed text-gray-900">
+              Pocki helps you trade tokens, journal your trades, set alerts and gaurdrails, track social sentiment and monitor portfolio health, giving you clarity and control for onchain tasks. <span className="text-panda-green-600 font-semibold">Trade mindfully. Intention is everything.</span>
             </p>
             <div className="grid md:grid-cols-3 gap-6 mt-8">
               <div className="text-center p-4">
@@ -102,7 +100,7 @@ export default function LandingPage() {
                 <div className="text-4xl mb-3">📊</div>
                 <h3 className="font-semibold mb-2">Wallet Insights</h3>
                 <p className="text-sm text-gray-600">
-                  Monitor your portfolio health in real-time
+                  Monitor portfolio health and token sentiment in real-time
                 </p>
               </div>
             </div>
