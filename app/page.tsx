@@ -1,7 +1,6 @@
 'use client';
 
 import { usePrivy } from '@privy-io/react-auth';
-import { useLoginToMiniApp } from '@privy-io/react-auth/farcaster';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -10,7 +9,6 @@ import miniappSdk from '@farcaster/miniapp-sdk';
 
 export default function LandingPage() {
   const { login, authenticated, ready } = usePrivy();
-  const { initLoginToMiniApp, loginToMiniApp } = useLoginToMiniApp();
   const router = useRouter();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
 
@@ -28,36 +26,6 @@ export default function LandingPage() {
       console.log('🎯 Mini App SDK initialized and ready');
     }
   }, [isSDKLoaded]);
-
-  // Auto-login with Farcaster when in Mini App context
-  useEffect(() => {
-    if (ready && !authenticated) {
-      const attemptFarcasterLogin = async () => {
-        try {
-          console.log('🔐 Attempting automatic Farcaster login...');
-          // Initialize a new login attempt to get a nonce for the Farcaster wallet to sign
-          const { nonce } = await initLoginToMiniApp();
-          console.log('✅ Got nonce from Privy');
-          
-          // Request a signature from Farcaster
-          const result = await miniappSdk.actions.signIn({ nonce });
-          console.log('✅ Got signature from Farcaster');
-          
-          // Send the received signature from Farcaster to Privy for authentication
-          await loginToMiniApp({
-            message: result.message,
-            signature: result.signature,
-          });
-          console.log('✅ Successfully authenticated with Farcaster!');
-        } catch (error) {
-          // If Farcaster login fails (not in Mini App context), silently continue
-          // User can still use the manual login button
-          console.log('ℹ️ Farcaster auto-login not available (not in Mini App context or user declined)');
-        }
-      };
-      attemptFarcasterLogin();
-    }
-  }, [ready, authenticated, initLoginToMiniApp, loginToMiniApp]);
 
   useEffect(() => {
     console.log('Privy state:', { ready, authenticated });
