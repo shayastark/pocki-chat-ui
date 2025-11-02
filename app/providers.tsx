@@ -26,6 +26,7 @@ export function Providers({ children }: { children: ReactNode }) {
           theme: 'light',
           accentColor: '#16a34a',
           logo: undefined,
+          walletList: ['base_account', 'metamask', 'coinbase_wallet', 'rainbow', 'detected_wallets'],
         },
         embeddedWallets: {
           createOnLogin: 'users-without-wallets',
