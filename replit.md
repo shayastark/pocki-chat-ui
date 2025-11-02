@@ -48,25 +48,16 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
-### Nov 2, 2025 - Improved Wallet Connection Flow  ✅
-- **Enhanced wallet connection reliability** - Fixed desktop browser wallet detection issues
-  - **Added WalletConnect support:** Added `wallet_connect` to walletList configuration to support the long-tail of wallets using WalletConnect protocol
-  - **Switched to `connectOrCreateWallet`:** Changed landing page from `login()` to `connectOrCreateWallet()` for better wallet connection UX
-    - Explicitly prompts users to connect external wallet OR create embedded wallet
-    - Ensures users always have a wallet available for XMTP
-    - More reliable than passive wallet detection
-  - **Added explicit wallet authentication:** Implemented `wallet.loginOrLink()` before XMTP initialization
-    - Authenticates external wallets with SIWE signature
-    - Skips authentication for embedded wallets (already authenticated)
-    - Handles "already authenticated" errors gracefully
-  - **Benefits:**
-    - Eliminates desktop browser extension wallet timing issues
-    - Provides clearer wallet connection flow to users
-    - More reliable wallet detection across all platforms
-    - Better error handling and user feedback
-  - **Configuration Updates:**
-    - walletList now includes: `['base_account', 'metamask', 'coinbase_wallet', 'rainbow', 'wallet_connect', 'detected_wallets']`
-    - embeddedWallets uses proper v3 nested structure: `ethereum: { createOnLogin: 'users-without-wallets' }`
+### Nov 2, 2025 - Reverted Breaking Wallet Connection Changes ✅
+- **Restored working wallet connection flow** - Fixed complete wallet connection breakage across all platforms
+  - **Reverted to `login()`:** Changed landing page back from `connectOrCreateWallet()` to `login()` from `usePrivy()`
+    - `connectOrCreateWallet()` was breaking wallet connection completely - nothing happened when clicking wallet options
+    - Restored original working authentication flow
+  - **Removed `wallet.loginOrLink()` call:** Removed explicit wallet authentication from XMTP initialization
+    - This authentication step was interfering with the wallet connection process
+  - **Kept WalletConnect support:** Maintained `wallet_connect` in walletList for broader wallet compatibility
+    - walletList: `['base_account', 'metamask', 'coinbase_wallet', 'rainbow', 'wallet_connect', 'detected_wallets']`
+  - **Result:** Wallet connection now works again on all platforms (desktop browser, mobile wallet browsers)
 
 ### Nov 2, 2025 - Successful Privy SDK v3.5.0 Migration  ✅
 - **Successfully upgraded from Privy v1.99.1 to v3.5.0** - Leveraging new features while maintaining XMTP Browser SDK compatibility
