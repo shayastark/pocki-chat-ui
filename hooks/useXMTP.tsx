@@ -184,15 +184,28 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
-      // Dynamically import XMTP Browser SDK and ethers to avoid SWC compilation crash
+      // Dynamically import XMTP Browser SDK and viem
       const { Client } = await import('@xmtp/browser-sdk');
-      const { ethers } = await import('ethers');
+      const { createWalletClient, custom } = await import('viem');
+      const { base } = await import('viem/chains');
       
-      // Get ethers signer from Privy wallet
+      // Switch wallet to Base network (required for proper provider setup)
+      await wallet.switchChain(base.id);
+      
+      // Get viem wallet client from Privy wallet (following Privy docs)
       const ethereumProvider = await wallet.getEthereumProvider();
-      const provider = new ethers.BrowserProvider(ethereumProvider);
-      const ethersSigner = await provider.getSigner();
+      const walletClient = createWalletClient({
+        account: wallet.address as `0x${string}`,
+        chain: base,
+        transport: custom(ethereumProvider),
+      });
       
+      console.log('✅ Created viem wallet client for XMTP:', {
+        address: walletClient.account.address,
+        chain: walletClient.chain.name,
+      });
+      
+      // Create XMTP signer using viem wallet client
       const signer: any = {
         type: 'EOA',
         getIdentifier: () => ({
@@ -203,11 +216,19 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           // Extract message string if it's an object
           const messageText = typeof message === 'string' ? message : message.message;
           
-          // Sign with ethers signer
-          const signature = await ethersSigner.signMessage(messageText);
+          // Sign message with viem - account is already set in walletClient
+          const signature = await walletClient.signMessage({
+            account: walletClient.account,
+            message: messageText,
+          });
           
-          // Convert hex signature to Uint8Array using ethers
-          return ethers.getBytes(signature);
+          // Convert hex signature to Uint8Array
+          const hexString = signature.startsWith('0x') ? signature.slice(2) : signature;
+          const bytes = new Uint8Array(hexString.length / 2);
+          for (let i = 0; i < hexString.length; i += 2) {
+            bytes[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
+          }
+          return bytes;
         },
       };
 
