@@ -54,8 +54,8 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="mb-6 flex justify-center">
+        <div className="text-center mb-8 animate-fade-in">
+          <div className="mb-4 flex justify-center">
             <Image 
               src="/pocki-logo.jpg" 
               alt="Pocki" 
@@ -65,10 +65,7 @@ export default function LandingPage() {
               priority
             />
           </div>
-          <h1 className="text-5xl font-bold mb-4 text-gray-900">
-            Welcome to Pocki Chat
-          </h1>
-          <p className="text-xl text-gray-600 mb-2">
+          <p className="text-xl text-gray-600">
             Your AI trading companion that helps you stick to your own rules.
           </p>
         </div>
@@ -78,9 +75,9 @@ export default function LandingPage() {
             What is Pocki?
           </h2>
           <div className="space-y-4 text-gray-700">
-            <div className="text-gray-900">
+            <div className="text-gray-900 text-center">
               <p className="mb-3">Pocki helps you:</p>
-              <ul className="list-disc list-inside space-y-2 mb-4 ml-4">
+              <ul className="list-disc list-inside space-y-2 mb-4 text-left inline-block">
                 <li>Trade tokens</li>
                 <li>Journal your trades</li>
                 <li>Set alerts and guardrails</li>
@@ -121,8 +118,11 @@ export default function LandingPage() {
             onClick={login}
             className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
           >
-            Connect Wallet to Start 🚀
+            Connect Wallet to Start 🎋
           </button>
+          <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
+            Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
+          </p>
         </div>
 
         <div className="mt-12">
