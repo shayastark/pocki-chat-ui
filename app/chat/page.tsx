@@ -430,7 +430,7 @@ export default function ChatPage() {
   }
 
   return (
-    <XMTPProvider isInMiniApp={isInMiniApp}>
+    <XMTPProvider>
       <ChatContent isInMiniApp={isInMiniApp} />
     </XMTPProvider>
   );

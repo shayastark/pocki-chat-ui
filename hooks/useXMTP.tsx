@@ -65,7 +65,7 @@ const XMTPContext = createContext<XMTPContextType>({
   fixConversation: async () => {},
 });
 
-export function XMTPProvider({ children, isInMiniApp = false }: { children: ReactNode; isInMiniApp?: boolean }) {
+export function XMTPProvider({ children }: { children: ReactNode }) {
   const { authenticated } = usePrivy();
   const { wallets, ready } = useWallets();
   const [client, setClient] = useState<any | null>(null);
@@ -83,7 +83,6 @@ export function XMTPProvider({ children, isInMiniApp = false }: { children: Reac
   const isSyncing = useRef(false);
   const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const walletRetryCountRef = useRef(0);
-  const miniAppDelayRef = useRef(false);
 
   const initializeClient = useCallback(async () => {
     // Prevent multiple simultaneous initialization attempts
@@ -98,16 +97,6 @@ export function XMTPProvider({ children, isInMiniApp = false }: { children: Reac
       return;
     }
 
-    // MINI APP DELAY: Add 3 second delay for Base App/Farcaster to let wallet stabilize
-    if (isInMiniApp && !miniAppDelayRef.current) {
-      console.log('🎯 Mini App detected - adding 3 second delay for wallet stabilization...');
-      miniAppDelayRef.current = true;
-      setTimeout(() => {
-        initializeClient();
-      }, 3000);
-      return;
-    }
-
     // Log wallet detection state
     console.log('🔍 WALLET DETECTION:', {
       authenticated,
@@ -115,7 +104,6 @@ export function XMTPProvider({ children, isInMiniApp = false }: { children: Reac
       walletsCount: wallets.length,
       walletTypes: wallets.map(w => ({ type: w.walletClientType, address: w.address })),
       retryCount: walletRetryCountRef.current,
-      isInMiniApp,
     });
 
     // Find embedded wallet or use first available
@@ -378,7 +366,7 @@ export function XMTPProvider({ children, isInMiniApp = false }: { children: Reac
       setIsConnecting(false);
       isInitializing.current = false;
     }
-  }, [authenticated, ready, wallets, isInMiniApp]);
+  }, [authenticated, ready, wallets]);
 
   useEffect(() => {
     // Trigger initialization when authenticated and ready

@@ -48,6 +48,19 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 2, 2025 - Farcaster Mini App Authentication Implementation
+- **Implemented proper Farcaster Mini App authentication flow** - Follows Privy's official best practices
+  - Added 'farcaster' to loginMethods in PrivyProvider configuration
+  - Integrated `useLoginToMiniApp` hook from `@privy-io/react-auth/farcaster` on landing page
+  - Implemented automatic Farcaster login flow using `miniappSdk.actions.signIn()`
+  - Added `miniappSdk.actions.ready()` call when SDK loads for proper Mini App handshake
+  - Authentication flow: Get nonce from Privy → Request signature from Farcaster → Authenticate with Privy
+  - Removed 3-second XMTP initialization delay hack (no longer needed with proper auth timing)
+  - Graceful fallback: Auto-login silently fails in standalone browser, manual login button still available
+  - **Testing Required:** Verify in The Base App or Farcaster that wallet connects before XMTP signature request
+  - **Note:** Users must add The Base App wallet as auth address to their Farcaster account for TBA authentication
+  - COOP header remains `same-origin` (required for XMTP SharedArrayBuffer, incompatible with wallet popups)
+
 ### Nov 1, 2025 - Browser Extension Wallet Detection Fix
 - **Fixed "No wallet" issue with desktop browser extensions** - Chrome with Rainbow/Coinbase extensions now works
   - Problem: Desktop browser extensions (Rainbow, Coinbase Wallet) inject wallets after Privy authentication completes, causing "No wallet" error and stuck "Connecting..." state
