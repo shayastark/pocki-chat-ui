@@ -48,6 +48,21 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 2, 2025 - Fixed XMTP Wallet Initialization with Viem ✅
+- **Migrated XMTP signer to use viem wallet client** - Fixed "No wallet" error in chat by following Privy v3.5.0 documentation
+  - **Problem:** XMTP was importing ethers incorrectly and not properly integrating with Privy's wallet system
+  - **Solution: Implemented viem wallet client following Privy docs**
+    - Uses `createWalletClient` from viem with `custom(ethereumProvider)` transport
+    - Switches wallet to Base network before creating client via `wallet.switchChain(base.id)`
+    - Signs XMTP messages using `walletClient.signMessage()` instead of ethers
+    - Properly converts hex signatures to Uint8Array for XMTP compatibility
+  - **Benefits:**
+    - Follows Privy's official integration pattern for wallet handling
+    - Ensures wallet is on Base network for all XMTP operations
+    - More reliable signature generation for XMTP authentication
+    - Better TypeScript support with viem's type-safe API
+  - **Architect Review:** Confirmed implementation correctly follows Privy v3.5.0 guidance and should successfully sign XMTP payloads on Base
+
 ### Nov 2, 2025 - Reverted Breaking Wallet Connection Changes ✅
 - **Restored working wallet connection flow** - Fixed complete wallet connection breakage across all platforms
   - **Reverted to `login()`:** Changed landing page back from `connectOrCreateWallet()` to `login()` from `usePrivy()`
