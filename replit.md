@@ -48,6 +48,17 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 2, 2025 - Smart Wallet Detection for Base App Support
+- **Implemented context-aware wallet detection** - Fixes Base App wallet timing issues without breaking Farcaster
+  - Enhanced XMTP initialization with smart wallet type detection
+  - Wallet priority: base_account > detected wallets > embedded wallet
+  - Base App specific handling: Waits up to 2.5 seconds for base_account wallet to inject after auth
+  - Browser extension handling: Waits up to 5 seconds for extension wallets to inject
+  - Farcaster unchanged: Wallet already ready, proceeds immediately (preserves working flow)
+  - Detailed logging shows which wallet type is being waited for and selection process
+  - Solves Base App issue where XMTP signature request appeared before wallet was ready
+  - **Testing Required:** Verify in The Base App that wallet connects before XMTP signature request
+
 ### Nov 2, 2025 - Farcaster Mini App Authentication Implementation
 - **Implemented proper Farcaster Mini App authentication flow** - Follows Privy's official best practices
   - Added 'farcaster' to loginMethods in PrivyProvider configuration
@@ -57,8 +68,7 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
   - Authentication flow: Get nonce from Privy → Request signature from Farcaster → Authenticate with Privy
   - Removed 3-second XMTP initialization delay hack (no longer needed with proper auth timing)
   - Graceful fallback: Auto-login silently fails in standalone browser, manual login button still available
-  - **Testing Required:** Verify in The Base App or Farcaster that wallet connects before XMTP signature request
-  - **Note:** Users must add The Base App wallet as auth address to their Farcaster account for TBA authentication
+  - **Result:** Farcaster Mini App works perfectly ✅
   - COOP header remains `same-origin` (required for XMTP SharedArrayBuffer, incompatible with wallet popups)
 
 ### Nov 1, 2025 - Browser Extension Wallet Detection Fix

@@ -97,43 +97,86 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    // SMART WALLET DETECTION: Determine which wallet type we expect
+    const walletTypes = wallets.map(w => w.walletClientType);
+    const hasBaseAccount = walletTypes.includes('base_account');
+    const hasDetectedWallets = wallets.some(w => 
+      w.walletClientType !== 'privy' && 
+      w.walletClientType !== 'base_account'
+    );
+    
     // Log wallet detection state
     console.log('🔍 WALLET DETECTION:', {
       authenticated,
       ready,
       walletsCount: wallets.length,
       walletTypes: wallets.map(w => ({ type: w.walletClientType, address: w.address })),
+      hasBaseAccount,
+      hasDetectedWallets,
       retryCount: walletRetryCountRef.current,
     });
 
-    // Find embedded wallet or use first available
-    const wallet = wallets.find(w => w.walletClientType === 'privy') || wallets[0];
+    // SMART RETRY LOGIC: Wait for specific wallet types based on context
+    // Priority: base_account > detected wallets > embedded wallet
+    let expectedWalletType = 'any';
+    let shouldRetry = false;
+    
+    // If we detect we're in a Base App context (has auth but waiting for base_account)
+    if (!hasBaseAccount && walletRetryCountRef.current < 10) {
+      // Check if this might be Base App by looking for signs
+      // Base App takes time to inject its wallet after auth
+      const mightBeBaseApp = wallets.length === 0 || wallets.every(w => w.walletClientType === 'privy');
+      
+      if (mightBeBaseApp && walletRetryCountRef.current < 5) {
+        // Give Base App extra time to inject its wallet (first 2.5 seconds)
+        expectedWalletType = 'base_account';
+        shouldRetry = true;
+        console.log('🎯 Waiting for Base App wallet to initialize...');
+      }
+    }
+    
+    // For desktop browser extensions (detected wallets take time to inject)
+    if (!shouldRetry && wallets.length === 0 && walletRetryCountRef.current < 10) {
+      expectedWalletType = 'browser extension or embedded wallet';
+      shouldRetry = true;
+      console.log('🔌 Waiting for browser extension wallets to inject...');
+    }
+
+    // Find the best available wallet
+    // Priority: base_account > detected wallets > embedded wallet
+    const wallet = 
+      wallets.find(w => w.walletClientType === 'base_account') ||
+      wallets.find(w => w.walletClientType !== 'privy') ||
+      wallets.find(w => w.walletClientType === 'privy') ||
+      wallets[0];
     
     if (!wallet) {
-      walletRetryCountRef.current += 1;
-      console.warn(`⚠️ No wallet found (attempt ${walletRetryCountRef.current}/10)`);
-      console.warn('This can happen with browser extensions that inject wallets after page load');
-      
-      // Retry up to 10 times with 500ms delay (5 seconds total)
-      if (walletRetryCountRef.current < 10) {
-        console.log('⏳ Retrying wallet detection in 500ms...');
+      if (shouldRetry) {
+        walletRetryCountRef.current += 1;
+        console.warn(`⚠️ No ${expectedWalletType} wallet found yet (attempt ${walletRetryCountRef.current}/10)`);
+        
         setIsConnecting(true);
         setTimeout(() => {
           initializeClient();
         }, 500);
         return;
       } else {
-        console.error('❌ No wallet found after 10 retries');
+        console.error('❌ No wallet found after retries');
         setError('No wallet available. Please connect a wallet and refresh the page.');
         setIsConnecting(false);
         return;
       }
     }
 
-    // Wallet found! Reset retry counter
+    // Wallet found! Reset retry counter and log selection
     walletRetryCountRef.current = 0;
-    console.log('✅ Wallet found! Initializing XMTP with wallet:', wallet.address);
-    console.log('Wallet type:', wallet.walletClientType);
+    console.log('✅ Wallet found! Initializing XMTP...');
+    console.log('📱 Selected wallet:', {
+      type: wallet.walletClientType,
+      address: wallet.address,
+      isBaseAccount: wallet.walletClientType === 'base_account',
+      isPrivy: wallet.walletClientType === 'privy',
+    });
     setActiveWalletAddress(wallet.address);
 
     isInitializing.current = true;
