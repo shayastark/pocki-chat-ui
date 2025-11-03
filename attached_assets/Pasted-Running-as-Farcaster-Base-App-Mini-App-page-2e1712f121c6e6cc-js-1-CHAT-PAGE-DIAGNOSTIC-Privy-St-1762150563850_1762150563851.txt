@@ -1,0 +1,143 @@
+Running as Farcaster/Base App Mini App
+page-2e1712f121c6e6cc.js:1 🔍 CHAT PAGE DIAGNOSTIC - Privy State: {authenticated: false, ready: true, timestamp: '2025-11-03T06:04:55.550Z'}
+page-2e1712f121c6e6cc.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: false, error: null, activeWalletAddress: null, timestamp: '2025-11-03T06:04:55.551Z'}
+page-2e1712f121c6e6cc.js:1 🔍 useXMTP DIAGNOSTIC - useWallets() State: {ready: false, walletsCount: 0, wallets: Array(0), authenticated: false, timestamp: '2025-11-03T06:04:55.552Z'}
+page-2e1712f121c6e6cc.js:1 🔍 useXMTP DIAGNOSTIC - Initialization Effect Triggered: {isBaseApp: false, authenticated: false, hasQuickAuth: false, isAuthenticated: false, ready: false, …}
+page-2e1712f121c6e6cc.js:1 ⏸️ Skipping XMTP initialization because: {authenticated: 'NOT AUTHENTICATED', readyOrWallets: 'NOT READY (ready: false, wallets: 0)', client: 'OK', hasInitialized: 'OK'}
+page-2e1712f121c6e6cc.js:1 ✅ Authentication confirmed: {privyAuth: false, quickAuth: false, baseApp: true, staying: 'on chat page'}
+9221-52d6e6637404431d.js:1 Uncaught (in promise) Error: Unsupported action: eip6963RequestProvider
+    at Object.eip6963RequestProvider (3862.e76c7843d81fc9a9.js:1:4258)
+    at 7816.172ec2ed62c7a0ba.js:14:111236
+    at a (7816.172ec2ed62c7a0ba.js:14:112174)
+    at i (2886-4123403508b003ee.js:9:4690)
+deserialize @ 9221-52d6e6637404431d.js:1
+rN @ 9221-52d6e6637404431d.js:1
+Promise.then
+apply @ 9221-52d6e6637404431d.js:1
+(anonymous) @ 9221-52d6e6637404431d.js:1
+(anonymous) @ 6241-ed1909c0434ecd78.js:25
+r @ 6241-ed1909c0434ecd78.js:25
+n @ 6241-ed1909c0434ecd78.js:25
+(anonymous) @ 9c560169-3d3a49b67b7219d9.js:1
+(anonymous) @ 9c560169-3d3a49b67b7219d9.js:1
+aW @ fd9d1056-78bbd36dda77d9e8.js:1
+oe @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+id @ fd9d1056-78bbd36dda77d9e8.js:1
+o @ fd9d1056-78bbd36dda77d9e8.js:1
+M @ 2117-ae22d5005721c73b.js:1Understand this error
+page-2e1712f121c6e6cc.js:1 🏦 Base App detected - initializing with Base Account
+page-2e1712f121c6e6cc.js:1 🏦 Initializing XMTP for Base App user...
+page-2e1712f121c6e6cc.js:1 🔓 Requesting storage access for Base App iframe...
+page-2e1712f121c6e6cc.js:1 ✅ Storage access already available
+page-2e1712f121c6e6cc.js:1 🔍 Getting Base Account provider from SDK...
+page-2e1712f121c6e6cc.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: true, error: null, activeWalletAddress: null, timestamp: '2025-11-03T06:04:55.564Z'}
+page-2e1712f121c6e6cc.js:1 ✅ Base Account connected: 0x4d400CdCdE2EE1984542a4750A54Fb587743ab04
+page-2e1712f121c6e6cc.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: true, error: null, activeWalletAddress: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', timestamp: '2025-11-03T06:04:55.594Z'}
+9c560169-3d3a49b67b7219d9.js:1 Base Account SDK Initialized
+page-2e1712f121c6e6cc.js:1 ✅ Created viem wallet client for Base Account: {address: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', chain: 'Base'}
+05808931.2968652d066bae1f.js:1  INFO xmtp_db::encrypted_store: sqlite_version=3.50.4
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_db::encrypted_store: Migrations successful
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_mls::identity: Initializing identity
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_api::identity: Getting inbox_ids for account identities: [ApiIdentifier { identifier: "0x4d400cdcde2ee1984542a4750a54fb587743ab04", identifier_kind: Ethereum }]
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_id::associations::builder: adding verified signature signer=18b9d49a5c7bbb9661eb5f1891d9117c142626386b5d719e4ecb05a6e6f868e6 missing_signatures=[Installation("18b9d49a5c7bbb9661eb5f1891d9117c142626386b5d719e4ecb05a6e6f868e6"), Address("0x4d400cdcde2ee1984542a4750a54fb587743ab04")]
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1 ERROR xmtp_mls::worker: Worker error: Metadata(Connection(Database(NotFound)))
+
+e.wbg.__wbg_error_51ecdd39ec054205 @ 05808931.2968652d066bae1f.js:1
+$func10288 @ bindings_wasm_bg.665c59bc.wasm:0x7274b5
+$func7461 @ bindings_wasm_bg.665c59bc.wasm:0x6d6f65
+$func1270 @ bindings_wasm_bg.665c59bc.wasm:0x3a8a4e
+$func7604 @ bindings_wasm_bg.665c59bc.wasm:0x6db53c
+$func11210 @ bindings_wasm_bg.665c59bc.wasm:0x73745d
+$func563 @ bindings_wasm_bg.665c59bc.wasm:0x24b66e
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1
+setInterval
+(anonymous) @ 05808931.2968652d066bae1f.js:1
+p @ 05808931.2968652d066bae1f.js:1
+e.wbg.__wbg_setInterval_ed3b5e3c3ebb8a6d @ 05808931.2968652d066bae1f.js:1
+$func12954 @ bindings_wasm_bg.665c59bc.wasm:0x765f8e
+$func6148 @ bindings_wasm_bg.665c59bc.wasm:0x693103
+$func563 @ bindings_wasm_bg.665c59bc.wasm:0x24b131
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1Understand this error
+05808931.2968652d066bae1f.js:1  INFO xmtp_mls::worker: Restarting KeyPackageCleaner worker...
+
+05808931.2968652d066bae1f.js:1 ERROR xmtp_mls::worker: Worker error: Metadata(Connection(Database(NotFound)))
