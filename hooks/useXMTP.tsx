@@ -129,6 +129,22 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     setError(null);
 
     try {
+      // Request storage access for Base App iframe (fixes OPFS access)
+      console.log('🔓 Requesting storage access for Base App iframe...');
+      
+      // Feature detection for Storage Access API
+      if (typeof (document as any).hasStorageAccess === 'function') {
+        const hasAccess = await (document as any).hasStorageAccess();
+        if (!hasAccess) {
+          await (document as any).requestStorageAccess();
+          console.log('✅ Storage access granted - OPFS now accessible');
+        } else {
+          console.log('✅ Storage access already available');
+        }
+      } else {
+        console.log('⚠️ Storage Access API not available (older browser)');
+      }
+      
       // Get Base Account provider from Mini App SDK
       const miniappSdk = await import('@farcaster/miniapp-sdk');
       const sdk = miniappSdk.default;
