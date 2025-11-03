@@ -145,6 +145,11 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       const requestedAccounts = await provider.request({ method: 'eth_requestAccounts' });
       console.log('✅ Wallet connection approved:', requestedAccounts);
 
+      // Wait for Face ID/passcode UI to complete and user to confirm
+      console.log('⏳ Waiting for Face ID confirmation...');
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      console.log('✅ Proceeding after Face ID confirmation window');
+
       // Get the connected account address
       const accounts = await provider.request({ method: 'eth_accounts' });
       if (!accounts || accounts.length === 0) {
