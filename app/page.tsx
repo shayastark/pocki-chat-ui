@@ -32,10 +32,14 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
-    if (isMiniApp && quickAuthToken && authenticated) {
+    if (isMiniApp && quickAuthToken) {
+      // For Mini Apps: navigate once Quick Auth succeeds
+      // Native wallet will be detected in the chat page
       sessionStorage.setItem('quickAuthToken', quickAuthToken);
+      console.log('🚀 Navigating to chat with Quick Auth token');
       router.push('/chat');
     } else if (!isMiniApp && ready && authenticated) {
+      // For browsers: wait for Privy authentication
       router.push('/chat');
     }
   }, [isMiniApp, quickAuthToken, ready, authenticated, router]);
@@ -78,8 +82,7 @@ export default function LandingPage() {
       
       setQuickAuthToken(token);
       
-      console.log('🔌 Connecting wallet via Privy...');
-      await login();
+      console.log('✅ Quick Auth complete! Waiting for native wallet detection...');
     } catch (error) {
       console.error('❌ Quick Auth failed:', error);
       setQuickAuthError(error instanceof Error ? error.message : 'Authentication failed');
