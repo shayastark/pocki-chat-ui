@@ -49,6 +49,18 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 3, 2025 - Fixed Base App 400 Error & Quick Auth Compatibility ✅
+- **Fixed Base App Quick Auth 400 Bad Request error**
+  - **Problem:** Base App users got 400 Bad Request when Quick Auth tried to verify SIWF message at `https://auth.farcaster.xyz/verify-siwf`
+  - **Root cause:** Base App auto-connects users to Base Account on launch, making Quick Auth unnecessary. The Farcaster verification endpoint rejects Base App's Quick Auth implementation
+  - **Solution:** Detect Base App (clientFid 309857) and skip Quick Auth entirely
+    - Added Base App detection using SDK context: `context.client.clientFid === 309857`
+    - Base App users auto-navigate to chat after SDK ready (no Quick Auth needed)
+    - Farcaster Mini App users continue using Quick Auth (working perfectly)
+    - Browser users continue using Privy login (working perfectly)
+    - Chat page recognizes Base App connection via sessionStorage flag
+  - **Result:** Base App users leverage auto-connected Base Account, avoiding 400 errors completely
+
 ### Nov 3, 2025 - Fixed Mini App Redirect Loop ✅
 - **Fixed chat page redirect loop for Mini App users**
   - **Problem:** After Quick Auth succeeded and navigated to `/chat`, the chat page immediately redirected back to `/` because it only checked for Privy authentication, creating an infinite navigation loop
