@@ -140,6 +140,11 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         throw new Error('Base Account provider not available');
       }
 
+      // CRITICAL: Request wallet connection - triggers Face ID/passcode prompt
+      console.log('🔐 Requesting wallet connection (triggers Face ID/passcode)...');
+      const requestedAccounts = await provider.request({ method: 'eth_requestAccounts' });
+      console.log('✅ Wallet connection approved:', requestedAccounts);
+
       // Get the connected account address
       const accounts = await provider.request({ method: 'eth_accounts' });
       if (!accounts || accounts.length === 0) {

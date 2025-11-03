@@ -49,6 +49,15 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 3, 2025 - CRITICAL: Added eth_requestAccounts for Base App Wallet Connection 🔧
+- **Testing wallet connection trigger that may resolve OPFS errors**
+  - **Discovery:** Base App Mini Apps (like base.dev) show "Coinbase Wallet Registration" signature request with Face ID/passcode prompt before any operations
+  - **Missing step:** Our code was calling `eth_accounts` (checks for existing connection) but never `eth_requestAccounts` (triggers connection flow)
+  - **Fix implemented:** Added `await provider.request({ method: 'eth_requestAccounts' })` before XMTP initialization
+  - **Expected behavior:** Should trigger Face ID/passcode prompt, fully initialize wallet, then XMTP can create its database
+  - **Hypothesis:** The `Database(NotFound)` error might be caused by incomplete wallet initialization, not iframe OPFS restrictions
+  - **Status:** Ready for testing - this could completely resolve the Base App issue without needing popup window
+
 ### Nov 3, 2025 - Implemented Popup Window Solution for Base App OPFS Issue ✅
 - **Base App users now chat in popup window to bypass iframe OPFS limitations**
   - **Problem:** Base App runs Mini Apps in iframes, blocking XMTP Browser SDK v5's OPFS (Origin Private File System) access with `Database(NotFound)` errors
