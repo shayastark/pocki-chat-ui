@@ -1,0 +1,30 @@
+Base App detected - initializing with Base Account
+page-82cec9ef0db9995a.js:1 🏦 Initializing XMTP for Base App user...
+page-82cec9ef0db9995a.js:1 🔍 Getting Base Account provider from SDK...
+page-82cec9ef0db9995a.js:1 🔍 Getting Base App wallet address...
+page-82cec9ef0db9995a.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: true, error: null, activeWalletAddress: null, timestamp: '2025-11-03T17:52:01.160Z'}
+page-82cec9ef0db9995a.js:1 ✅ Base Account connected: 0x4d400CdCdE2EE1984542a4750A54Fb587743ab04
+page-82cec9ef0db9995a.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: true, error: null, activeWalletAddress: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', timestamp: '2025-11-03T17:52:01.194Z'}
+9c560169-3d3a49b67b7219d9.js:1 Base Account SDK Initialized
+page-82cec9ef0db9995a.js:1 ✅ Created viem wallet client for Base Account: {address: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', chain: 'Base'}
+05808931.2968652d066bae1f.js:1  INFO xmtp_db::encrypted_store: sqlite_version=3.50.4
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_db::encrypted_store: Migrations successful
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_mls::identity: Initializing identity
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_api::identity: Getting inbox_ids for account identities: [ApiIdentifier { identifier: "0x4d400cdcde2ee1984542a4750a54fb587743ab04", identifier_kind: Ethereum }]
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_id::associations::builder: adding verified signature signer=50d0bc3f2fd90a28d7b37563a70d7d38466f64d1858048ae85d9b5f1da38cc5d missing_signatures=[Installation("50d0bc3f2fd90a28d7b37563a70d7d38466f64d1858048ae85d9b5f1da38cc5d"), Address("0x4d400cdcde2ee1984542a4750a54fb587743ab04")]
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1 ERROR xmtp_mls::worker: Worker error: Metadata(Connection(Database(NotFound)))
