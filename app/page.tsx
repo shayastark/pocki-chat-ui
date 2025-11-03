@@ -12,6 +12,7 @@ export default function LandingPage() {
   const router = useRouter();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [isMiniApp, setIsMiniApp] = useState(false);
+  const [isBaseApp, setIsBaseApp] = useState(false);
   const [quickAuthToken, setQuickAuthToken] = useState<string | null>(null);
   const [quickAuthError, setQuickAuthError] = useState<string | null>(null);
 
@@ -20,11 +21,19 @@ export default function LandingPage() {
       try {
         const context = await miniappSdk?.context;
         const inMiniApp = context?.client?.clientFid !== undefined;
+        const inBaseApp = context?.client?.clientFid === 309857;
         setIsMiniApp(inMiniApp);
-        console.log('🔍 Environment detection:', { inMiniApp, context });
+        setIsBaseApp(inBaseApp);
+        console.log('🔍 Environment detection:', { 
+          inMiniApp, 
+          inBaseApp, 
+          clientFid: context?.client?.clientFid,
+          context 
+        });
       } catch (error) {
         console.log('🔍 Not in Mini App environment');
         setIsMiniApp(false);
+        setIsBaseApp(false);
       }
     };
     
@@ -32,19 +41,21 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
-    if (isMiniApp && quickAuthToken) {
-      // For Mini Apps: navigate once Quick Auth succeeds
-      // Store token and navigate in next tick to avoid state issues
+    if (isBaseApp && isSDKLoaded) {
+      // For Base App: Base Account is auto-connected, skip Quick Auth
+      console.log('🏦 Base App detected - Base Account auto-connected, navigating to chat');
+      sessionStorage.setItem('baseAppConnected', 'true');
+      window.location.href = '/chat';
+    } else if (isMiniApp && !isBaseApp && quickAuthToken) {
+      // For Farcaster Mini App: navigate once Quick Auth succeeds
       sessionStorage.setItem('quickAuthToken', quickAuthToken);
       console.log('🚀 Navigating to chat with Quick Auth token');
-      
-      // Use window.location for more reliable navigation in Mini App context
       window.location.href = '/chat';
     } else if (!isMiniApp && ready && authenticated) {
       // For browsers: wait for Privy authentication
       router.push('/chat');
     }
-  }, [isMiniApp, quickAuthToken, ready, authenticated, router]);
+  }, [isBaseApp, isMiniApp, isSDKLoaded, quickAuthToken, ready, authenticated, router]);
 
   // Ensure Mini App SDK is ready
   useEffect(() => {
@@ -174,7 +185,22 @@ export default function LandingPage() {
         </div>
 
         <div className="text-center">
-          {isMiniApp ? (
+          {isBaseApp ? (
+            <div className="text-center">
+              <div className="mb-4 animate-pulse-gentle">
+                <Image 
+                  src="/pocki-logo.jpg" 
+                  alt="Pocki" 
+                  width={80} 
+                  height={80}
+                  className="mx-auto rounded-2xl"
+                />
+              </div>
+              <p className="text-panda-green-600 font-semibold text-lg">
+                Connecting to your Base Account...
+              </p>
+            </div>
+          ) : isMiniApp ? (
             <>
               <button
                 onClick={handleQuickAuth}
@@ -196,9 +222,11 @@ export default function LandingPage() {
               Connect Wallet to Start 🎋
             </button>
           )}
-          <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
-            Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
-          </p>
+          {!isBaseApp && (
+            <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
+              Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
+            </p>
+          )}
         </div>
 
         <div className="mt-12">

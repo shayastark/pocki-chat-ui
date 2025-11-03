@@ -1,0 +1,57 @@
+POST https://auth.farcaster.xyz/verify-siwf 400 (Bad Request)
+rx @ 7058-cd36c7028031cf4a.js:1
+verifySiwf @ 7058-cd36c7028031cf4a.js:1
+r @ 7058-cd36c7028031cf4a.js:1
+await in r
+getToken @ 7058-cd36c7028031cf4a.js:1
+v @ page-9fe07bde49d0c247.js:1
+a_ @ fd9d1056-78bbd36dda77d9e8.js:1
+aR @ fd9d1056-78bbd36dda77d9e8.js:1
+(anonymous) @ fd9d1056-78bbd36dda77d9e8.js:1
+sF @ fd9d1056-78bbd36dda77d9e8.js:1
+sM @ fd9d1056-78bbd36dda77d9e8.js:1
+(anonymous) @ fd9d1056-78bbd36dda77d9e8.js:1
+o4 @ fd9d1056-78bbd36dda77d9e8.js:1
+iV @ fd9d1056-78bbd36dda77d9e8.js:1
+sU @ fd9d1056-78bbd36dda77d9e8.js:1
+uR @ fd9d1056-78bbd36dda77d9e8.js:1
+uM @ fd9d1056-78bbd36dda77d9e8.js:1Understand this error
+2117-ae22d5005721c73b.js:1 ❌ Quick Auth failed: RequestFailedError: Request failed with status 400
+    at rx (7058-cd36c7028031cf4a.js:1:82691)
+    at async r (7058-cd36c7028031cf4a.js:1:84143)
+window.console.error @ 2117-ae22d5005721c73b.js:1
+v @ page-9fe07bde49d0c247.js:1
+await in v
+a_ @ fd9d1056-78bbd36dda77d9e8.js:1
+aR @ fd9d1056-78bbd36dda77d9e8.js:1
+(anonymous) @ fd9d1056-78bbd36dda77d9e8.js:1
+sF @ fd9d1056-78bbd36dda77d9e8.js:1
+sM @ fd9d1056-78bbd36dda77d9e8.js:1
+(anonymous) @ fd9d1056-78bbd36dda77d9e8.js:1
+o4 @ fd9d1056-78bbd36dda77d9e8.js:1
+iV @ fd9d1056-78bbd36dda77d9e8.js:1
+sU @ fd9d1056-78bbd36dda77d9e8.js:1
+uR @ fd9d1056-78bbd36dda77d9e8.js:1
+uM @ fd9d1056-78bbd36dda77d9e8.js:1Understand this error
+7058-cd36c7028031cf4a.js:1 Uncaught (in promise) RequestFailedError: Request failed with status 400
+    at rx (7058-cd36c7028031cf4a.js:1:82691)
+    at async r (7058-cd36c7028031cf4a.js:1:84143)
+rx @ 7058-cd36c7028031cf4a.js:1
+await in rx
+verifySiwf @ 7058-cd36c7028031cf4a.js:1
+r @ 7058-cd36c7028031cf4a.js:1
+await in r
+getToken @ 7058-cd36c7028031cf4a.js:1
+v @ page-9fe07bde49d0c247.js:1
+a_ @ fd9d1056-78bbd36dda77d9e8.js:1
+aR @ fd9d1056-78bbd36dda77d9e8.js:1
+(anonymous) @ fd9d1056-78bbd36dda77d9e8.js:1
+sF @ fd9d1056-78bbd36dda77d9e8.js:1
+sM @ fd9d1056-78bbd36dda77d9e8.js:1
+(anonymous) @ fd9d1056-78bbd36dda77d9e8.js:1
+o4 @ fd9d1056-78bbd36dda77d9e8.js:1
+iV @ fd9d1056-78bbd36dda77d9e8.js:1
+sU @ fd9d1056-78bbd36dda77d9e8.js:1
+uR @ fd9d1056-78bbd36dda77d9e8.js:1
+uM @ fd9d1056-78bbd36dda77d9e8.js:1Understand this error
+getFarcasterUserByCustodyAddress.ts:2  GET https://www.base.dev/api/neynar/user-by-custody-address?address=0x4d400CdCdE2EE1984542a4750A54Fb587743ab04 404 (Not Found)
