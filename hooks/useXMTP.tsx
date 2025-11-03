@@ -84,19 +84,22 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const walletRetryCountRef = useRef(0);
   const [hasQuickAuth, setHasQuickAuth] = useState(false);
+  const [isBaseApp, setIsBaseApp] = useState(false);
 
-  // Check for Quick Auth token on mount and when sessionStorage changes
+  // Check for Quick Auth token and Base App connection on mount
   useEffect(() => {
-    const checkQuickAuth = () => {
+    const checkAuth = () => {
       const token = typeof window !== 'undefined' ? sessionStorage.getItem('quickAuthToken') : null;
+      const baseAppConnected = typeof window !== 'undefined' ? sessionStorage.getItem('baseAppConnected') : null;
       setHasQuickAuth(!!token);
+      setIsBaseApp(!!baseAppConnected);
     };
     
-    checkQuickAuth();
+    checkAuth();
     
     // Listen for storage changes (in case token is added/removed)
-    window.addEventListener('storage', checkQuickAuth);
-    return () => window.removeEventListener('storage', checkQuickAuth);
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
   }, []);
 
   // DIAGNOSTIC: Log useWallets state whenever it changes
@@ -113,6 +116,184 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       timestamp: new Date().toISOString(),
     });
   }, [ready, wallets, authenticated]);
+
+  const initializeClientForBaseApp = useCallback(async () => {
+    if (isInitializing.current) {
+      console.log('Already initializing Base App client, skipping...');
+      return;
+    }
+
+    console.log('🏦 Initializing XMTP for Base App user...');
+    isInitializing.current = true;
+    setIsConnecting(true);
+    setError(null);
+
+    try {
+      // Get Base Account provider from Mini App SDK
+      const miniappSdk = await import('@farcaster/miniapp-sdk');
+      const sdk = miniappSdk.default;
+      
+      console.log('🔍 Getting Base Account provider from SDK...');
+      const provider = await sdk.wallet.ethProvider;
+      
+      if (!provider) {
+        throw new Error('Base Account provider not available');
+      }
+
+      // Get the connected account address
+      const accounts = await provider.request({ method: 'eth_accounts' });
+      if (!accounts || accounts.length === 0) {
+        throw new Error('No Base Account connected');
+      }
+      
+      const accountAddress = accounts[0];
+      console.log('✅ Base Account connected:', accountAddress);
+      setActiveWalletAddress(accountAddress);
+
+      // Dynamically import XMTP Browser SDK and viem
+      const { Client } = await import('@xmtp/browser-sdk');
+      const { createWalletClient, custom } = await import('viem');
+      const { base } = await import('viem/chains');
+      
+      // Create viem wallet client from Base Account provider
+      const walletClient = createWalletClient({
+        account: accountAddress as `0x${string}`,
+        chain: base,
+        transport: custom(provider),
+      });
+      
+      console.log('✅ Created viem wallet client for Base Account:', {
+        address: walletClient.account.address,
+        chain: walletClient.chain.name,
+      });
+      
+      // Create XMTP signer using viem wallet client
+      const signer: any = {
+        type: 'EOA',
+        getIdentifier: () => ({
+          identifier: accountAddress.toLowerCase(),
+          identifierKind: 'Ethereum' as const,
+        }),
+        signMessage: async (message: string | { message: string }): Promise<Uint8Array> => {
+          const messageText = typeof message === 'string' ? message : message.message;
+          
+          const signature = await walletClient.signMessage({
+            account: walletClient.account,
+            message: messageText,
+          });
+          
+          const hexString = signature.startsWith('0x') ? signature.slice(2) : signature;
+          const bytes = new Uint8Array(hexString.length / 2);
+          for (let i = 0; i < hexString.length; i += 2) {
+            bytes[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
+          }
+          return bytes;
+        },
+      };
+
+      // Import codecs before creating client
+      const { ReplyCodec } = await import('@xmtp/content-type-reply');
+      const { WalletSendCallsCodec } = await import('@xmtp/content-type-wallet-send-calls');
+
+      const newClient = await Client.create(signer, {
+        env: XMTP_ENV,
+        codecs: [new ReplyCodec(), new WalletSendCallsCodec()],
+      });
+      
+      console.log('✅ Created XMTP client for Base App');
+      console.log('🌍 XMTP Environment:', XMTP_ENV);
+      console.log('📬 Client Inbox ID:', newClient.inboxId);
+      console.log('🎯 Target Agent Inbox ID:', AGENT_ADDRESS);
+
+      setClient(newClient);
+
+      if (!AGENT_ADDRESS) {
+        throw new Error('Agent address not configured. Please set NEXT_PUBLIC_AGENT_ADDRESS environment variable.');
+      }
+
+      console.log('Finding or creating conversation with agent inbox ID:', AGENT_ADDRESS);
+
+      // Sync all conversations
+      console.log('🔄 Syncing all conversations and messages...');
+      await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
+      console.log('✅ Successfully synced all conversations');
+      
+      // Find or create conversation with agent
+      const allConvs = await (newClient.conversations as any).list();
+      console.log(`📋 Total conversations: ${allConvs.length}`);
+      
+      const agentDMs = [];
+      for (const c of allConvs) {
+        const peerInboxId = await c.peerInboxId();
+        const isAgentDM = peerInboxId === AGENT_ADDRESS && !c.isGroup;
+        if (isAgentDM) {
+          agentDMs.push(c);
+        }
+      }
+      
+      let conv = null;
+      if (agentDMs.length > 0) {
+        // Use existing conversation
+        conv = agentDMs[0];
+        console.log('✅ Found existing DM with agent');
+      } else {
+        // Create new conversation
+        console.log('⚠️ No existing DM found, creating new one...');
+        conv = await (newClient.conversations as any).newDm(AGENT_ADDRESS);
+        console.log('✅ Created new DM with agent');
+        await (newClient.conversations as any).syncAll(['allowed', 'unknown', 'denied']);
+      }
+      
+      setAllConversations(allConvs);
+      
+      // Ensure conversation consent is allowed
+      const consentState = await conv.consentState();
+      if (consentState !== 'allowed') {
+        await conv.updateConsentState('allowed');
+        console.log('✅ Updated conversation consent to "allowed"');
+      }
+      
+      setConversation(conv);
+
+      const existingMessages = await conv.messages();
+      console.log(`Initial load: Fetched ${existingMessages.length} messages`);
+      
+      const normalizedMessages = existingMessages
+        .map((msg: any) => {
+          let textContent: string | null = null;
+          
+          if (typeof msg.content === 'string') {
+            textContent = msg.content;
+          } else if (msg.contentType?.typeId === 'reply') {
+            if (typeof msg.content?.content === 'string') {
+              textContent = msg.content.content;
+            } else if (typeof msg.contentFallback === 'string') {
+              textContent = msg.contentFallback;
+            }
+          }
+          
+          return textContent ? {
+            id: msg.id,
+            content: textContent,
+            senderInboxId: msg.senderAddress || msg.senderInboxId,
+            sentAt: msg.sent || msg.sentAt,
+          } : null;
+        })
+        .filter((msg: Message | null): msg is Message => msg !== null);
+      
+      console.log(`Initial load: Displaying ${normalizedMessages.length} text messages`);
+      setMessages(normalizedMessages);
+
+      setIsConnected(true);
+      hasInitialized.current = true;
+    } catch (err) {
+      console.error('Failed to initialize XMTP for Base App:', err);
+      setError(err instanceof Error ? err.message : 'Failed to connect to XMTP');
+    } finally {
+      setIsConnecting(false);
+      isInitializing.current = false;
+    }
+  }, []);
 
   const initializeClient = useCallback(async () => {
     // Prevent multiple simultaneous initialization attempts
@@ -485,15 +666,23 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   }, [authenticated, hasQuickAuth, ready, wallets]);
 
   useEffect(() => {
-    const isAuthenticated = authenticated || hasQuickAuth;
+    // CRITICAL: Route to appropriate initialization based on platform
     
-    // CRITICAL FIX: Match the same bypass logic as initializeClient
-    // Privy's ready state is unreliable - proceed if we have wallets
+    // For Base App users: Bypass Privy entirely
+    if (isBaseApp && !client && !hasInitialized.current) {
+      console.log('🏦 Base App detected - initializing with Base Account');
+      initializeClientForBaseApp();
+      return;
+    }
+    
+    // For Farcaster Mini App & Browser users: Use Privy flow
+    const isAuthenticated = authenticated || hasQuickAuth;
     const hasWallets = wallets.length > 0;
     const shouldProceed = isAuthenticated && (ready || hasWallets);
     
-    // DIAGNOSTIC: Always log the state, regardless of whether we initialize
+    // DIAGNOSTIC: Always log the state
     console.log('🔍 useXMTP DIAGNOSTIC - Initialization Effect Triggered:', {
+      isBaseApp,
       authenticated,
       hasQuickAuth,
       isAuthenticated,
@@ -508,7 +697,6 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     });
 
     // Trigger initialization when authenticated (Privy or Quick Auth) and ready OR has wallets
-    // This bypasses Privy's unreliable ready state when wallets are already present
     if (shouldProceed && !client && !hasInitialized.current) {
       console.log('🚀 Triggering XMTP initialization:', { 
         authenticated,
@@ -531,7 +719,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         hasInitialized: hasInitialized.current ? 'ALREADY INITIALIZED' : 'OK',
       });
     }
-  }, [authenticated, hasQuickAuth, ready, wallets, client, initializeClient]);
+  }, [isBaseApp, authenticated, hasQuickAuth, ready, wallets, client, initializeClient, initializeClientForBaseApp]);
 
   // Fetch peer inbox ID when conversation changes
   useEffect(() => {
