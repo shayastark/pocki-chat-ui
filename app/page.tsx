@@ -41,12 +41,7 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
-    if (isBaseApp && isSDKLoaded) {
-      // For Base App: Navigate to chat, eth_requestAccounts will trigger Face ID
-      console.log('🏦 Base App detected - navigating to chat');
-      sessionStorage.setItem('baseAppConnected', 'true');
-      window.location.href = '/chat';
-    } else if (isMiniApp && !isBaseApp && quickAuthToken) {
+    if (isMiniApp && !isBaseApp && quickAuthToken) {
       // For Farcaster Mini App: navigate once Quick Auth succeeds
       sessionStorage.setItem('quickAuthToken', quickAuthToken);
       console.log('🚀 Navigating to chat with Quick Auth token');
@@ -55,7 +50,7 @@ export default function LandingPage() {
       // For browsers: wait for Privy authentication
       router.push('/chat');
     }
-  }, [isBaseApp, isMiniApp, isSDKLoaded, quickAuthToken, ready, authenticated, router]);
+  }, [isMiniApp, isBaseApp, quickAuthToken, ready, authenticated, router]);
 
   // Ensure Mini App SDK is ready
   useEffect(() => {
@@ -100,6 +95,12 @@ export default function LandingPage() {
       console.error('❌ Quick Auth failed:', error);
       setQuickAuthError(error instanceof Error ? error.message : 'Authentication failed');
     }
+  };
+
+  const handleBaseAppSignIn = () => {
+    console.log('🏦 Base App user signing in - navigating to chat');
+    sessionStorage.setItem('baseAppConnected', 'true');
+    window.location.href = '/chat';
   };
 
   if (!isMiniApp && !ready) {
@@ -186,20 +187,12 @@ export default function LandingPage() {
 
         <div className="text-center">
           {isBaseApp ? (
-            <div className="text-center">
-              <div className="mb-4 animate-pulse-gentle">
-                <Image 
-                  src="/pocki-logo.jpg" 
-                  alt="Pocki" 
-                  width={80} 
-                  height={80}
-                  className="mx-auto rounded-2xl"
-                />
-              </div>
-              <p className="text-panda-green-600 font-semibold text-lg">
-                Connecting to your Base Account...
-              </p>
-            </div>
+            <button
+              onClick={handleBaseAppSignIn}
+              className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+            >
+              Sign In to Start 🎋
+            </button>
           ) : isMiniApp ? (
             <>
               <button
