@@ -1,0 +1,80 @@
+ Skipping XMTP initialization because: {authenticated: 'NOT AUTHENTICATED', readyOrWallets: 'NOT READY (ready: false, wallets: 0)', client: 'OK', hasInitialized: 'OK'}
+page-0053864bf60febc0.js:1 ✅ Authentication confirmed: {privyAuth: false, quickAuth: false, baseApp: true, staying: 'on chat page'}
+7058-cd36c7028031cf4a.js:1 Uncaught (in promise) Error: Unsupported action: eip6963RequestProvider
+    at Object.eip6963RequestProvider (3862.e76c7843d81fc9a9.js:1:4258)
+    at 7816.172ec2ed62c7a0ba.js:14:111236
+    at a (7816.172ec2ed62c7a0ba.js:14:112174)
+    at i (2886-4123403508b003ee.js:9:4690)
+deserialize @ 7058-cd36c7028031cf4a.js:1
+t2 @ 7058-cd36c7028031cf4a.js:1
+Promise.then
+apply @ 7058-cd36c7028031cf4a.js:1
+(anonymous) @ 7058-cd36c7028031cf4a.js:1
+(anonymous) @ 6241-ed1909c0434ecd78.js:25
+r @ 6241-ed1909c0434ecd78.js:25
+n @ 6241-ed1909c0434ecd78.js:25
+(anonymous) @ 9c560169-3d3a49b67b7219d9.js:1
+(anonymous) @ 9c560169-3d3a49b67b7219d9.js:1
+aW @ fd9d1056-78bbd36dda77d9e8.js:1
+oe @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+id @ fd9d1056-78bbd36dda77d9e8.js:1
+o @ fd9d1056-78bbd36dda77d9e8.js:1
+M @ 2117-ae22d5005721c73b.js:1Understand this error
+9c560169-3d3a49b67b7219d9.js:1 Base Account SDK Initialized
