@@ -57,7 +57,8 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
       - Frontend: `sdk.quickAuth.getToken()` obtains JWT token from Farcaster
       - Backend: `/api/auth` route verifies JWT using `@farcaster/quick-auth` server package
       - Token stored in sessionStorage for session persistence
-      - After Quick Auth, triggers Privy `login()` to connect wallet for XMTP
+      - **No Privy login() call** - lets native Mini App wallet be detected naturally
+      - Privy's `useWallets()` detects base_account/injected wallets without authentication
       - Cleaner, native authentication experience in Mini App context
     - **Privy for Browsers:** Existing Privy flow maintained for standalone browser users
       - Wallet, email, and social login options
