@@ -422,6 +422,13 @@ export default function ChatPage() {
     return !!token;
   });
 
+  // Check for Base App connection (Base Account auto-connected)
+  const [hasBaseApp] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const baseApp = sessionStorage.getItem('baseAppConnected');
+    return !!baseApp;
+  });
+
   useEffect(() => {
     const initializeMiniApp = async () => {
       try {
@@ -439,9 +446,9 @@ export default function ChatPage() {
     initializeMiniApp();
   }, []);
 
-  // CRITICAL FIX: Accept either Privy auth OR Quick Auth token
+  // CRITICAL FIX: Accept Privy auth OR Quick Auth token OR Base App connection
   useEffect(() => {
-    const isAuthenticated = authenticated || hasQuickAuth;
+    const isAuthenticated = authenticated || hasQuickAuth || hasBaseApp;
     
     if (ready && !isAuthenticated) {
       console.log('❌ No authentication found, redirecting to landing page');
@@ -450,13 +457,14 @@ export default function ChatPage() {
       console.log('✅ Authentication confirmed:', { 
         privyAuth: authenticated, 
         quickAuth: hasQuickAuth,
+        baseApp: hasBaseApp,
         staying: 'on chat page'
       });
     }
-  }, [ready, authenticated, hasQuickAuth, router]);
+  }, [ready, authenticated, hasQuickAuth, hasBaseApp, router]);
 
   // CRITICAL FIX: Show loading only if we don't have any form of auth yet
-  const isAuthenticated = authenticated || hasQuickAuth;
+  const isAuthenticated = authenticated || hasQuickAuth || hasBaseApp;
   
   if (!ready || !isAuthenticated) {
     return (
