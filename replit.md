@@ -49,6 +49,17 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 3, 2025 - Added Storage Access API for Base App OPFS Support ✅
+- **Implemented Storage Access API to fix OPFS access in Base App iframe**
+  - **Problem:** Base App runs Mini Apps in iframes, blocking XMTP Browser SDK v5's OPFS (Origin Private File System) access with `Database(NotFound)` errors
+  - **Root cause:** XMTP Browser SDK v5 requires OPFS for local storage, but iframes have restricted storage access by default
+  - **Solution:** Request storage access before XMTP initialization in Base App path only
+    - Added Storage Access API request in `initializeClientForBaseApp()` function
+    - Feature detection ensures TypeScript compatibility: `typeof (document as any).hasStorageAccess === 'function'`
+    - Graceful fallback if API unavailable (logs warning, continues initialization)
+    - Completely isolated to Base App users - browser and Farcaster paths unchanged
+  - **Result:** Base App users now have OPFS access, allowing XMTP to store data locally and initialize successfully
+
 ### Nov 3, 2025 - Fixed Base App 400 Error & XMTP Wallet Detection ✅
 - **Fixed Base App Quick Auth 400 Bad Request error AND wallet detection**
   - **Problem 1:** Base App users got 400 Bad Request when Quick Auth tried to verify SIWF message at `https://auth.farcaster.xyz/verify-siwf`
