@@ -34,10 +34,12 @@ export default function LandingPage() {
   useEffect(() => {
     if (isMiniApp && quickAuthToken) {
       // For Mini Apps: navigate once Quick Auth succeeds
-      // Native wallet will be detected in the chat page
+      // Store token and navigate in next tick to avoid state issues
       sessionStorage.setItem('quickAuthToken', quickAuthToken);
       console.log('🚀 Navigating to chat with Quick Auth token');
-      router.push('/chat');
+      
+      // Use window.location for more reliable navigation in Mini App context
+      window.location.href = '/chat';
     } else if (!isMiniApp && ready && authenticated) {
       // For browsers: wait for Privy authentication
       router.push('/chat');

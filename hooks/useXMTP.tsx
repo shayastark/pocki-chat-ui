@@ -124,16 +124,30 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     // Check authentication state - either Privy OR Quick Auth
     const isAuthenticated = authenticated || hasQuickAuth;
     
-    // Wait for wallets to be ready
-    if (!isAuthenticated || !ready) {
-      console.log('🔍 Waiting for auth/ready:', { 
+    // CRITICAL FIX: Privy's ready state is unreliable (stays false even when wallets exist)
+    // Bypass ready check if we have authentication + wallets already
+    const hasWallets = wallets.length > 0;
+    const shouldProceed = isAuthenticated && (ready || hasWallets);
+    
+    if (!shouldProceed) {
+      console.log('🔍 Waiting for auth/wallets:', { 
         authenticated, 
         hasQuickAuth, 
         isAuthenticated, 
-        ready 
+        ready,
+        walletsCount: wallets.length,
+        shouldProceed
       });
       return;
     }
+    
+    console.log('✅ Proceeding with XMTP initialization:', {
+      authenticated,
+      hasQuickAuth,
+      ready,
+      walletsCount: wallets.length,
+      bypassedReadyCheck: !ready && hasWallets
+    });
 
     // SMART WALLET DETECTION: Determine which wallet type we expect
     const walletTypes = wallets.map(w => w.walletClientType);
@@ -473,6 +487,11 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const isAuthenticated = authenticated || hasQuickAuth;
     
+    // CRITICAL FIX: Match the same bypass logic as initializeClient
+    // Privy's ready state is unreliable - proceed if we have wallets
+    const hasWallets = wallets.length > 0;
+    const shouldProceed = isAuthenticated && (ready || hasWallets);
+    
     // DIAGNOSTIC: Always log the state, regardless of whether we initialize
     console.log('🔍 useXMTP DIAGNOSTIC - Initialization Effect Triggered:', {
       authenticated,
@@ -480,29 +499,34 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       isAuthenticated,
       ready,
       walletsCount: wallets.length,
+      shouldProceed,
       hasClient: !!client,
       hasInitialized: hasInitialized.current,
-      willInitialize: isAuthenticated && ready && !client && !hasInitialized.current,
+      willInitialize: shouldProceed && !client && !hasInitialized.current,
+      bypassedReadyCheck: !ready && hasWallets,
       timestamp: new Date().toISOString(),
     });
 
-    // Trigger initialization when authenticated (Privy or Quick Auth) and ready
-    // Even if wallets.length is 0, the retry logic in initializeClient will handle waiting
-    if (isAuthenticated && ready && !client && !hasInitialized.current) {
+    // Trigger initialization when authenticated (Privy or Quick Auth) and ready OR has wallets
+    // This bypasses Privy's unreliable ready state when wallets are already present
+    if (shouldProceed && !client && !hasInitialized.current) {
       console.log('🚀 Triggering XMTP initialization:', { 
         authenticated,
         hasQuickAuth,
         isAuthenticated, 
-        ready, 
+        ready,
+        hasWallets,
+        shouldProceed,
         walletsCount: wallets.length,
         hasClient: !!client,
-        hasInitialized: hasInitialized.current 
+        hasInitialized: hasInitialized.current,
+        bypassedReadyCheck: !ready && hasWallets
       });
       initializeClient();
     } else {
       console.log('⏸️ Skipping XMTP initialization because:', {
-        authenticated: !authenticated && !hasQuickAuth ? 'NOT AUTHENTICATED (neither Privy nor Quick Auth)' : 'OK',
-        ready: !ready ? 'NOT READY' : 'OK',
+        authenticated: !isAuthenticated ? 'NOT AUTHENTICATED' : 'OK',
+        readyOrWallets: !ready && !hasWallets ? `NOT READY (ready: ${ready}, wallets: ${wallets.length})` : 'OK',
         client: client ? 'CLIENT ALREADY EXISTS' : 'OK',
         hasInitialized: hasInitialized.current ? 'ALREADY INITIALIZED' : 'OK',
       });
