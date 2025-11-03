@@ -1,0 +1,59 @@
+Base App detected - initializing with Base Account
+page-7564dca831aae7d9.js:1 🏦 Initializing XMTP for Base App user...
+page-7564dca831aae7d9.js:1 🔍 Getting Base Account provider from SDK...
+page-7564dca831aae7d9.js:1 🔐 Requesting wallet connection (triggers Face ID/passcode)...
+page-7564dca831aae7d9.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: true, error: null, activeWalletAddress: null, timestamp: '2025-11-03T16:50:53.583Z'}
+page-7564dca831aae7d9.js:1 ✅ Wallet connection approved: ['0x4d400CdCdE2EE1984542a4750A54Fb587743ab04']
+page-7564dca831aae7d9.js:1 ✅ Base Account connected: 0x4d400CdCdE2EE1984542a4750A54Fb587743ab04
+page-7564dca831aae7d9.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: true, error: null, activeWalletAddress: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', timestamp: '2025-11-03T16:50:53.617Z'}
+9c560169-3d3a49b67b7219d9.js:1 Base Account SDK Initialized
+page-7564dca831aae7d9.js:1 ✅ Created viem wallet client for Base Account: {address: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', chain: 'Base'}
+05808931.2968652d066bae1f.js:1  INFO xmtp_db::encrypted_store: sqlite_version=3.50.4
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_db::encrypted_store: Migrations successful
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_mls::identity: Initializing identity
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_api::identity: Getting inbox_ids for account identities: [ApiIdentifier { identifier: "0x4d400cdcde2ee1984542a4750a54fb587743ab04", identifier_kind: Ethereum }]
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_id::associations::builder: adding verified signature signer=747715410f4e08b98916437e6b5791324ba91bbbd1d015e035370d67bdee3ae0 missing_signatures=[Installation("747715410f4e08b98916437e6b5791324ba91bbbd1d015e035370d67bdee3ae0"), Address("0x4d400cdcde2ee1984542a4750a54fb587743ab04")]
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1 ERROR xmtp_mls::worker: Worker error: Metadata(Connection(Database(NotFound)))
+
+e.wbg.__wbg_error_51ecdd39ec054205 @ 05808931.2968652d066bae1f.js:1
+$func10288 @ bindings_wasm_bg.665c59bc.wasm:0x7274b5
+$func7461 @ bindings_wasm_bg.665c59bc.wasm:0x6d6f65
+$func1270 @ bindings_wasm_bg.665c59bc.wasm:0x3a8a4e
+$func7604 @ bindings_wasm_bg.665c59bc.wasm:0x6db53c
+$func11210 @ bindings_wasm_bg.665c59bc.wasm:0x73745d
+$func563 @ bindings_wasm_bg.665c59bc.wasm:0x24b66e
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1
+setInterval
+(anonymous) @ 05808931.2968652d066bae1f.js:1
+p @ 05808931.2968652d066bae1f.js:1
+e.wbg.__wbg_setInterval_ed3b5e3c3ebb8a6d @ 05808931.2968652d066bae1f.js:1
+$func12954 @ bindings_wasm_bg.665c59bc.wasm:0x765f8e
+$func6148 @ bindings_wasm_bg.665c59bc.wasm:0x693103
+$func563 @ bindings_wasm_bg.665c59bc.wasm:0x24b131
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1Understand this error
+05808931.2968652d066bae1f.js:1  INFO xmtp_mls::worker: Restarting KeyPackageCleaner worker...
+
+05808931.2968652d066bae1f.js:1 ERROR xmtp_mls::worker: Worker error: Metadata(Connection(Database(NotFound)))
