@@ -49,16 +49,16 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
-### Nov 3, 2025 - CRITICAL: Added eth_requestAccounts to Fix Base App Wallet Initialization 🔧
-- **Removed popup workaround, testing direct iframe fix via wallet connection trigger**
-  - **Discovery:** Base App Mini Apps (like base.dev) show "Coinbase Wallet Registration" signature request with Face ID/passcode prompt before any operations
-  - **Root cause:** Our code was calling `eth_accounts` (checks for existing connection) but never `eth_requestAccounts` (triggers connection flow)
+### Nov 3, 2025 - FIXED: Removed Incorrect eth_requestAccounts Call for Base App ✅
+- **Base App provides already-connected wallet - no connection request needed**
+  - **Root cause:** Was incorrectly calling `eth_requestAccounts` which triggered Face ID prompt that auto-dismissed
+  - **Misunderstanding:** Base App (and Farcaster) provide in-app wallets that are already connected - no external wallet connection needed
   - **Fix implemented:** 
-    - Added `await provider.request({ method: 'eth_requestAccounts' })` before XMTP initialization in `initializeClientForBaseApp()`
-    - Removed popup window logic from landing page - Base App now navigates to `/chat` normally like Farcaster
-  - **Expected behavior:** Should trigger Face ID/passcode prompt, fully initialize wallet, then XMTP can create its database
-  - **Hypothesis:** The `Database(NotFound)` error might be caused by incomplete wallet initialization, not iframe OPFS restrictions
-  - **Status:** Testing in production - if successful, provides seamless embedded Mini App experience without popup
+    - Removed `eth_requestAccounts` call entirely from `initializeClientForBaseApp()`
+    - Removed 3-second delay added for Face ID (not needed)
+    - Now uses `eth_accounts` directly to get the already-connected Base App wallet address
+  - **Expected behavior:** No Face ID prompt - XMTP initializes using Base App's connected wallet seamlessly
+  - **Status:** Testing whether OPFS Database(NotFound) issue persists or if this resolves it
 
 ### Nov 3, 2025 - Fixed Base App 400 Error & XMTP Wallet Detection ✅
 - **Fixed Base App Quick Auth 400 Bad Request error AND wallet detection**
