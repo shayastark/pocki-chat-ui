@@ -413,21 +413,6 @@ export default function ChatPage() {
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const [isInMiniApp, setIsInMiniApp] = useState(false);
-  
-  // CRITICAL: Initialize Quick Auth state directly from sessionStorage
-  // This prevents redirect before the token check completes
-  const [hasQuickAuth] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const token = sessionStorage.getItem('quickAuthToken');
-    return !!token;
-  });
-
-  // Check for Base App connection (Base Account auto-connected)
-  const [hasBaseApp] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const baseApp = sessionStorage.getItem('baseAppConnected');
-    return !!baseApp;
-  });
 
   useEffect(() => {
     const initializeMiniApp = async () => {
@@ -446,27 +431,19 @@ export default function ChatPage() {
     initializeMiniApp();
   }, []);
 
-  // CRITICAL FIX: Accept Privy auth OR Quick Auth token OR Base App connection
   useEffect(() => {
-    const isAuthenticated = authenticated || hasQuickAuth || hasBaseApp;
-    
-    if (ready && !isAuthenticated) {
+    if (ready && !authenticated) {
       console.log('❌ No authentication found, redirecting to landing page');
       router.push('/');
-    } else if (isAuthenticated) {
+    } else if (authenticated) {
       console.log('✅ Authentication confirmed:', { 
         privyAuth: authenticated, 
-        quickAuth: hasQuickAuth,
-        baseApp: hasBaseApp,
         staying: 'on chat page'
       });
     }
-  }, [ready, authenticated, hasQuickAuth, hasBaseApp, router]);
+  }, [ready, authenticated, router]);
 
-  // CRITICAL FIX: Show loading only if we don't have any form of auth yet
-  const isAuthenticated = authenticated || hasQuickAuth || hasBaseApp;
-  
-  if (!ready || !isAuthenticated) {
+  if (!ready || !authenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
