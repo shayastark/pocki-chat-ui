@@ -49,6 +49,16 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 3, 2025 - FIXED: Improved Base App UX - User-Initiated Sign In ✅
+- **Base App users now see landing page and choose to sign in (not auto-redirected)**
+  - **Previous behavior:** Auto-navigated Base App users to `/chat` immediately, bypassing landing page
+  - **Issue:** Users couldn't see app description, features, or make informed decision to sign in
+  - **Fix implemented:**
+    - Removed auto-navigation logic for Base App from landing page useEffect
+    - Added "Sign In to Start" button that sets `baseAppConnected` flag and navigates to `/chat` on click
+    - Users now see full landing page content before choosing to sign in
+  - **Result:** Better UX - users understand what Pocki is before diving in
+
 ### Nov 3, 2025 - FIXED: Removed Incorrect eth_requestAccounts Call for Base App ✅
 - **Base App provides already-connected wallet - no connection request needed**
   - **Root cause:** Was incorrectly calling `eth_requestAccounts` which triggered Face ID prompt that auto-dismissed
@@ -57,8 +67,7 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
     - Removed `eth_requestAccounts` call entirely from `initializeClientForBaseApp()`
     - Removed 3-second delay added for Face ID (not needed)
     - Now uses `eth_accounts` directly to get the already-connected Base App wallet address
-  - **Expected behavior:** No Face ID prompt - XMTP initializes using Base App's connected wallet seamlessly
-  - **Status:** Testing whether OPFS Database(NotFound) issue persists or if this resolves it
+  - **Known issue:** OPFS `Database(NotFound)` error persists in Base App iframe - this is an XMTP Browser SDK v5 limitation with iframe storage contexts, not a wallet initialization issue
 
 ### Nov 3, 2025 - Fixed Base App 400 Error & XMTP Wallet Detection ✅
 - **Fixed Base App Quick Auth 400 Bad Request error AND wallet detection**
