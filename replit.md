@@ -49,17 +49,22 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
-### Nov 3, 2025 - Fixed Base App 400 Error & Quick Auth Compatibility ✅
-- **Fixed Base App Quick Auth 400 Bad Request error**
-  - **Problem:** Base App users got 400 Bad Request when Quick Auth tried to verify SIWF message at `https://auth.farcaster.xyz/verify-siwf`
-  - **Root cause:** Base App auto-connects users to Base Account on launch, making Quick Auth unnecessary. The Farcaster verification endpoint rejects Base App's Quick Auth implementation
-  - **Solution:** Detect Base App (clientFid 309857) and skip Quick Auth entirely
-    - Added Base App detection using SDK context: `context.client.clientFid === 309857`
-    - Base App users auto-navigate to chat after SDK ready (no Quick Auth needed)
-    - Farcaster Mini App users continue using Quick Auth (working perfectly)
-    - Browser users continue using Privy login (working perfectly)
-    - Chat page recognizes Base App connection via sessionStorage flag
-  - **Result:** Base App users leverage auto-connected Base Account, avoiding 400 errors completely
+### Nov 3, 2025 - Fixed Base App 400 Error & XMTP Wallet Detection ✅
+- **Fixed Base App Quick Auth 400 Bad Request error AND wallet detection**
+  - **Problem 1:** Base App users got 400 Bad Request when Quick Auth tried to verify SIWF message at `https://auth.farcaster.xyz/verify-siwf`
+  - **Problem 2:** After skipping Quick Auth, Privy couldn't detect the Base Account wallet, blocking XMTP initialization
+  - **Root cause:** Base App auto-connects users to Base Account on launch. Both Quick Auth and Privy are unnecessary - Base Account provides its own authentication and wallet
+  - **Solution:** Complete Base App integration bypassing Privy entirely
+    - **Landing page:** Detect Base App using SDK context (`clientFid === 309857`), skip Quick Auth, auto-navigate to chat
+    - **XMTP hook:** Created `initializeClientForBaseApp()` function that:
+      - Gets wallet provider directly from Mini App SDK (`sdk.wallet.ethProvider`)
+      - Creates viem wallet client from Base Account provider
+      - Initializes XMTP with Base Account signer (no Privy needed)
+    - **Authentication routing:** Chat page recognizes 3 auth methods via sessionStorage:
+      - `quickAuthToken` for Farcaster Mini App
+      - `baseAppConnected` for Base App
+      - Privy `authenticated` for browsers
+  - **Result:** Base App users get seamless Base Account wallet detection and XMTP messaging
 
 ### Nov 3, 2025 - Fixed Mini App Redirect Loop ✅
 - **Fixed chat page redirect loop for Mini App users**
