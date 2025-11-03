@@ -1,6 +1,7 @@
 'use client';
 
 import { usePrivy } from '@privy-io/react-auth';
+import { useLoginToMiniApp } from '@privy-io/react-auth/farcaster';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -9,48 +10,71 @@ import miniappSdk from '@farcaster/miniapp-sdk';
 
 export default function LandingPage() {
   const { login, authenticated, ready } = usePrivy();
+  const { initLoginToMiniApp, loginToMiniApp } = useLoginToMiniApp();
   const router = useRouter();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [isMiniApp, setIsMiniApp] = useState(false);
-  const [isBaseApp, setIsBaseApp] = useState(false);
-  const [quickAuthToken, setQuickAuthToken] = useState<string | null>(null);
-  const [quickAuthError, setQuickAuthError] = useState<string | null>(null);
+  const [miniAppError, setMiniAppError] = useState<string | null>(null);
 
   useEffect(() => {
     const detectMiniApp = async () => {
       try {
         const context = await miniappSdk?.context;
         const inMiniApp = context?.client?.clientFid !== undefined;
-        const inBaseApp = context?.client?.clientFid === 309857;
         setIsMiniApp(inMiniApp);
-        setIsBaseApp(inBaseApp);
         console.log('🔍 Environment detection:', { 
           inMiniApp, 
-          inBaseApp, 
           clientFid: context?.client?.clientFid,
           context 
         });
       } catch (error) {
         console.log('🔍 Not in Mini App environment');
         setIsMiniApp(false);
-        setIsBaseApp(false);
       }
     };
     
     detectMiniApp();
   }, []);
 
+  // Auto-login for Mini Apps (both Farcaster and Base App) using Privy
   useEffect(() => {
-    if (isMiniApp && !isBaseApp && quickAuthToken) {
-      // For Farcaster Mini App: navigate once Quick Auth succeeds
-      sessionStorage.setItem('quickAuthToken', quickAuthToken);
-      console.log('🚀 Navigating to chat with Quick Auth token');
-      window.location.href = '/chat';
-    } else if (!isMiniApp && ready && authenticated) {
-      // For browsers: wait for Privy authentication
+    if (ready && !authenticated && isMiniApp) {
+      const loginMiniApp = async () => {
+        try {
+          setMiniAppError(null);
+          console.log('🎯 Mini App detected - auto-logging in with Privy...');
+          
+          // Initialize login to get nonce
+          const { nonce } = await initLoginToMiniApp();
+          console.log('✅ Got nonce from Privy');
+          
+          // Request signature from Farcaster/Base App
+          const result = await miniappSdk.actions.signIn({ nonce });
+          console.log('✅ Got signature from Mini App');
+          
+          // Send signature to Privy for authentication
+          await loginToMiniApp({
+            message: result.message,
+            signature: result.signature,
+          });
+          console.log('✅ Logged in with Privy!');
+        } catch (error) {
+          console.error('❌ Mini App login failed:', error);
+          setMiniAppError(error instanceof Error ? error.message : 'Mini App authentication failed');
+        }
+      };
+      
+      loginMiniApp();
+    }
+  }, [ready, authenticated, isMiniApp, initLoginToMiniApp, loginToMiniApp]);
+
+  // Navigate to chat once authenticated
+  useEffect(() => {
+    if (ready && authenticated) {
+      console.log('✅ Authenticated - navigating to chat');
       router.push('/chat');
     }
-  }, [isMiniApp, isBaseApp, quickAuthToken, ready, authenticated, router]);
+  }, [ready, authenticated, router]);
 
   // Ensure Mini App SDK is ready
   useEffect(() => {
@@ -64,44 +88,6 @@ export default function LandingPage() {
   useEffect(() => {
     console.log('Privy state:', { ready, authenticated });
   }, [ready, authenticated]);
-
-  const handleQuickAuth = async () => {
-    try {
-      setQuickAuthError(null);
-      console.log('🔐 Starting Quick Auth...');
-      
-      const { token } = await miniappSdk.quickAuth.getToken();
-      console.log('✅ Got Quick Auth token');
-
-      const backendUrl = typeof window !== 'undefined' 
-        ? `${window.location.origin}/api/auth`
-        : '/api/auth';
-
-      const response = await fetch(backendUrl, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to verify authentication');
-      }
-
-      const data = await response.json();
-      console.log('✅ Quick Auth verified:', data);
-      
-      setQuickAuthToken(token);
-      
-      console.log('✅ Quick Auth complete! Waiting for native wallet detection...');
-    } catch (error) {
-      console.error('❌ Quick Auth failed:', error);
-      setQuickAuthError(error instanceof Error ? error.message : 'Authentication failed');
-    }
-  };
-
-  const handleBaseAppSignIn = () => {
-    console.log('🏦 Base App user signing in - navigating to chat');
-    sessionStorage.setItem('baseAppConnected', 'true');
-    window.location.href = '/chat';
-  };
 
   if (!isMiniApp && !ready) {
     return (
@@ -186,39 +172,38 @@ export default function LandingPage() {
         </div>
 
         <div className="text-center">
-          {isBaseApp ? (
-            <button
-              onClick={handleBaseAppSignIn}
-              className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-            >
-              Sign In to Start 🎋
-            </button>
-          ) : isMiniApp ? (
+          {isMiniApp ? (
             <>
-              <button
-                onClick={handleQuickAuth}
-                className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-              >
-                Sign In to Start 🎋
-              </button>
-              {quickAuthError && (
+              <div className="mb-4 animate-pulse-gentle">
+                <Image 
+                  src="/pocki-logo.jpg" 
+                  alt="Pocki" 
+                  width={80} 
+                  height={80}
+                  className="mx-auto rounded-2xl"
+                />
+              </div>
+              <p className="text-panda-green-600 font-semibold text-lg">
+                Signing you in...
+              </p>
+              {miniAppError && (
                 <p className="mt-3 text-sm text-red-500">
-                  {quickAuthError}
+                  {miniAppError}
                 </p>
               )}
             </>
           ) : (
-            <button
-              onClick={login}
-              className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-            >
-              Connect Wallet to Start 🎋
-            </button>
-          )}
-          {!isBaseApp && (
-            <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
-              Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
-            </p>
+            <>
+              <button
+                onClick={login}
+                className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+              >
+                Connect Wallet to Start 🎋
+              </button>
+              <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
+                Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
+              </p>
+            </>
           )}
         </div>
 
