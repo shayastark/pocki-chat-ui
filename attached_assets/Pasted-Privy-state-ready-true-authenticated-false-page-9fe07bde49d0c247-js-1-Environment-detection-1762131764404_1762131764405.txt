@@ -1,0 +1,17 @@
+Privy state: {ready: true, authenticated: false}
+page-9fe07bde49d0c247.js:1 🔍 Environment detection: {inMiniApp: false, context: undefined}
+page-9fe07bde49d0c247.js:1 Privy state: {ready: true, authenticated: true}
+page-9097f525c5a8cb81.js:1 🔍 CHAT PAGE DIAGNOSTIC - Privy State: {authenticated: true, ready: true, timestamp: '2025-11-03T00:57:42.652Z'}
+page-9097f525c5a8cb81.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: false, error: null, activeWalletAddress: null, timestamp: '2025-11-03T00:57:42.653Z'}
+page-9097f525c5a8cb81.js:1 🔍 useXMTP DIAGNOSTIC - useWallets() State: {ready: false, walletsCount: 2, wallets: Array(2), authenticated: true, timestamp: '2025-11-03T00:57:42.654Z'}
+page-9097f525c5a8cb81.js:1 🔍 useXMTP DIAGNOSTIC - Initialization Effect Triggered: {authenticated: true, hasQuickAuth: false, isAuthenticated: true, ready: false, walletsCount: 2, …}
+page-9097f525c5a8cb81.js:1 🚀 Triggering XMTP initialization: {authenticated: true, hasQuickAuth: false, isAuthenticated: true, ready: false, hasWallets: true, …}
+page-9097f525c5a8cb81.js:1 ✅ Proceeding with XMTP initialization: {authenticated: true, hasQuickAuth: false, ready: false, walletsCount: 2, bypassedReadyCheck: true}
+page-9097f525c5a8cb81.js:1 🔍 WALLET DETECTION: {authenticated: true, ready: false, walletsCount: 2, walletTypes: Array(2), hasBaseAccount: false, …}
+page-9097f525c5a8cb81.js:1 ✅ Wallet found! Initializing XMTP...
+page-9097f525c5a8cb81.js:1 📱 Selected wallet: {type: 'rainbow', address: '0xE2D8cf473f284834195fb2728Ea56c0E86Df0e02', isBaseAccount: false, isPrivy: false}
+page-9097f525c5a8cb81.js:1 ✅ Created viem wallet client for XMTP: {address: '0xE2D8cf473f284834195fb2728Ea56c0E86Df0e02', chain: 'Base'}
+page-9097f525c5a8cb81.js:1 ✅ Called sdk.actions.ready()
+page-9097f525c5a8cb81.js:1 🌐 Running as standalone web app
+page-9097f525c5a8cb81.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: true, error: null, activeWalletAddress: '0xE2D8cf473f284834195fb2728Ea56c0E86Df0e02', timestamp: '2025-11-03T00:57:42.674Z'}
+05808931.2968652d066bae1f.js:1 ERROR xmtp_db::encrypted_store::database::wasm: error code=NoModificationAllowedError, Failed to execute 'createSyncAccessHandle' on 'FileSystemFileHandle': Access Handles cannot be created if there is another open Access Handle or Writable stream associated with the same file.:7

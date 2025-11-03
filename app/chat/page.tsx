@@ -413,6 +413,14 @@ export default function ChatPage() {
   const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const [isInMiniApp, setIsInMiniApp] = useState(false);
+  
+  // CRITICAL: Initialize Quick Auth state directly from sessionStorage
+  // This prevents redirect before the token check completes
+  const [hasQuickAuth] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const token = sessionStorage.getItem('quickAuthToken');
+    return !!token;
+  });
 
   useEffect(() => {
     const initializeMiniApp = async () => {
@@ -431,13 +439,26 @@ export default function ChatPage() {
     initializeMiniApp();
   }, []);
 
+  // CRITICAL FIX: Accept either Privy auth OR Quick Auth token
   useEffect(() => {
-    if (ready && !authenticated) {
+    const isAuthenticated = authenticated || hasQuickAuth;
+    
+    if (ready && !isAuthenticated) {
+      console.log('❌ No authentication found, redirecting to landing page');
       router.push('/');
+    } else if (isAuthenticated) {
+      console.log('✅ Authentication confirmed:', { 
+        privyAuth: authenticated, 
+        quickAuth: hasQuickAuth,
+        staying: 'on chat page'
+      });
     }
-  }, [ready, authenticated, router]);
+  }, [ready, authenticated, hasQuickAuth, router]);
 
-  if (!ready || !authenticated) {
+  // CRITICAL FIX: Show loading only if we don't have any form of auth yet
+  const isAuthenticated = authenticated || hasQuickAuth;
+  
+  if (!ready || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

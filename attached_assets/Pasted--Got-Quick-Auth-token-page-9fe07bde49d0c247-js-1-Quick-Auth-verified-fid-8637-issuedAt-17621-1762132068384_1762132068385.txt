@@ -1,0 +1,251 @@
+✅ Got Quick Auth token
+page-9fe07bde49d0c247.js:1 ✅ Quick Auth verified: {fid: 8637, issuedAt: 1762131984, expiresAt: 1762135584}
+page-9fe07bde49d0c247.js:1 ✅ Quick Auth complete! Waiting for native wallet detection...
+page-9fe07bde49d0c247.js:1 🚀 Navigating to chat with Quick Auth token
+layout-6c7cf360f755bc2a.js:1 🔧 Wagmi Config: {hasAlchemyRPC: true, usingFallbackTransports: true}
+page-9097f525c5a8cb81.js:1 ✅ Called sdk.actions.ready()
+page-9097f525c5a8cb81.js:1 🎯 Running as Farcaster/Base App Mini App
+9c560169-3d3a49b67b7219d9.js:1 Base Account SDK Initialized
+page-9fe07bde49d0c247.js:1 🎯 Mini App SDK initialized and ready
+page-9fe07bde49d0c247.js:1 Privy state: {ready: true, authenticated: false}
+page-9fe07bde49d0c247.js:1 🔍 Environment detection: {inMiniApp: true, context: {…}}
+page-9fe07bde49d0c247.js:1 🔐 Starting Quick Auth...
+MiniAppTransactionModal?id=88b3a8c3-9028-484c-9696-2357f634ffd8:1 Access to fetch at 'https://privy.farcaster.xyz/api/v1/analytics_events' from origin 'https://wallet.farcaster.xyz' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+WebEmbeddedWalletProvider.tsx:449  POST https://privy.farcaster.xyz/api/v1/analytics_events net::ERR_FAILED 400 (Bad Request)
+h @ instrumentMethod.js:67
+(anonymous) @ index.mjs:21
+E @ ofetch.03887fc3.mjs:258
+await in E
+j @ ofetch.03887fc3.mjs:316
+post @ privy-provider-Dg-HUZ-W.js:1
+createAnalyticsEvent @ privy-provider-Dg-HUZ-W.js:1
+g @ privy-provider-Dg-HUZ-W.js:26
+await in g
+(anonymous) @ privy-provider-Dg-HUZ-W.js:26
+signMessage @ privy-provider-Dg-HUZ-W.js:26
+gx @ privy-provider-Dg-HUZ-W.js:26
+handlePersonalSign @ privy-provider-Dg-HUZ-W.js:1
+request @ privy-provider-Dg-HUZ-W.js:1
+request @ Provider.js:219
+delay.count @ buildRequest.js:28
+f @ withRetry.js:12
+(anonymous) @ withRetry.js:22
+e.withRetry @ withRetry.js:3
+enabled @ buildRequest.js:26
+e.withDedupe @ withDedupe.js:7
+(anonymous) @ buildRequest.js:26
+e.signMessage @ signMessage.js:65
+signMessage @ wallet.js:42
+(anonymous) @ WebEmbeddedWalletProvider.tsx:449
+await in (anonymous)
+(anonymous) @ WebEmbeddedWalletProvider.tsx:473
+eu @ react-dom-client.production.js:7485
+Uu @ react-dom-client.production.js:8940
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9003
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:8934
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034
+Iu @ react-dom-client.production.js:8915
+Uu @ react-dom-client.production.js:9034Understand this error
+privy-provider-Dg-HUZ-W.js:1 Unable to submit event. This is not an issue.
+page-9fe07bde49d0c247.js:1 ✅ Got Quick Auth token
+page-9fe07bde49d0c247.js:1 ✅ Quick Auth verified: {fid: 8637, issuedAt: 1762132002, expiresAt: 1762135602}
+page-9fe07bde49d0c247.js:1 ✅ Quick Auth complete! Waiting for native wallet detection...
+page-9fe07bde49d0c247.js:1 🚀 Navigating to chat with Quick Auth token
+layout-6c7cf360f755bc2a.js:1 🔧 Wagmi Config: {hasAlchemyRPC: true, usingFallbackTransports: true}
+page-9097f525c5a8cb81.js:1 ✅ Called sdk.actions.ready()
+page-9097f525c5a8cb81.js:1 🎯 Running as Farcaster/Base App Mini App
+9c560169-3d3a49b67b7219d9.js:1 Base Account SDK Initialized
+page-9fe07bde49d0c247.js:1 🎯 Mini App SDK initialized and ready
+page-9fe07bde49d0c247.js:1 Privy state: {ready: true, authenticated: false}
+page-9fe07bde49d0c247.js:1 🔍 Environment detection: {inMiniApp: true, context: {…}}
