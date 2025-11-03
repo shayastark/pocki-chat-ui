@@ -49,16 +49,16 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
-### Nov 3, 2025 - Added Storage Access API for Base App OPFS Support ✅
-- **Implemented Storage Access API to fix OPFS access in Base App iframe**
+### Nov 3, 2025 - Implemented Popup Window Solution for Base App OPFS Issue ✅
+- **Base App users now chat in popup window to bypass iframe OPFS limitations**
   - **Problem:** Base App runs Mini Apps in iframes, blocking XMTP Browser SDK v5's OPFS (Origin Private File System) access with `Database(NotFound)` errors
-  - **Root cause:** XMTP Browser SDK v5 requires OPFS for local storage, but iframes have restricted storage access by default
-  - **Solution:** Request storage access before XMTP initialization in Base App path only
-    - Added Storage Access API request in `initializeClientForBaseApp()` function
-    - Feature detection ensures TypeScript compatibility: `typeof (document as any).hasStorageAccess === 'function'`
-    - Graceful fallback if API unavailable (logs warning, continues initialization)
-    - Completely isolated to Base App users - browser and Farcaster paths unchanged
-  - **Result:** Base App users now have OPFS access, allowing XMTP to store data locally and initialize successfully
+  - **Root cause:** XMTP Browser SDK v5 requires OPFS for local storage, but iframes have restricted storage access. Modern XMTP SDKs (Browser SDK v5, Node SDK v4) don't support key export/import for server-side proxy approach.
+  - **Solution:** Open chat in popup window for Base App users
+    - Landing page detects Base App (clientFid === 309857) and opens `/chat` in popup window (420x700px)
+    - Popup runs outside iframe context with full OPFS access
+    - Browser SDK initializes normally using `initializeClientForBaseApp()` function
+    - Completely isolated to Base App users - browser and Farcaster users unaffected
+  - **Result:** Base App users get full XMTP messaging functionality in popup window with no OPFS errors
 
 ### Nov 3, 2025 - Fixed Base App 400 Error & XMTP Wallet Detection ✅
 - **Fixed Base App Quick Auth 400 Bad Request error AND wallet detection**

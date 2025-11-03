@@ -42,10 +42,22 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (isBaseApp && isSDKLoaded) {
-      // For Base App: Base Account is auto-connected, skip Quick Auth
-      console.log('🏦 Base App detected - Base Account auto-connected, navigating to chat');
+      // For Base App: Open chat in popup window (fixes OPFS iframe limitations)
+      console.log('🏦 Base App detected - Base Account auto-connected, opening chat in popup');
       sessionStorage.setItem('baseAppConnected', 'true');
-      window.location.href = '/chat';
+      
+      const popup = window.open(
+        '/chat',
+        'PockiChat',
+        'width=420,height=700,menubar=no,toolbar=no,location=no,status=no'
+      );
+      
+      if (!popup) {
+        console.error('❌ Popup blocked! Please allow popups for Pocki Chat.');
+        alert('Please allow popups to use Pocki Chat in Base App');
+      } else {
+        console.log('✅ Chat popup opened successfully');
+      }
     } else if (isMiniApp && !isBaseApp && quickAuthToken) {
       // For Farcaster Mini App: navigate once Quick Auth succeeds
       sessionStorage.setItem('quickAuthToken', quickAuthToken);
