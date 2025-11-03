@@ -49,42 +49,20 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
-### Nov 3, 2025 - FIXED: Improved Base App UX - User-Initiated Sign In ✅
-- **Base App users now see landing page and choose to sign in (not auto-redirected)**
-  - **Previous behavior:** Auto-navigated Base App users to `/chat` immediately, bypassing landing page
-  - **Issue:** Users couldn't see app description, features, or make informed decision to sign in
-  - **Fix implemented:**
-    - Removed auto-navigation logic for Base App from landing page useEffect
-    - Added "Sign In to Start" button that sets `baseAppConnected` flag and navigates to `/chat` on click
-    - Users now see full landing page content before choosing to sign in
-  - **Result:** Better UX - users understand what Pocki is before diving in
-
-### Nov 3, 2025 - FIXED: Removed Incorrect eth_requestAccounts Call for Base App ✅
-- **Base App provides already-connected wallet - no connection request needed**
-  - **Root cause:** Was incorrectly calling `eth_requestAccounts` which triggered Face ID prompt that auto-dismissed
-  - **Misunderstanding:** Base App (and Farcaster) provide in-app wallets that are already connected - no external wallet connection needed
-  - **Fix implemented:** 
-    - Removed `eth_requestAccounts` call entirely from `initializeClientForBaseApp()`
-    - Removed 3-second delay added for Face ID (not needed)
-    - Now uses `eth_accounts` directly to get the already-connected Base App wallet address
-  - **Known issue:** OPFS `Database(NotFound)` error persists in Base App iframe - this is an XMTP Browser SDK v5 limitation with iframe storage contexts, not a wallet initialization issue
-
-### Nov 3, 2025 - Fixed Base App 400 Error & XMTP Wallet Detection ✅
-- **Fixed Base App Quick Auth 400 Bad Request error AND wallet detection**
-  - **Problem 1:** Base App users got 400 Bad Request when Quick Auth tried to verify SIWF message at `https://auth.farcaster.xyz/verify-siwf`
-  - **Problem 2:** After skipping Quick Auth, Privy couldn't detect the Base Account wallet, blocking XMTP initialization
-  - **Root cause:** Base App auto-connects users to Base Account on launch. Both Quick Auth and Privy are unnecessary - Base Account provides its own authentication and wallet
-  - **Solution:** Complete Base App integration bypassing Privy entirely
-    - **Landing page:** Detect Base App using SDK context (`clientFid === 309857`), skip Quick Auth, auto-navigate to chat
-    - **XMTP hook:** Created `initializeClientForBaseApp()` function that:
-      - Gets wallet provider directly from Mini App SDK (`sdk.wallet.ethProvider`)
-      - Creates viem wallet client from Base Account provider
-      - Initializes XMTP with Base Account signer (no Privy needed)
-    - **Authentication routing:** Chat page recognizes 3 auth methods via sessionStorage:
-      - `quickAuthToken` for Farcaster Mini App
-      - `baseAppConnected` for Base App
-      - Privy `authenticated` for browsers
-  - **Result:** Base App users get seamless Base Account wallet detection and XMTP messaging
+### Nov 3, 2025 - MAJOR: Implemented Privy-Based Mini App Authentication ✅
+- **Unified authentication flow using Privy for Farcaster AND Base App Mini Apps**
+  - **Previous approach:** Custom Quick Auth for Farcaster, custom Base Account bypass for Base App - resulted in OPFS errors and complexity
+  - **New approach:** Use Privy's official Mini App integration (`useLoginToMiniApp` from `@privy-io/react-auth/farcaster`)
+  - **Implementation:**
+    - **Landing page:** Auto-login for all Mini Apps using `initLoginToMiniApp() → miniappSdk.actions.signIn() → loginToMiniApp()`
+    - **XMTP initialization:** Unified flow using Privy's wallet detection for all platforms (browser, Farcaster, Base App)
+    - **Removed:** All custom Base App bypass logic (`initializeClientForBaseApp`), Quick Auth backend verification, sessionStorage checks
+  - **Benefits:**
+    - Works with both Farcaster wallet AND Base Account wallet through Privy
+    - No iframe OPFS issues - Privy handles wallet provider detection properly
+    - Single authentication code path for all platforms
+    - Follows Privy's official best practices for Mini Apps
+  - **Result:** Seamless authentication and XMTP messaging for browser users (wallet/email/social), Farcaster Mini App users, and Base App users
 
 ### Nov 3, 2025 - Fixed Mini App Redirect Loop ✅
 - **Fixed chat page redirect loop for Mini App users**
