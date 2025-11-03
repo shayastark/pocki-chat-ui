@@ -46,3 +46,32 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 - **Next.js:** Web framework.
 - **Tailwind CSS:** Utility-first CSS framework.
 - **Farcaster Mini App SDK:** Base App/Farcaster integration (`@farcaster/miniapp-sdk`).
+
+## Recent Updates
+
+### Nov 3, 2025 - Fixed Mini App Redirect Loop ✅
+- **Fixed chat page redirect loop for Mini App users**
+  - **Problem:** After Quick Auth succeeded and navigated to `/chat`, the chat page immediately redirected back to `/` because it only checked for Privy authentication, creating an infinite navigation loop
+  - **Root cause:** Chat page authentication guard used useEffect to check Quick Auth token asynchronously, so on first render `hasQuickAuth` was `false` and redirect fired before token was detected
+  - **Solution:** Initialize Quick Auth state synchronously using useState initializer
+    - Changed from `useEffect` checking sessionStorage (async state update) to `useState(() => sessionStorage.getItem())` (sync initialization)
+    - Updated redirect logic to accept EITHER Privy auth OR Quick Auth token
+    - Ensures `hasQuickAuth` has correct value on first render before redirect logic runs
+  - **Result:** Mini App users with Quick Auth token now successfully stay on chat page
+
+### Nov 3, 2025 - Fixed Chrome Desktop Ready State Deadlock ✅
+- **Fixed Privy useWallets() ready: false deadlock**
+  - **Problem:** Chrome Desktop showed `authenticated: true` with 2 wallets detected, but `ready: false` permanently, blocking XMTP initialization
+  - **Root cause:** Privy's `ready` flag sometimes stays false even when wallets are already available
+  - **Solution:** Bypass ready check when wallets exist
+    - Updated both `initializeClient()` and useEffect trigger: `isAuthenticated && (ready || hasWallets)`
+    - XMTP initialization proceeds when authenticated users have wallets, regardless of Privy's ready state
+  - **Result:** Chrome Desktop browser users can now use the app with extension wallets
+
+### Nov 2, 2025 - Implemented Dual Authentication Strategy ✅
+- **Added Quick Auth for Farcaster/Base App Mini Apps**
+  - Uses `@farcaster/quick-auth` SDK with JWT verification on backend `/api/auth` route
+  - Quick Auth token stored in sessionStorage for session persistence
+  - No Privy login() call for Mini Apps - native wallet detected via Privy's useWallets() without authentication
+- **Maintained Privy authentication for browsers**
+  - Full wallet, email, and social login support for standalone web users
