@@ -13,18 +13,35 @@ export default function LandingPage() {
   const { initLoginToMiniApp, loginToMiniApp } = useLoginToMiniApp();
   const router = useRouter();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
+  const [isMiniApp, setIsMiniApp] = useState(false);
+  const [loginAttempted, setLoginAttempted] = useState(false);
 
-  // Auto-login for Mini Apps - only attempt if SDK context is available
+  // Detect Mini App environment on mount
   useEffect(() => {
-    if (ready && !authenticated) {
+    const detectMiniApp = async () => {
+      try {
+        const context = await Promise.race([
+          miniappSdk?.context,
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 500))
+        ]) as any;
+        const inMiniApp = context?.client?.clientFid !== undefined;
+        setIsMiniApp(inMiniApp);
+        console.log('🔍 Mini App detection:', { inMiniApp, clientFid: context?.client?.clientFid });
+      } catch (error) {
+        console.log('🔍 Not in Mini App environment (detection timeout or error)');
+        setIsMiniApp(false);
+      }
+    };
+    
+    detectMiniApp();
+  }, []);
+
+  // Auto-login for Mini Apps ONLY - with environment gate
+  useEffect(() => {
+    if (ready && !authenticated && isMiniApp && !loginAttempted) {
       const loginMiniApp = async () => {
         try {
-          // Quick synchronous check - if SDK isn't loaded, skip
-          if (!miniappSdk) {
-            console.log('ℹ️ Mini App SDK not available - skipping auto-login');
-            return;
-          }
-          
+          setLoginAttempted(true);
           console.log('🎯 Attempting Mini App auto-login...');
           
           const { nonce } = await initLoginToMiniApp();
@@ -39,13 +56,13 @@ export default function LandingPage() {
           });
           console.log('✅ Logged in with Privy via Mini App!');
         } catch (error) {
-          console.log('ℹ️ Mini App auto-login not available:', error);
+          console.error('❌ Mini App login failed:', error);
         }
       };
       
       loginMiniApp();
     }
-  }, [ready, authenticated, initLoginToMiniApp, loginToMiniApp]);
+  }, [ready, authenticated, isMiniApp, loginAttempted, initLoginToMiniApp, loginToMiniApp]);
 
   // Navigate to chat once authenticated
   useEffect(() => {
