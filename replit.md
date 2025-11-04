@@ -49,6 +49,22 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 4, 2025 - CRITICAL FIX: Configured Privy App Client for Base App ✅
+- **Fixed Privy 400 authentication error in Base App**
+  - **Problem:** Base App Mini Apps getting `POST https://auth.privy.io/api/v2/farcaster/authenticate 400 (Bad Request)` after successfully obtaining nonce and signature
+  - **Root cause:** Default Privy app configuration uses httpOnly cookies, which Base App does not support per official Privy documentation
+  - **Solution:** Created dedicated Privy App Client for Base App with non-httpOnly cookies
+    - **Privy Dashboard:** Created new Web App Client with ID `client-WY6RdKiPGQJANCbSJQGU1f4NEr2nmb1FKkurudHXcHmSg`
+    - **Allowed Origins:** Configured `https://base.app` in app client settings
+    - **Cookie Settings:** Disabled httpOnly cookies for Base App compatibility
+    - **Code Changes:** Updated `app/providers.tsx` to detect Base App and dynamically use `clientId` prop on `PrivyProvider`
+    - **Environment:** Added `NEXT_PUBLIC_PRIVY_BASE_APP_CLIENT_ID` secret
+  - **Implementation:**
+    - Base App detection runs on mount in Providers component
+    - When `clientFid === 309857` (Base App), use dedicated app client
+    - Browser and Farcaster Mini Apps continue using default configuration
+  - **Result:** Base App now uses proper Privy configuration without httpOnly cookies, should resolve 400 authentication errors
+
 ### Nov 4, 2025 - Fixed Base App Mini App Detection & XMTP Chain Persistence ✅
 - **Implemented official SDK Mini App detection method**
   - **Problem:** Base App Mini Apps failed to connect wallet on both iOS and Android; Android showed chain ID error "Initially added with 8453 but now signing from 0"

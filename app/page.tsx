@@ -6,53 +6,30 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { BaseAppBanner } from '@/components/BaseAppBanner';
+import { useMiniApp } from '@/app/contexts/MiniAppContext';
 import miniappSdk from '@farcaster/miniapp-sdk';
 
 export default function LandingPage() {
   const { login, authenticated, ready } = usePrivy();
   const { initLoginToMiniApp, loginToMiniApp } = useLoginToMiniApp();
+  const { isMiniApp, isBaseApp, detectionComplete } = useMiniApp();
   const router = useRouter();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
-  const [isMiniApp, setIsMiniApp] = useState(false);
   const [loginAttempted, setLoginAttempted] = useState(false);
 
-  // Detect Mini App environment on mount using official SDK method
+  // Auto-login for Mini Apps ONLY - gated on detection being complete
   useEffect(() => {
-    const detectMiniApp = async () => {
-      try {
-        // Use official Farcaster SDK detection method
-        const inMiniApp = await miniappSdk.isInMiniApp();
-        setIsMiniApp(inMiniApp);
-        
-        if (inMiniApp) {
-          // Get context details for debugging
-          const context = await miniappSdk.context;
-          console.log('🔍 Mini App detected:', { 
-            inMiniApp,
-            clientFid: context?.client?.clientFid,
-            platformType: context?.client?.platformType,
-            isBaseApp: context?.client?.clientFid === 309857,
-            isFarcaster: context?.client?.clientFid === 9152
-          });
-        } else {
-          console.log('🔍 Not in Mini App environment (browser mode)');
-        }
-      } catch (error) {
-        console.log('🔍 Mini App detection error:', error);
-        setIsMiniApp(false);
-      }
-    };
-    
-    detectMiniApp();
-  }, []);
-
-  // Auto-login for Mini Apps ONLY - with environment gate
-  useEffect(() => {
-    if (ready && !authenticated && isMiniApp && !loginAttempted) {
+    // Wait for: Privy ready, detection complete, not already authenticated, is a Mini App, haven't tried yet
+    if (ready && detectionComplete && !authenticated && isMiniApp && !loginAttempted) {
       const loginMiniApp = async () => {
         try {
           setLoginAttempted(true);
-          console.log('🎯 Attempting Mini App auto-login...');
+          
+          if (isBaseApp) {
+            console.log('🎯 Base App auto-login starting (using Base App client ID)');
+          } else {
+            console.log('🎯 Farcaster Mini App auto-login starting');
+          }
           
           const { nonce } = await initLoginToMiniApp();
           console.log('✅ Got nonce from Privy');
@@ -72,7 +49,7 @@ export default function LandingPage() {
       
       loginMiniApp();
     }
-  }, [ready, authenticated, isMiniApp, loginAttempted, initLoginToMiniApp, loginToMiniApp]);
+  }, [ready, detectionComplete, authenticated, isMiniApp, isBaseApp, loginAttempted, initLoginToMiniApp, loginToMiniApp]);
 
   // Navigate to chat once authenticated
   useEffect(() => {

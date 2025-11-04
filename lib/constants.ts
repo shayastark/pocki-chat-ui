@@ -2,3 +2,4 @@
 export const AGENT_ADDRESS = process.env.NEXT_PUBLIC_AGENT_ADDRESS || '';
 export const XMTP_ENV = (process.env.NEXT_PUBLIC_XMTP_ENV || 'production') as 'production' | 'dev' | 'local';
 export const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || '';
+export const PRIVY_BASE_APP_CLIENT_ID = process.env.NEXT_PUBLIC_PRIVY_BASE_APP_CLIENT_ID || '';
