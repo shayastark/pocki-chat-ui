@@ -220,8 +220,64 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       const { createWalletClient, custom } = await import('viem');
       const { base } = await import('viem/chains');
       
-      // Switch wallet to Base network (required for proper provider setup)
-      await wallet.switchChain(base.id);
+      // CRITICAL FIX: Ensure wallet is on Base BEFORE XMTP initialization
+      // Chain must be correct before any signature requests begin
+      console.log('🔍 Verifying wallet chain before XMTP initialization...');
+      
+      let chainSwitchAttempts = 0;
+      const maxChainSwitchAttempts = 3;
+      
+      while (chainSwitchAttempts < maxChainSwitchAttempts) {
+        try {
+          const currentChainIdHex = await wallet.chainId;
+          const currentChainId = typeof currentChainIdHex === 'string' 
+            ? parseInt(currentChainIdHex, 16) 
+            : currentChainIdHex;
+          
+          console.log('🔍 Current wallet chain:', { hex: currentChainIdHex, decimal: currentChainId, expected: base.id });
+          
+          if (currentChainId === base.id) {
+            console.log('✅ Wallet already on Base network');
+            break;
+          }
+          
+          // Wallet is on wrong chain, switch it
+          console.log(`⚠️ Wallet on chain ${currentChainId}, switching to Base (${base.id})...`);
+          await wallet.switchChain(base.id);
+          
+          // Wait for chain switch to complete
+          await new Promise(resolve => setTimeout(resolve, 300));
+          
+          // Verify the switch succeeded
+          const newChainIdHex = await wallet.chainId;
+          const newChainId = typeof newChainIdHex === 'string' 
+            ? parseInt(newChainIdHex, 16) 
+            : newChainIdHex;
+          
+          if (newChainId === base.id) {
+            console.log('✅ Successfully switched to Base network');
+            break;
+          } else {
+            console.warn(`⚠️ Chain switch verification failed: expected ${base.id}, got ${newChainId}`);
+            chainSwitchAttempts++;
+            if (chainSwitchAttempts < maxChainSwitchAttempts) {
+              console.log(`🔄 Retrying chain switch (attempt ${chainSwitchAttempts + 1}/${maxChainSwitchAttempts})...`);
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }
+          }
+        } catch (chainError) {
+          console.error('❌ Chain verification/switch error:', chainError);
+          chainSwitchAttempts++;
+          if (chainSwitchAttempts >= maxChainSwitchAttempts) {
+            throw new Error('Failed to switch wallet to Base network. Please manually switch to Base network and try again.');
+          }
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+      
+      if (chainSwitchAttempts >= maxChainSwitchAttempts) {
+        throw new Error('Failed to verify wallet is on Base network after multiple attempts.');
+      }
       
       // Get viem wallet client from Privy wallet (following Privy docs)
       const ethereumProvider = await wallet.getEthereumProvider();
@@ -247,38 +303,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           // Extract message string if it's an object
           const messageText = typeof message === 'string' ? message : message.message;
           
-          // CRITICAL FIX: Ensure wallet is on Base network before signing
-          // Base Account wallet can drift to chain 0 (disconnected) causing XMTP errors
-          try {
-            const currentChainIdHex = await wallet.chainId;
-            // Parse chain ID (can be hex string like "0x2105" or number)
-            const currentChainId = typeof currentChainIdHex === 'string' 
-              ? parseInt(currentChainIdHex, 16) 
-              : currentChainIdHex;
-            
-            console.log('🔍 Current wallet chain ID before signing:', { hex: currentChainIdHex, decimal: currentChainId });
-            
-            if (currentChainId !== base.id) {
-              console.warn(`⚠️ Wallet on wrong chain (${currentChainId}), switching to Base (${base.id})...`);
-              await wallet.switchChain(base.id);
-              console.log('✅ Switched wallet to Base network');
-              
-              // Small delay to ensure chain switch completes
-              await new Promise(resolve => setTimeout(resolve, 100));
-            }
-          } catch (chainCheckError) {
-            console.error('❌ Chain check/switch failed:', chainCheckError);
-            // Try to switch anyway
-            try {
-              await wallet.switchChain(base.id);
-              console.log('✅ Recovered: switched wallet to Base network');
-            } catch (switchError) {
-              console.error('❌ Failed to switch to Base network:', switchError);
-              throw new Error('Wallet is not on Base network and cannot switch. Please manually switch to Base network.');
-            }
-          }
-          
           // Sign message with viem - account is already set in walletClient
+          // Note: Chain should already be verified before XMTP client creation
           const signature = await walletClient.signMessage({
             account: walletClient.account,
             message: messageText,
