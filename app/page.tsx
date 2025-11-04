@@ -13,60 +13,43 @@ export default function LandingPage() {
   const { initLoginToMiniApp, loginToMiniApp } = useLoginToMiniApp();
   const router = useRouter();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
-  const [isMiniApp, setIsMiniApp] = useState(false);
-  const [miniAppError, setMiniAppError] = useState<string | null>(null);
 
+  // Auto-login for Mini Apps - matches Privy's official example approach
+  // Try auto-login with timeout protection to prevent blocking
   useEffect(() => {
-    const detectMiniApp = async () => {
-      try {
-        const context = await miniappSdk?.context;
-        const inMiniApp = context?.client?.clientFid !== undefined;
-        setIsMiniApp(inMiniApp);
-        console.log('🔍 Environment detection:', { 
-          inMiniApp, 
-          clientFid: context?.client?.clientFid,
-          context 
-        });
-      } catch (error) {
-        console.log('🔍 Not in Mini App environment');
-        setIsMiniApp(false);
-      }
-    };
-    
-    detectMiniApp();
-  }, []);
-
-  // Auto-login for Mini Apps (both Farcaster and Base App) using Privy
-  useEffect(() => {
-    if (ready && !authenticated && isMiniApp) {
+    if (ready && !authenticated) {
       const loginMiniApp = async () => {
         try {
-          setMiniAppError(null);
-          console.log('🎯 Mini App detected - auto-logging in with Privy...');
+          console.log('🎯 Attempting Mini App auto-login...');
           
-          // Initialize login to get nonce
-          const { nonce } = await initLoginToMiniApp();
-          console.log('✅ Got nonce from Privy');
+          // Add timeout protection - if this takes too long, we're not in a Mini App
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Mini App login timeout')), 2000)
+          );
           
-          // Request signature from Farcaster/Base App
-          const result = await miniappSdk.actions.signIn({ nonce });
-          console.log('✅ Got signature from Mini App');
+          const loginPromise = (async () => {
+            const { nonce } = await initLoginToMiniApp();
+            console.log('✅ Got nonce from Privy');
+            
+            const result = await miniappSdk.actions.signIn({ nonce });
+            console.log('✅ Got signature from Mini App');
+            
+            await loginToMiniApp({
+              message: result.message,
+              signature: result.signature,
+            });
+            console.log('✅ Logged in with Privy via Mini App!');
+          })();
           
-          // Send signature to Privy for authentication
-          await loginToMiniApp({
-            message: result.message,
-            signature: result.signature,
-          });
-          console.log('✅ Logged in with Privy!');
+          await Promise.race([loginPromise, timeoutPromise]);
         } catch (error) {
-          console.error('❌ Mini App login failed:', error);
-          setMiniAppError(error instanceof Error ? error.message : 'Mini App authentication failed');
+          console.log('ℹ️ Mini App auto-login not available:', error);
         }
       };
       
       loginMiniApp();
     }
-  }, [ready, authenticated, isMiniApp, initLoginToMiniApp, loginToMiniApp]);
+  }, [ready, authenticated, initLoginToMiniApp, loginToMiniApp]);
 
   // Navigate to chat once authenticated
   useEffect(() => {
@@ -89,7 +72,7 @@ export default function LandingPage() {
     console.log('Privy state:', { ready, authenticated });
   }, [ready, authenticated]);
 
-  if (!isMiniApp && !ready) {
+  if (!ready) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -172,39 +155,15 @@ export default function LandingPage() {
         </div>
 
         <div className="text-center">
-          {isMiniApp ? (
-            <>
-              <div className="mb-4 animate-pulse-gentle">
-                <Image 
-                  src="/pocki-logo.jpg" 
-                  alt="Pocki" 
-                  width={80} 
-                  height={80}
-                  className="mx-auto rounded-2xl"
-                />
-              </div>
-              <p className="text-panda-green-600 font-semibold text-lg">
-                Signing you in...
-              </p>
-              {miniAppError && (
-                <p className="mt-3 text-sm text-red-500">
-                  {miniAppError}
-                </p>
-              )}
-            </>
-          ) : (
-            <>
-              <button
-                onClick={login}
-                className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-              >
-                Connect Wallet to Start 🎋
-              </button>
-              <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
-                Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
-              </p>
-            </>
-          )}
+          <button
+            onClick={login}
+            className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+          >
+            Connect Wallet to Start 🎋
+          </button>
+          <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
+            Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
+          </p>
         </div>
 
         <div className="mt-12">
