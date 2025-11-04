@@ -1,0 +1,475 @@
+✅ Authenticated - navigating to chat
+page-c00028613cd3a694.js:1 Privy state: {ready: true, authenticated: true}
+layout-2d9e456b2116546a.js:1 🎯 Using Base App client ID for Privy
+page-6a360b0ff40c63b5.js:1 🔍 CHAT PAGE DIAGNOSTIC - Privy State: {authenticated: true, ready: true, timestamp: '2025-11-04T20:27:32.887Z'}
+page-6a360b0ff40c63b5.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: false, error: null, activeWalletAddress: null, timestamp: '2025-11-04T20:27:32.888Z'}
+page-6a360b0ff40c63b5.js:1 🔍 useXMTP DIAGNOSTIC - useWallets() State: {ready: false, walletsCount: 1, wallets: Array(1), authenticated: true, timestamp: '2025-11-04T20:27:32.889Z'}
+page-6a360b0ff40c63b5.js:1 🔍 useXMTP DIAGNOSTIC - Initialization Effect Triggered: {authenticated: true, ready: false, walletsCount: 1, shouldProceed: true, hasClient: false, …}
+page-6a360b0ff40c63b5.js:1 🚀 Triggering XMTP initialization: {authenticated: true, ready: false, hasWallets: true, shouldProceed: true, walletsCount: 1, …}
+page-6a360b0ff40c63b5.js:1 ✅ Proceeding with XMTP initialization: {authenticated: true, ready: false, walletsCount: 1, bypassedReadyCheck: true}
+page-6a360b0ff40c63b5.js:1 🔍 WALLET DETECTION: {authenticated: true, ready: false, walletsCount: 1, walletTypes: Array(1), hasBaseAccount: true, …}
+page-6a360b0ff40c63b5.js:1 ✅ Wallet found! Initializing XMTP...
+page-6a360b0ff40c63b5.js:1 📱 Selected wallet: {type: 'base_account', address: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', isBaseAccount: true, isPrivy: false}
+page-6a360b0ff40c63b5.js:1 ✅ Authentication confirmed: {privyAuth: true, staying: 'on chat page'}
+page-6a360b0ff40c63b5.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: true, error: null, activeWalletAddress: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', timestamp: '2025-11-04T20:27:32.905Z'}
+page-6a360b0ff40c63b5.js:1 ✅ Called sdk.actions.ready()
+page-6a360b0ff40c63b5.js:1 🎯 Running as Farcaster/Base App Mini App
+page-6a360b0ff40c63b5.js:1 🔍 useXMTP DIAGNOSTIC - useWallets() State: {ready: false, walletsCount: 1, wallets: Array(1), authenticated: true, timestamp: '2025-11-04T20:27:33.115Z'}
+page-6a360b0ff40c63b5.js:1 🔍 useXMTP DIAGNOSTIC - Initialization Effect Triggered: {authenticated: true, ready: false, walletsCount: 1, shouldProceed: true, hasClient: false, …}
+page-6a360b0ff40c63b5.js:1 🚀 Triggering XMTP initialization: {authenticated: true, ready: false, hasWallets: true, shouldProceed: true, walletsCount: 1, …}
+page-6a360b0ff40c63b5.js:1 Already initializing, skipping...
+page-6a360b0ff40c63b5.js:1 ✅ Created viem wallet client for XMTP: {address: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', chain: 'Base'}
+05808931.2968652d066bae1f.js:1  INFO xmtp_db::encrypted_store: sqlite_version=3.50.4
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_db::encrypted_store: Migrations successful
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_mls::identity: Initializing identity
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_api::identity: Getting inbox_ids for account identities: [ApiIdentifier { identifier: "0x4d400cdcde2ee1984542a4750a54fb587743ab04", identifier_kind: Ethereum }]
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_id::associations::builder: adding verified signature signer=19170d8470f024cdbe1076093150962acc551dcce5afc53f25e6b901e57d6510 missing_signatures=[Installation("19170d8470f024cdbe1076093150962acc551dcce5afc53f25e6b901e57d6510"), Address("0x4d400cdcde2ee1984542a4750a54fb587743ab04")]
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+05808931.2968652d066bae1f.js:1  INFO xmtp_common::stream_handles::wasm: Spawning local task on web executor
+
+page-6a360b0ff40c63b5.js:1 🔍 Current wallet chain ID before signing: {hex: 'eip155:1', decimal: 14}
+page-6a360b0ff40c63b5.js:1 ⚠️ Wallet on wrong chain (14), switching to Base (8453)...
+signMessage @ page-6a360b0ff40c63b5.js:1
+await in signMessage
+register @ 9998.1b99a32162934fa4.js:1
+await in register
+create @ 9998.1b99a32162934fa4.js:1
+await in create
+(anonymous) @ page-6a360b0ff40c63b5.js:1
+await in (anonymous)
+(anonymous) @ page-6a360b0ff40c63b5.js:1
+aW @ fd9d1056-78bbd36dda77d9e8.js:1
+oe @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+id @ fd9d1056-78bbd36dda77d9e8.js:1
+o @ fd9d1056-78bbd36dda77d9e8.js:1
+M @ 2117-ae22d5005721c73b.js:1Understand this warning
+page-6a360b0ff40c63b5.js:1 ✅ Switched wallet to Base network
+05808931.2968652d066bae1f.js:1 ERROR xmtp_mls::worker: Worker error: Metadata(Connection(Database(NotFound)))
+
+e.wbg.__wbg_error_51ecdd39ec054205 @ 05808931.2968652d066bae1f.js:1
+$func10288 @ bindings_wasm_bg.665c59bc.wasm:0x7274b5
+$func7461 @ bindings_wasm_bg.665c59bc.wasm:0x6d6f65
+$func1270 @ bindings_wasm_bg.665c59bc.wasm:0x3a8a4e
+$func7604 @ bindings_wasm_bg.665c59bc.wasm:0x6db53c
+$func11210 @ bindings_wasm_bg.665c59bc.wasm:0x73745d
+$func563 @ bindings_wasm_bg.665c59bc.wasm:0x24b66e
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1
+setInterval
+(anonymous) @ 05808931.2968652d066bae1f.js:1
+p @ 05808931.2968652d066bae1f.js:1
+e.wbg.__wbg_setInterval_ed3b5e3c3ebb8a6d @ 05808931.2968652d066bae1f.js:1
+$func12954 @ bindings_wasm_bg.665c59bc.wasm:0x765f8e
+$func6148 @ bindings_wasm_bg.665c59bc.wasm:0x693103
+$func563 @ bindings_wasm_bg.665c59bc.wasm:0x24b131
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1Understand this error
+05808931.2968652d066bae1f.js:1  INFO xmtp_mls::worker: Restarting KeyPackageCleaner worker...
+
+05808931.2968652d066bae1f.js:1 ERROR xmtp_mls::worker: Worker error: Metadata(Connection(Database(NotFound)))
+
+e.wbg.__wbg_error_51ecdd39ec054205 @ 05808931.2968652d066bae1f.js:1
+$func10288 @ bindings_wasm_bg.665c59bc.wasm:0x7274b5
+$func7461 @ bindings_wasm_bg.665c59bc.wasm:0x6d6f65
+$func1270 @ bindings_wasm_bg.665c59bc.wasm:0x3a8a4e
+$func7604 @ bindings_wasm_bg.665c59bc.wasm:0x6db53c
+$func11210 @ bindings_wasm_bg.665c59bc.wasm:0x73745d
+$func563 @ bindings_wasm_bg.665c59bc.wasm:0x24b66e
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1
+setInterval
+(anonymous) @ 05808931.2968652d066bae1f.js:1
+p @ 05808931.2968652d066bae1f.js:1
+e.wbg.__wbg_setInterval_ed3b5e3c3ebb8a6d @ 05808931.2968652d066bae1f.js:1
+$func12954 @ bindings_wasm_bg.665c59bc.wasm:0x765f8e
+$func6148 @ bindings_wasm_bg.665c59bc.wasm:0x693103
+$func563 @ bindings_wasm_bg.665c59bc.wasm:0x24b131
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1
+setTimeout
+(anonymous) @ 05808931.2968652d066bae1f.js:1
+p @ 05808931.2968652d066bae1f.js:1
+e.wbg.__wbg_setTimeout_db2dbaeefb6f39c7 @ 05808931.2968652d066bae1f.js:1
+$func6914 @ bindings_wasm_bg.665c59bc.wasm:0x6bd582
+$func563 @ bindings_wasm_bg.665c59bc.wasm:0x24b150
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1
+setInterval
+(anonymous) @ 05808931.2968652d066bae1f.js:1
+p @ 05808931.2968652d066bae1f.js:1
+e.wbg.__wbg_setInterval_ed3b5e3c3ebb8a6d @ 05808931.2968652d066bae1f.js:1
+$func12954 @ bindings_wasm_bg.665c59bc.wasm:0x765f8e
+$func6148 @ bindings_wasm_bg.665c59bc.wasm:0x693103
+$func563 @ bindings_wasm_bg.665c59bc.wasm:0x24b131
+$func2540 @ bindings_wasm_bg.665c59bc.wasm:0x4d72a7
+$func12455 @ bindings_wasm_bg.665c59bc.wasm:0x75fe72
+$closure5289_externref_shim @ bindings_wasm_bg.665c59bc.wasm:0x7693f0
+U @ 05808931.2968652d066bae1f.js:1
+s @ 05808931.2968652d066bae1f.js:1Understand this error
+05808931.2968652d066bae1f.js:1  INFO xmtp_mls::worker: Restarting KeyPackageCleaner worker...
+
+2117-ae22d5005721c73b.js:1 Failed to initialize XMTP - Full error: {error: Error: Signature error Signature validation failed
+    at e.wbg.__wbg_Error_0497d5bdba9362e5 (https…, message: 'Signature error Signature validation failed', stack: 'Error: Signature error Signature validation failed…tatic/chunks/05808931.2968652d066bae1f.js:1:2684)', type: 'object'}error: Error: Signature error Signature validation failed
+    at e.wbg.__wbg_Error_0497d5bdba9362e5 (https://pocki-chat.replit.app/_next/static/chunks/05808931.2968652d066bae1f.js:1:55025)
+    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[13099]:0x76733c
+    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[905]:0x33c3a8
+    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[2540]:0x4d72a7
+    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[12455]:0x75fe72
+    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[13254]:0x7693f0
+    at U (https://pocki-chat.replit.app/_next/static/chunks/05808931.2968652d066bae1f.js:1:4715)
+    at s (https://pocki-chat.replit.app/_next/static/chunks/05808931.2968652d066bae1f.js:1:2684)message: "Signature error Signature validation failed"stack: "Error: Signature error Signature validation failed\n    at e.wbg.__wbg_Error_0497d5bdba9362e5 (https://pocki-chat.replit.app/_next/static/chunks/05808931.2968652d066bae1f.js:1:55025)\n    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[13099]:0x76733c\n    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[905]:0x33c3a8\n    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[2540]:0x4d72a7\n    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[12455]:0x75fe72\n    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[13254]:0x7693f0\n    at U (https://pocki-chat.replit.app/_next/static/chunks/05808931.2968652d066bae1f.js:1:4715)\n    at s (https://pocki-chat.replit.app/_next/static/chunks/05808931.2968652d066bae1f.js:1:2684)"[[Prototype]]: Objectmessage: "Signature error Signature validation failed"stack: "Error: Signature error Signature validation failed\n    at e.wbg.__wbg_Error_0497d5bdba9362e5 (https://pocki-chat.replit.app/_next/static/chunks/05808931.2968652d066bae1f.js:1:55025)\n    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[13099]:0x76733c\n    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[905]:0x33c3a8\n    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[2540]:0x4d72a7\n    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[12455]:0x75fe72\n    at https://pocki-chat.replit.app/_next/static/media/bindings_wasm_bg.665c59bc.wasm:wasm-function[13254]:0x7693f0\n    at U (https://pocki-chat.replit.app/_next/static/chunks/05808931.2968652d066bae1f.js:1:4715)\n    at s (https://pocki-chat.replit.app/_next/static/chunks/05808931.2968652d066bae1f.js:1:2684)"type: "object"[[Prototype]]: Object
+window.console.error @ 2117-ae22d5005721c73b.js:1
+(anonymous) @ page-6a360b0ff40c63b5.js:1
+await in (anonymous)
+(anonymous) @ page-6a360b0ff40c63b5.js:1
+aW @ fd9d1056-78bbd36dda77d9e8.js:1
+oe @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+or @ fd9d1056-78bbd36dda77d9e8.js:1
+ol @ fd9d1056-78bbd36dda77d9e8.js:1
+id @ fd9d1056-78bbd36dda77d9e8.js:1
+o @ fd9d1056-78bbd36dda77d9e8.js:1
+M @ 2117-ae22d5005721c73b.js:1Understand this error
+page-6a360b0ff40c63b5.js:1 🔍 CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: false, error: 'Signature error Signature validation failed', activeWalletAddress: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', timestamp: '2025-11-04T20:27:48.394Z'}
