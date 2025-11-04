@@ -14,34 +14,30 @@ export default function LandingPage() {
   const router = useRouter();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
 
-  // Auto-login for Mini Apps - matches Privy's official example approach
-  // Try auto-login with timeout protection to prevent blocking
+  // Auto-login for Mini Apps - only attempt if SDK context is available
   useEffect(() => {
     if (ready && !authenticated) {
       const loginMiniApp = async () => {
         try {
+          // Quick synchronous check - if SDK isn't loaded, skip
+          if (!miniappSdk) {
+            console.log('ℹ️ Mini App SDK not available - skipping auto-login');
+            return;
+          }
+          
           console.log('🎯 Attempting Mini App auto-login...');
           
-          // Add timeout protection - if this takes too long, we're not in a Mini App
-          const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Mini App login timeout')), 2000)
-          );
+          const { nonce } = await initLoginToMiniApp();
+          console.log('✅ Got nonce from Privy');
           
-          const loginPromise = (async () => {
-            const { nonce } = await initLoginToMiniApp();
-            console.log('✅ Got nonce from Privy');
-            
-            const result = await miniappSdk.actions.signIn({ nonce });
-            console.log('✅ Got signature from Mini App');
-            
-            await loginToMiniApp({
-              message: result.message,
-              signature: result.signature,
-            });
-            console.log('✅ Logged in with Privy via Mini App!');
-          })();
+          const result = await miniappSdk.actions.signIn({ nonce });
+          console.log('✅ Got signature from Mini App');
           
-          await Promise.race([loginPromise, timeoutPromise]);
+          await loginToMiniApp({
+            message: result.message,
+            signature: result.signature,
+          });
+          console.log('✅ Logged in with Privy via Mini App!');
         } catch (error) {
           console.log('ℹ️ Mini App auto-login not available:', error);
         }

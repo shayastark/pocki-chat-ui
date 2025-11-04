@@ -49,6 +49,14 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 4, 2025 - Simplified Mini App Authentication & Fixed Privy iframe Loading ✅
+- **Simplified authentication to match Privy's official example**
+  - **Removed:** Complex Mini App detection logic, sessionStorage checks, custom Base App bypass
+  - **Implementation:** Auto-login attempt in useEffect when `ready && !authenticated` - matches Privy's example
+  - **Critical fix:** Removed `Cross-Origin-Embedder-Policy` and `Cross-Origin-Opener-Policy` headers that were blocking Privy's iframe
+  - **Discovery:** `initLoginToMiniApp()` from Privy SDK can block compilation outside Mini App contexts - wrapped in try-catch for graceful fallback
+  - **Result:** Unified authentication flow for all platforms (browser, Farcaster Mini App, Base App)
+
 ### Nov 3, 2025 - MAJOR: Implemented Privy-Based Mini App Authentication ✅
 - **Unified authentication flow using Privy for Farcaster AND Base App Mini Apps**
   - **Previous approach:** Custom Quick Auth for Farcaster, custom Base Account bypass for Base App - resulted in OPFS errors and complexity
