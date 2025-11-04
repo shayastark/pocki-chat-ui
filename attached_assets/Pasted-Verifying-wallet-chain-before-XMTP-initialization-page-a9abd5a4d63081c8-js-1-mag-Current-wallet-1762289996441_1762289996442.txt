@@ -1,0 +1,41 @@
+Verifying wallet chain before XMTP initialization...
+page-a9abd5a4d63081c8.js:1 :mag: Current wallet chain: {hex: 'eip155:8453', decimal: 14, expected: 8453}
+page-a9abd5a4d63081c8.js:1 :warning: Wallet on chain 14, switching to Base (8453)...
+page-a9abd5a4d63081c8.js:1 :warning: Chain switch verification failed: expected 8453, got 14
+(anonymous) @ page-a9abd5a4d63081c8.js:1
+await in (anonymous)
+
+M @ 2117-ae22d5005721c73b.js:1Understand this warning
+page-a9abd5a4d63081c8.js:1 :arrows_counterclockwise: Retrying chain switch (attempt 2/3)...
+page-a9abd5a4d63081c8.js:1 :mag: Current wallet chain: {hex: 'eip155:8453', decimal: 14, expected: 8453}
+page-a9abd5a4d63081c8.js:1 :warning: Wallet on chain 14, switching to Base (8453)...
+page-a9abd5a4d63081c8.js:1 :warning: Chain switch verification failed: expected 8453, got 14
+(anonymous) @ page-a9abd5a4d63081c8.js:1
+await in (anonymous)
+(anonymous) @ page-a9abd5a4d63081c8.js:1
+aW @ fd9d1056-78bbd36dda77d9e8.js:1
+
+M @ 2117-ae22d5005721c73b.js:1Understand this warning
+page-a9abd5a4d63081c8.js:1 :arrows_counterclockwise: Retrying chain switch (attempt 3/3)...
+page-a9abd5a4d63081c8.js:1 :mag: Current wallet chain: {hex: 'eip155:8453', decimal: 14, expected: 8453}
+page-a9abd5a4d63081c8.js:1 :warning: Wallet on chain 14, switching to Base (8453)...
+page-a9abd5a4d63081c8.js:1 :warning: Chain switch verification failed: expected 8453, got 14
+(anonymous) @ page-a9abd5a4d63081c8.js:1
+await in (anonymous)
+(anonymous) @ page-a9abd5a4d63081c8.js:1
+aW @ fd9d1056-78bbd36dda77d9e8.js:1
+oe @ fd9d1056-78bbd36dda77d9e8.js:1
+
+M @ 2117-ae22d5005721c73b.js:1Understand this warning
+2117-ae22d5005721c73b.js:1 Failed to initialize XMTP - Full error: {error: Error: Failed to verify wallet is on Base network after multiple attempts.
+    at https://pocki-cha…, message: 'Failed to verify wallet is on Base network after multiple attempts.', stack: 'Error: Failed to verify wallet is on Base network …c/chunks/app/chat/page-a9abd5a4d63081c8.js:1:4554', type: 'object'}
+window.console.error @ 2117-ae22d5005721c73b.js:1
+(anonymous) @ page-a9abd5a4d63081c8.js:1
+await in (anonymous)
+(anonymous) @ page-a9abd5a4d63081c8.js:1
+aW @ fd9d1056-78bbd36dda77d9e8.js:1
+
+
+
+M @ 2117-ae22d5005721c73b.js:1Understand this error
+page-a9abd5a4d63081c8.js:1 :mag: CHAT PAGE DIAGNOSTIC - XMTP State: {isConnected: false, isConnecting: false, error: 'Failed to verify wallet is on Base network after multiple attempts.', activeWalletAddress: '0x4d400CdCdE2EE1984542a4750A54Fb587743ab04', timestamp: '2025-11-04T20:56:10.697Z'}
