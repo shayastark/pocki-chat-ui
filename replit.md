@@ -49,6 +49,21 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 4, 2025 - CRITICAL FIX: Chain ID Parsing for CAIP-2 Format ✅
+- **Fixed chain ID parsing to handle Base App wallet format**
+  - **Problem:** Pre-flight chain verification detected wallet as chain 14 instead of Base (8453), causing 3 failed switch attempts and blocking XMTP initialization
+  - **Root cause:** Base App wallet returns chain ID in CAIP-2 format `"eip155:8453"`, but code parsed it as hexadecimal, extracting only `"e"` (14 in hex)
+  - **Solution:** Updated chain ID parser to handle both CAIP-2 and hex formats (hooks/useXMTP.tsx lines 235-280)
+    - **CAIP-2 format**: `"eip155:8453"` → split on `":"` → extract `"8453"` → parse as decimal → `8453`
+    - **Hex format**: `"0x2105"` → parse as hexadecimal → `8453`
+    - **Numeric format**: Use value directly
+    - Added diagnostic logging showing both raw and parsed chain IDs
+  - **Testing Results**: Browser logs confirm correct parsing:
+    - `🔍 Current wallet chain: {"raw":"eip155:8453","parsed":8453,"expected":8453}`
+    - `✅ Wallet already on Base network`
+    - `✅ Created XMTP client with ReplyCodec and WalletSendCallsCodec`
+  - **Result:** Wallet on Base (8453) correctly recognized, no unnecessary chain switches, XMTP initialization succeeds
+
 ### Nov 4, 2025 - CRITICAL FIX: Pre-flight Chain Verification for XMTP Initialization ✅
 - **Fixed XMTP "Signature validation failed" error in Base App**
   - **Problem:** Base App wallet reported chain ID 14 (unknown) or 0 (disconnected) during XMTP initialization, causing signature validation failures when chain switching occurred mid-signature
