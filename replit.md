@@ -49,6 +49,22 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
+### Nov 4, 2025 - CRITICAL FIX: Pre-flight Chain Verification for XMTP Initialization ✅
+- **Fixed XMTP "Signature validation failed" error in Base App**
+  - **Problem:** Base App wallet reported chain ID 14 (unknown) or 0 (disconnected) during XMTP initialization, causing signature validation failures when chain switching occurred mid-signature
+  - **Root cause:** Chain verification happened inside `signMessage` function during XMTP client creation, switching chains while signature request was in progress
+  - **Solution:** Moved chain verification to occur BEFORE XMTP client creation with retry logic
+    - **Pre-flight verification loop** (hooks/useXMTP.tsx lines 226-283):
+      - Checks wallet chain ID before any XMTP operations
+      - Automatically switches to Base network (8453) if wallet is on wrong chain
+      - Waits 300ms after switch and verifies it succeeded
+      - Retries up to 3 times with 500ms delays if verification fails
+      - Throws clear error if chain cannot be switched after max attempts
+    - **Simplified signMessage** (hooks/useXMTP.tsx lines 305-323):
+      - Removed redundant chain verification since chain is guaranteed correct before XMTP initialization
+      - Signatures now always execute on correct Base chain
+  - **Result:** XMTP initialization succeeds in Base App; all signatures requested on correct chain, preventing validation errors
+
 ### Nov 4, 2025 - CRITICAL FIX: Configured Privy App Client for Base App ✅
 - **Fixed Privy 400 authentication error in Base App**
   - **Problem:** Base App Mini Apps getting `POST https://auth.privy.io/api/v2/farcaster/authenticate 400 (Bad Request)` after successfully obtaining nonce and signature
