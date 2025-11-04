@@ -53,17 +53,32 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 - **Fixed Privy 400 authentication error in Base App**
   - **Problem:** Base App Mini Apps getting `POST https://auth.privy.io/api/v2/farcaster/authenticate 400 (Bad Request)` after successfully obtaining nonce and signature
   - **Root cause:** Default Privy app configuration uses httpOnly cookies, which Base App does not support per official Privy documentation
-  - **Solution:** Created dedicated Privy App Client for Base App with non-httpOnly cookies
+  - **Solution:** Created dedicated Privy App Client for Base App with non-httpOnly cookies and centralized detection to prevent race conditions
     - **Privy Dashboard:** Created new Web App Client with ID `client-WY6RdKiPGQJANCbSJQGU1f4NEr2nmb1FKkurudHXcHmSg`
     - **Allowed Origins:** Configured `https://base.app` in app client settings
     - **Cookie Settings:** Disabled httpOnly cookies for Base App compatibility
-    - **Code Changes:** Updated `app/providers.tsx` to detect Base App and dynamically use `clientId` prop on `PrivyProvider`
     - **Environment:** Added `NEXT_PUBLIC_PRIVY_BASE_APP_CLIENT_ID` secret
-  - **Implementation:**
-    - Base App detection runs on mount in Providers component
-    - When `clientFid === 309857` (Base App), use dedicated app client
-    - Browser and Farcaster Mini Apps continue using default configuration
-  - **Result:** Base App now uses proper Privy configuration without httpOnly cookies, should resolve 400 authentication errors
+  - **Architecture Changes:**
+    - **Created MiniAppContext** (`app/contexts/MiniAppContext.tsx`): Single source of truth for Mini App detection
+      - Exposes: `isMiniApp`, `isBaseApp`, `isFarcaster`, `detectionComplete`
+      - Runs once on mount using official `miniappSdk.isInMiniApp()` method
+    - **Updated Providers** (`app/providers.tsx`): 
+      - Wrapped in `MiniAppProvider` → `PrivyWrapper` hierarchy
+      - `PrivyWrapper` consumes detection context
+      - Sets `clientId` based on `detectionComplete && isBaseApp`
+      - Uses `key` prop to force PrivyProvider remount when clientId changes
+    - **Updated Landing Page** (`app/page.tsx`):
+      - Consumes shared MiniAppContext
+      - Gates auto-login on `ready && detectionComplete` to prevent race condition
+      - Auto-login only proceeds after Privy has correct configuration
+  - **Implementation Flow:**
+    1. MiniAppContext detects environment on app mount
+    2. PrivyProvider mounts with default config (clientId=undefined)
+    3. When detection completes and Base App is detected, clientId changes to Base App client ID
+    4. Key prop forces PrivyProvider to remount with new configuration
+    5. Landing page waits for `detectionComplete` before triggering auto-login
+    6. Auto-login uses correctly configured Privy instance with non-httpOnly cookies
+  - **Result:** Base App authentication now uses proper Privy configuration, eliminating 400 errors caused by httpOnly cookie mismatch
 
 ### Nov 4, 2025 - Fixed Base App Mini App Detection & XMTP Chain Persistence ✅
 - **Implemented official SDK Mini App detection method**
