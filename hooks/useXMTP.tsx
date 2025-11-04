@@ -229,12 +229,23 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       
       while (chainSwitchAttempts < maxChainSwitchAttempts) {
         try {
-          const currentChainIdHex = await wallet.chainId;
-          const currentChainId = typeof currentChainIdHex === 'string' 
-            ? parseInt(currentChainIdHex, 16) 
-            : currentChainIdHex;
+          const currentChainIdRaw = await wallet.chainId;
           
-          console.log('🔍 Current wallet chain:', { hex: currentChainIdHex, decimal: currentChainId, expected: base.id });
+          // Parse chain ID - handle both CAIP-2 format (eip155:8453) and hex format (0x2105)
+          let currentChainId: number;
+          if (typeof currentChainIdRaw === 'string') {
+            if (currentChainIdRaw.startsWith('eip155:')) {
+              // CAIP-2 format: "eip155:8453" -> extract "8453" -> convert to number
+              currentChainId = parseInt(currentChainIdRaw.split(':')[1], 10);
+            } else {
+              // Hex format: "0x2105" -> parse as hex
+              currentChainId = parseInt(currentChainIdRaw, 16);
+            }
+          } else {
+            currentChainId = currentChainIdRaw;
+          }
+          
+          console.log('🔍 Current wallet chain:', { raw: currentChainIdRaw, parsed: currentChainId, expected: base.id });
           
           if (currentChainId === base.id) {
             console.log('✅ Wallet already on Base network');
@@ -249,10 +260,21 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           await new Promise(resolve => setTimeout(resolve, 300));
           
           // Verify the switch succeeded
-          const newChainIdHex = await wallet.chainId;
-          const newChainId = typeof newChainIdHex === 'string' 
-            ? parseInt(newChainIdHex, 16) 
-            : newChainIdHex;
+          const newChainIdRaw = await wallet.chainId;
+          
+          // Parse chain ID - handle both CAIP-2 format (eip155:8453) and hex format (0x2105)
+          let newChainId: number;
+          if (typeof newChainIdRaw === 'string') {
+            if (newChainIdRaw.startsWith('eip155:')) {
+              // CAIP-2 format: "eip155:8453" -> extract "8453" -> convert to number
+              newChainId = parseInt(newChainIdRaw.split(':')[1], 10);
+            } else {
+              // Hex format: "0x2105" -> parse as hex
+              newChainId = parseInt(newChainIdRaw, 16);
+            }
+          } else {
+            newChainId = newChainIdRaw;
+          }
           
           if (newChainId === base.id) {
             console.log('✅ Successfully switched to Base network');
