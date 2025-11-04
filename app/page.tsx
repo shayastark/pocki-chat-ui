@@ -16,19 +16,29 @@ export default function LandingPage() {
   const [isMiniApp, setIsMiniApp] = useState(false);
   const [loginAttempted, setLoginAttempted] = useState(false);
 
-  // Detect Mini App environment on mount
+  // Detect Mini App environment on mount using official SDK method
   useEffect(() => {
     const detectMiniApp = async () => {
       try {
-        const context = await Promise.race([
-          miniappSdk?.context,
-          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 500))
-        ]) as any;
-        const inMiniApp = context?.client?.clientFid !== undefined;
+        // Use official Farcaster SDK detection method
+        const inMiniApp = await miniappSdk.isInMiniApp();
         setIsMiniApp(inMiniApp);
-        console.log('🔍 Mini App detection:', { inMiniApp, clientFid: context?.client?.clientFid });
+        
+        if (inMiniApp) {
+          // Get context details for debugging
+          const context = await miniappSdk.context;
+          console.log('🔍 Mini App detected:', { 
+            inMiniApp,
+            clientFid: context?.client?.clientFid,
+            platformType: context?.client?.platformType,
+            isBaseApp: context?.client?.clientFid === 309857,
+            isFarcaster: context?.client?.clientFid === 9152
+          });
+        } else {
+          console.log('🔍 Not in Mini App environment (browser mode)');
+        }
       } catch (error) {
-        console.log('🔍 Not in Mini App environment (detection timeout or error)');
+        console.log('🔍 Mini App detection error:', error);
         setIsMiniApp(false);
       }
     };

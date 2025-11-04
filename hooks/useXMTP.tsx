@@ -236,7 +236,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         chain: walletClient.chain.name,
       });
       
-      // Create XMTP signer using viem wallet client
+      // Create XMTP signer using viem wallet client with chain persistence
       const signer: any = {
         type: 'EOA',
         getIdentifier: () => ({
@@ -246,6 +246,37 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         signMessage: async (message: string | { message: string }): Promise<Uint8Array> => {
           // Extract message string if it's an object
           const messageText = typeof message === 'string' ? message : message.message;
+          
+          // CRITICAL FIX: Ensure wallet is on Base network before signing
+          // Base Account wallet can drift to chain 0 (disconnected) causing XMTP errors
+          try {
+            const currentChainIdHex = await wallet.chainId;
+            // Parse chain ID (can be hex string like "0x2105" or number)
+            const currentChainId = typeof currentChainIdHex === 'string' 
+              ? parseInt(currentChainIdHex, 16) 
+              : currentChainIdHex;
+            
+            console.log('🔍 Current wallet chain ID before signing:', { hex: currentChainIdHex, decimal: currentChainId });
+            
+            if (currentChainId !== base.id) {
+              console.warn(`⚠️ Wallet on wrong chain (${currentChainId}), switching to Base (${base.id})...`);
+              await wallet.switchChain(base.id);
+              console.log('✅ Switched wallet to Base network');
+              
+              // Small delay to ensure chain switch completes
+              await new Promise(resolve => setTimeout(resolve, 100));
+            }
+          } catch (chainCheckError) {
+            console.error('❌ Chain check/switch failed:', chainCheckError);
+            // Try to switch anyway
+            try {
+              await wallet.switchChain(base.id);
+              console.log('✅ Recovered: switched wallet to Base network');
+            } catch (switchError) {
+              console.error('❌ Failed to switch to Base network:', switchError);
+              throw new Error('Wallet is not on Base network and cannot switch. Please manually switch to Base network.');
+            }
+          }
           
           // Sign message with viem - account is already set in walletClient
           const signature = await walletClient.signMessage({

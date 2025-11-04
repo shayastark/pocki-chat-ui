@@ -49,18 +49,22 @@ The application is built with Next.js 14 (App Router), React, and TypeScript.
 
 ## Recent Updates
 
-### Nov 4, 2025 - Implemented Robust Mini App Environment Detection ✅
-- **Added proper Mini App environment gate to prevent browser login attempts**
-  - **Problem:** Previous implementation attempted Mini App login for ALL users (browser + Mini App), causing 60s page load delays
-  - **Root cause:** `miniappSdk` import is always truthy, so `if (!miniappSdk)` check doesn't work
-  - **Solution:** Race `miniappSdk.context` against 500ms timeout to detect actual Mini App environment
-    - Sets `isMiniApp` state based on `context.client.clientFid` presence
-    - Auto-login only triggers when `isMiniApp === true`
-    - Added `loginAttempted` flag to prevent repeated attempts
-  - **Critical fix:** Removed `Cross-Origin-Embedder-Policy` and `Cross-Origin-Opener-Policy` headers that were blocking Privy's iframe
-  - **Performance:** Page load improved from 60s to 28s for browser users
-  - **Result:** Browser users get instant page load, Mini App users get automatic authentication
-  - **Known issue:** "Origin not allowed" error requires adding Replit domain (*.spock.replit.dev) to Privy allowlist in dashboard
+### Nov 4, 2025 - Fixed Base App Mini App Detection & XMTP Chain Persistence ✅
+- **Implemented official SDK Mini App detection method**
+  - **Problem:** Base App Mini Apps failed to connect wallet on both iOS and Android; Android showed chain ID error "Initially added with 8453 but now signing from 0"
+  - **Root cause 1:** Manual timeout-based detection (`miniappSdk.context` race) was unreliable for Base App
+  - **Root cause 2:** Base Account wallet chain drifted from Base (8453) to disconnected (0) after XMTP initialization
+  - **Solution 1 - Detection:** Use official `miniappSdk.isInMiniApp()` method
+    - More reliable than custom timeout approach
+    - Works consistently across Farcaster and Base App on all platforms
+    - Logs detailed context including Base App detection (clientFid 309857)
+  - **Solution 2 - Chain Persistence:** Added chain verification before every XMTP signature
+    - Checks wallet chain ID before signing messages
+    - Auto-switches back to Base network if wallet drifts to chain 0 or wrong network
+    - Includes retry logic with detailed error logging
+    - Prevents "Wrong chain id" XMTP errors
+  - **Result:** Browser users unaffected, Mini App detection more reliable, XMTP signatures protected from chain drift
+  - **Note:** Privy allowlist configuration still required for production domain
 
 ### Nov 3, 2025 - MAJOR: Implemented Privy-Based Mini App Authentication ✅
 - **Unified authentication flow using Privy for Farcaster AND Base App Mini Apps**
