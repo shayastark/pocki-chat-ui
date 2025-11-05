@@ -1,6 +1,6 @@
 'use client';
 
-import { AGENT_ADDRESS } from '@/lib/constants';
+import { AGENT_WALLET_ADDRESS, AGENT_BASENAME } from '@/lib/constants';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -15,40 +15,15 @@ export function BaseAppChat() {
   const [copied, setCopied] = useState(false);
 
   const openBaseAppDM = () => {
-    // Use Base App's messaging deeplink format from the documentation
+    // Use Base App's messaging deeplink format from the official documentation
     // Format: cbwallet://messaging/address
-    // This opens a direct message immediately (not just the profile)
+    // Address must be 0x wallet address (hex format), NOT ENS basename
     
-    // Try the messaging deeplink first (opens DM directly)
-    const messagingUrl = `cbwallet://messaging/pocki.base.eth`;
+    // Create the deeplink per Base documentation
+    const messagingDeeplink = `cbwallet://messaging/${AGENT_WALLET_ADDRESS}`;
     
-    // Fallback to web profile URL if deeplink doesn't work
-    const profileUrl = `https://base.app/pocki.base.eth`;
-    
-    // Try deeplink first (works in Base App mobile/desktop)
-    window.location.href = messagingUrl;
-    
-    // Fallback to web profile after a short delay if deeplink fails
-    setTimeout(() => {
-      // If still on the same page, deeplink didn't work - use web URL
-      if (document.hasFocus()) {
-        window.open(profileUrl, '_self');
-      }
-    }, 1000);
-    
-    // Note: Alternative formats to test:
-    // cbwallet://messaging/0x... (with wallet address)
-    // https://go.cb-w.com/messaging/pocki.base.eth (universal link)
-  };
-
-  const copyAgentInboxId = async () => {
-    try {
-      await navigator.clipboard.writeText(AGENT_ADDRESS);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
+    // Open the deeplink (will open DM directly in Base App)
+    window.location.href = messagingDeeplink;
   };
 
   return (
@@ -102,7 +77,7 @@ export function BaseAppChat() {
               Or search for Pocki directly in Base App:
             </p>
             <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-mono">
-              pocki.base.eth
+              {AGENT_BASENAME}
             </div>
             <p className="text-blue-50 text-xs mt-2">
               Search in Base App → Open profile → Tap "Message" to chat
