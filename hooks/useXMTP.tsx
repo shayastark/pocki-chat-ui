@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, useRef, type ReactNode, useCallback } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { XMTP_ENV, AGENT_ADDRESS } from '@/lib/constants';
+import { useMiniApp } from '@/app/contexts/MiniAppContext';
 
 interface Message {
   id: string;
@@ -65,9 +66,48 @@ const XMTPContext = createContext<XMTPContextType>({
   fixConversation: async () => {},
 });
 
+// Utility function to check if OPFS (Origin Private File System) is available
+// OPFS is required by XMTP Browser SDK v5 but is restricted in iframe contexts
+async function checkOPFSAvailability(): Promise<{ available: boolean; error?: string }> {
+  try {
+    // Check if we're in an iframe
+    const inIframe = window.self !== window.top;
+    
+    // Check if StorageManager API is available
+    if (!navigator.storage || !navigator.storage.getDirectory) {
+      return {
+        available: false,
+        error: 'OPFS (Origin Private File System) API not available in this browser'
+      };
+    }
+    
+    // Try to access OPFS root directory
+    try {
+      const root = await navigator.storage.getDirectory();
+      console.log('✅ OPFS is available:', { inIframe, hasRoot: !!root });
+      return { available: true };
+    } catch (opfsError: any) {
+      console.error('❌ OPFS access failed:', opfsError);
+      return {
+        available: false,
+        error: inIframe 
+          ? 'OPFS is not accessible in iframe context (Base App restriction)' 
+          : `OPFS access error: ${opfsError.message}`
+      };
+    }
+  } catch (err: any) {
+    console.error('❌ OPFS check failed:', err);
+    return {
+      available: false,
+      error: `OPFS availability check failed: ${err.message}`
+    };
+  }
+}
+
 export function XMTPProvider({ children }: { children: ReactNode }) {
   const { authenticated } = usePrivy();
   const { wallets, ready } = useWallets();
+  const { isBaseApp } = useMiniApp();
   const [client, setClient] = useState<any | null>(null);
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -342,6 +382,38 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         },
       };
 
+      // CRITICAL: Check if OPFS (Origin Private File System) is available
+      // XMTP Browser SDK v5 requires OPFS, which is restricted in iframe contexts like Base App
+      console.log('🔍 Checking OPFS availability before XMTP initialization...');
+      const opfsCheck = await checkOPFSAvailability();
+      
+      if (!opfsCheck.available) {
+        console.error('❌ OPFS is not available:', opfsCheck.error);
+        
+        // Special error message for Base App users
+        if (isBaseApp) {
+          throw new Error(
+            '❌ XMTP cannot initialize in Base App due to browser restrictions.\n\n' +
+            '🔧 SOLUTION: This requires a server-side XMTP proxy.\n\n' +
+            '📋 Base App\'s iframe security policy blocks the Origin Private File System (OPFS) ' +
+            'that XMTP Browser SDK v5 requires for local storage.\n\n' +
+            '✨ You can use Pocki Chat in:\n' +
+            '  • Web browsers (Chrome, Safari, etc.)\n' +
+            '  • Farcaster Mini App\n\n' +
+            'For Base App support, deploy a server-side XMTP service on Railway. ' +
+            'See the documentation for details.'
+          );
+        } else {
+          throw new Error(
+            `XMTP initialization failed: ${opfsCheck.error}\n\n` +
+            'Your browser or context does not support the required storage features. ' +
+            'Try using a modern browser (Chrome, Safari, Firefox) in a regular window (not incognito).'
+          );
+        }
+      }
+      
+      console.log('✅ OPFS is available, proceeding with XMTP initialization');
+      
       // Import codecs before creating client
       // CRITICAL: XMTP Browser SDK v5 requires codecs passed during creation
       const { ReplyCodec } = await import('@xmtp/content-type-reply');
