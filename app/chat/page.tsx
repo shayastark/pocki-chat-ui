@@ -11,10 +11,13 @@ import { MessageInput } from '@/components/MessageInput';
 import { TransactionModal } from '@/components/TransactionModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { BaseAppBanner } from '@/components/BaseAppBanner';
+import { BaseAppChat } from '@/components/BaseAppChat';
+import { useMiniApp } from '@/app/contexts/MiniAppContext';
 
 function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll, fixConversation } = useXMTP();
   const { logout, authenticated, ready } = usePrivy();
+  const { isBaseApp } = useMiniApp();
   const [showTxModal, setShowTxModal] = useState(false);
   const [currentTx, setCurrentTx] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -168,6 +171,13 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   }
 
   if (error) {
+    // If we're in Base App and XMTP failed to initialize (as expected),
+    // show the Base App native messaging interface instead of error
+    if (isBaseApp && error.includes('XMTP Browser SDK cannot initialize')) {
+      return <BaseAppChat />;
+    }
+    
+    // For other errors, show the standard error UI
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4">
@@ -183,7 +193,7 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
           <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
             Connection Error
           </h2>
-          <p className="text-gray-600 text-center mb-6">{error}</p>
+          <p className="text-gray-600 text-center mb-6 whitespace-pre-line">{error}</p>
           <button
             onClick={() => window.location.reload()}
             className="w-full bg-panda-green-600 hover:bg-panda-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"

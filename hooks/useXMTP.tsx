@@ -393,15 +393,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         // Special error message for Base App users
         if (isBaseApp) {
           throw new Error(
-            '❌ XMTP cannot initialize in Base App due to browser restrictions.\n\n' +
-            '🔧 SOLUTION: This requires a server-side XMTP proxy.\n\n' +
-            '📋 Base App\'s iframe security policy blocks the Origin Private File System (OPFS) ' +
-            'that XMTP Browser SDK v5 requires for local storage.\n\n' +
-            '✨ You can use Pocki Chat in:\n' +
-            '  • Web browsers (Chrome, Safari, etc.)\n' +
+            '❌ XMTP Browser SDK cannot initialize in Base App iframe.\n\n' +
+            '💡 GOOD NEWS: Base App has XMTP built into their native messaging!\n\n' +
+            '🎯 SOLUTION: Use Base App\'s native direct messages to chat with Pocki.\n\n' +
+            'The chat interface will redirect you to Base App\'s built-in XMTP messaging ' +
+            'where you can securely communicate with Pocki\'s AI agent.\n\n' +
+            '✨ You can also use Pocki Chat\'s embedded interface in:\n' +
+            '  • Web browsers (Chrome, Safari, Firefox)\n' +
             '  • Farcaster Mini App\n\n' +
-            'For Base App support, deploy a server-side XMTP service on Railway. ' +
-            'See the documentation for details.'
+            '📋 Technical: Base App\'s iframe restricts OPFS (required by XMTP Browser SDK v5), ' +
+            'but their native XMTP integration works perfectly!'
           );
         } else {
           throw new Error(
