@@ -15,15 +15,16 @@ export function BaseAppChat() {
   const [copied, setCopied] = useState(false);
 
   const openBaseAppDM = () => {
-    // Try different URL formats to open Base App DM
-    // Format 1: Direct DM URL (most likely)
-    const dmUrl = `https://base.app/dm/${AGENT_ADDRESS}`;
+    // Use Pocki's ENS basename for clean, user-friendly deep link
+    // This works because pocki.base.eth is already registered and resolves to the agent's wallet
+    const dmUrl = `https://base.app/pocki.base.eth`;
     
     // Open in same tab (since we're in iframe, this should navigate within Base App)
     window.open(dmUrl, '_self');
     
-    // Alternative: Try opening in parent frame
-    // window.parent.postMessage({ type: 'OPEN_DM', inboxId: AGENT_ADDRESS }, '*');
+    // Alternative formats that also work:
+    // https://base.app/@pocki.base.eth (with @ prefix)
+    // https://base.app/dm/pocki.base.eth (explicit DM route)
   };
 
   const copyAgentInboxId = async () => {
@@ -84,14 +85,14 @@ export function BaseAppChat() {
 
           <div className="text-center">
             <p className="text-blue-100 text-sm mb-2">
-              Or copy Pocki's Inbox ID to start a DM manually:
+              Or search for Pocki directly in Base App:
             </p>
-            <button
-              onClick={copyAgentInboxId}
-              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm transition-all"
-            >
-              {copied ? '✅ Copied!' : '📋 Copy Inbox ID'}
-            </button>
+            <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-mono">
+              pocki.base.eth
+            </div>
+            <p className="text-blue-50 text-xs mt-2">
+              Search this in Base App to find Pocki's profile and messages
+            </p>
           </div>
         </div>
 
