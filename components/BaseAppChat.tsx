@@ -15,16 +15,30 @@ export function BaseAppChat() {
   const [copied, setCopied] = useState(false);
 
   const openBaseAppDM = () => {
-    // Use Pocki's ENS basename for clean, user-friendly deep link
-    // This works because pocki.base.eth is already registered and resolves to the agent's wallet
-    const dmUrl = `https://base.app/pocki.base.eth`;
+    // Use Base App's messaging deeplink format from the documentation
+    // Format: cbwallet://messaging/address
+    // This opens a direct message immediately (not just the profile)
     
-    // Open in same tab (since we're in iframe, this should navigate within Base App)
-    window.open(dmUrl, '_self');
+    // Try the messaging deeplink first (opens DM directly)
+    const messagingUrl = `cbwallet://messaging/pocki.base.eth`;
     
-    // Alternative formats that also work:
-    // https://base.app/@pocki.base.eth (with @ prefix)
-    // https://base.app/dm/pocki.base.eth (explicit DM route)
+    // Fallback to web profile URL if deeplink doesn't work
+    const profileUrl = `https://base.app/pocki.base.eth`;
+    
+    // Try deeplink first (works in Base App mobile/desktop)
+    window.location.href = messagingUrl;
+    
+    // Fallback to web profile after a short delay if deeplink fails
+    setTimeout(() => {
+      // If still on the same page, deeplink didn't work - use web URL
+      if (document.hasFocus()) {
+        window.open(profileUrl, '_self');
+      }
+    }, 1000);
+    
+    // Note: Alternative formats to test:
+    // cbwallet://messaging/0x... (with wallet address)
+    // https://go.cb-w.com/messaging/pocki.base.eth (universal link)
   };
 
   const copyAgentInboxId = async () => {
@@ -91,7 +105,7 @@ export function BaseAppChat() {
               pocki.base.eth
             </div>
             <p className="text-blue-50 text-xs mt-2">
-              Search this in Base App to find Pocki's profile and messages
+              Search in Base App → Open profile → Tap "Message" to chat
             </p>
           </div>
         </div>
