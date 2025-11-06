@@ -207,7 +207,7 @@
     
     <div class="alert alert-info" style="margin-top: 20px;">
       <strong>💡 After Revocation:</strong><br>
-      1. Go to <a href="/chat" style="color: #667eea; font-weight: bold;">Pocki Chat</a><br>
+      1. Go to <a href="/" style="color: #667eea; font-weight: bold;">Pocki Chat</a><br>
       2. Connect your wallet<br>
       3. You'll be at 1/10 installations! 🎉
     </div>
@@ -261,13 +261,13 @@
         walletAddress = accounts[0];
         log(`✅ Connected: ${walletAddress}`, 'success');
         
-        // Import XMTP dynamically
+        // Import XMTP dynamically using jsDelivr which handles Web Workers properly
         log('Loading XMTP SDK...', 'info');
         showStatus('⏳ Loading XMTP SDK... This may take a moment.', 'info');
         
-        const { Client } = await import('https://esm.sh/@xmtp/browser-sdk@5.0.1');
-        const { createWalletClient, custom } = await import('https://esm.sh/viem@2.38.2');
-        const { base } = await import('https://esm.sh/viem@2.38.2/chains');
+        const { Client } = await import('https://cdn.jsdelivr.net/npm/@xmtp/browser-sdk@5.0.1/+esm');
+        const { createWalletClient, custom } = await import('https://cdn.jsdelivr.net/npm/viem@2.38.2/+esm');
+        const { base } = await import('https://cdn.jsdelivr.net/npm/viem@2.38.2/chains/+esm');
         
         log('✅ XMTP SDK loaded', 'success');
         
@@ -402,7 +402,7 @@
         showStatus(
           '✅ Success! All installations revoked!<br><br>' +
           '📋 Next Steps:<br>' +
-          '1. Go to <a href="/chat" style="color: #155724; font-weight: bold;">Pocki Chat</a><br>' +
+          '1. Go to <a href="/" style="color: #155724; font-weight: bold;">Pocki Chat</a><br>' +
           '2. Connect your wallet<br>' +
           '3. You\'ll create 1 new installation (1/10)<br>' +
           '4. Start chatting! 🎉',
