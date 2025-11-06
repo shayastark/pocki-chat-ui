@@ -197,39 +197,39 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
           </h2>
           <p className="text-gray-600 text-center mb-6 whitespace-pre-line">{error}</p>
           
-          {/* Show installation management for installation limit errors */}
-          {error.includes('installation limit') || error.includes('10/10 installations') ? (
+          {/* Show key management for all XMTP errors */}
+          {error.includes('installation limit') || error.includes('10/10 installations') || error.includes('hexadecimal') || error.includes('SQLSTATE') ? (
             <div className="space-y-3 mb-4">
               <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3 text-sm">
-                <p className="font-semibold text-yellow-800 mb-2">🔧 Installation Limit Reached</p>
+                <p className="font-semibold text-yellow-800 mb-2">
+                  {error.includes('hexadecimal') || error.includes('SQLSTATE') 
+                    ? '🔧 Corrupted Installation Key' 
+                    : '🔧 Installation Limit Reached'}
+                </p>
                 <p className="text-yellow-700 text-xs mb-2">
-                  You have 10 installations registered on the XMTP network. This limit is stored server-side.
+                  {error.includes('hexadecimal') || error.includes('SQLSTATE')
+                    ? 'Your stored installation key is corrupted. This causes database errors when connecting to XMTP.'
+                    : 'You have 10 installations registered on the XMTP network. This limit is stored server-side.'}
                 </p>
                 <p className="text-yellow-700 text-xs">
-                  Use our fix utility to diagnose and resolve this issue.
+                  Use our utility tool to automatically detect and clear corrupted keys.
                 </p>
               </div>
               <button
                 onClick={() => {
-                  window.location.href = '/fix-installation-limit.html';
+                  window.location.href = '/clear-xmtp-keys.html';
                 }}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
               >
-                🔧 Open Installation Fixer
+                🔧 Clear XMTP Keys (Recommended)
               </button>
               <button
                 onClick={() => {
-                  if (activeWalletAddress) {
-                    const key = `xmtp_installation_key_${activeWalletAddress.toLowerCase()}`;
-                    localStorage.removeItem(key);
-                    alert(`Cleared installation key: ${key}\n\nNow click "Retry Connection"`);
-                  } else {
-                    alert('No wallet address found. Please refresh and try again.');
-                  }
+                  window.location.href = '/fix-installation-limit.html';
                 }}
-                className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
               >
-                🗑️ Quick Clear (May Not Fix)
+                📋 Installation Limit Fixer
               </button>
             </div>
           ) : null}

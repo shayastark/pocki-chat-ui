@@ -432,19 +432,57 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       try {
         const storedKeyHex = localStorage.getItem(installationKeyStorageKey);
         if (storedKeyHex) {
-          console.log('🔑 Found stored installation key, reusing it...');
-          // Convert hex string back to Uint8Array
+          console.log('🔑 Found stored installation key, validating it...');
+          
+          // CRITICAL: Validate hex string format before parsing
+          // This prevents "invalid hexadecimal digit" errors from corrupted keys
           const hexString = storedKeyHex.startsWith('0x') ? storedKeyHex.slice(2) : storedKeyHex;
-          storedInstallationKey = new Uint8Array(hexString.length / 2);
-          for (let i = 0; i < hexString.length; i += 2) {
-            storedInstallationKey[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
+          
+          // Validation checks:
+          // 1. Must be even length (each byte = 2 hex chars)
+          // 2. Must only contain valid hex characters (0-9, a-f, A-F)
+          // 3. Must be at least 64 chars (32 bytes minimum for installation keys)
+          const isValidLength = hexString.length % 2 === 0 && hexString.length >= 64;
+          const isValidHex = /^[0-9a-fA-F]+$/.test(hexString);
+          
+          if (!isValidLength || !isValidHex) {
+            console.error('❌ CORRUPTED INSTALLATION KEY DETECTED!');
+            console.error('   Length valid:', isValidLength, '(must be even and >= 64 chars)');
+            console.error('   Hex valid:', isValidHex, '(only 0-9, a-f allowed)');
+            console.error('   Length:', hexString.length);
+            console.error('   First 20 chars:', hexString.substring(0, 20));
+            
+            // Auto-clear corrupted key to prevent API errors
+            localStorage.removeItem(installationKeyStorageKey);
+            console.log('✅ Automatically cleared corrupted key');
+            console.log('📝 Will create a fresh installation key');
+            
+            // Show user-friendly alert
+            alert(
+              '⚠️ Corrupted installation key detected and cleared.\n\n' +
+              'This is why you were seeing the "invalid hexadecimal digit" error.\n\n' +
+              'Creating a fresh installation key now...'
+            );
+          } else {
+            // Key is valid, parse it
+            storedInstallationKey = new Uint8Array(hexString.length / 2);
+            for (let i = 0; i < hexString.length; i += 2) {
+              storedInstallationKey[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
+            }
+            console.log('✅ Installation key loaded and validated from storage');
           }
-          console.log('✅ Installation key loaded from storage');
         } else {
           console.log('📝 No stored installation key found, will create new one');
         }
       } catch (err) {
-        console.warn('⚠️ Failed to load installation key from storage:', err);
+        console.error('❌ Failed to load installation key from storage:', err);
+        // Clear potentially corrupted key
+        try {
+          localStorage.removeItem(installationKeyStorageKey);
+          console.log('✅ Cleared potentially corrupted key after error');
+        } catch (clearErr) {
+          console.error('Failed to clear key:', clearErr);
+        }
       }
 
       // Create XMTP client with persistent installation key
@@ -470,13 +508,26 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         try {
           const installationKey = await (newClient as any).installationKey();
           if (installationKey) {
-            // Convert Uint8Array to hex string for storage
-            const hexString = '0x' + Array.from(installationKey)
-              .map(b => b.toString(16).padStart(2, '0'))
-              .join('');
-            localStorage.setItem(installationKeyStorageKey, hexString);
-            console.log('✅ Installation key saved to localStorage for future sessions');
-            console.log('📊 This prevents hitting the 10 installation limit');
+            // Validate the key before storing
+            if (installationKey instanceof Uint8Array && installationKey.length >= 32) {
+              // Convert Uint8Array to hex string for storage
+              const hexString = '0x' + Array.from(installationKey)
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+              
+              // Double-check the hex string is valid before storing
+              const hexWithoutPrefix = hexString.slice(2);
+              if (/^[0-9a-fA-F]+$/.test(hexWithoutPrefix) && hexWithoutPrefix.length % 2 === 0) {
+                localStorage.setItem(installationKeyStorageKey, hexString);
+                console.log('✅ Installation key validated and saved to localStorage');
+                console.log('📊 Key length:', installationKey.length, 'bytes');
+                console.log('📊 This prevents hitting the 10 installation limit');
+              } else {
+                console.error('❌ Generated hex string is invalid, not saving');
+              }
+            } else {
+              console.error('❌ Installation key is invalid format or too short');
+            }
           }
         } catch (err) {
           console.warn('⚠️ Failed to save installation key:', err);
