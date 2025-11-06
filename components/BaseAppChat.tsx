@@ -52,7 +52,7 @@ export function BaseAppChat() {
 
           <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-6 mb-6">
             <h2 className="font-semibold text-xl mb-3 text-center">
-              💚 Base App Native Messaging
+              💙 Base App Native Messaging
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               Great news! Base App has XMTP messaging built right into the platform. Click below to open a secure, end-to-end encrypted direct message with Pocki's AI agent.
