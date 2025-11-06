@@ -40,9 +40,34 @@ I've implemented installation key persistence in `/workspace/hooks/useXMTP.tsx`:
 
 ## 🔧 How to Fix Your Current Error
 
-### **Option 1: Clear Your Corrupted Installation Key (RECOMMENDED)**
+### **🚨 IMPORTANT: The 10/10 limit is stored SERVER-SIDE on XMTP**
 
-Since you already hit the 10 installation limit, your stored key is likely invalid. Clear it:
+Clearing localStorage alone won't fix this! The limit is on XMTP's servers, not in your browser.
+
+### **Option 1: Use the Installation Fixer Utility (RECOMMENDED)**
+
+We've created a dedicated tool to help you fix this issue:
+
+1. **Access the Fixer:**
+   - When you see the installation limit error, click "🔧 Open Installation Fixer"
+   - Or go directly to: `https://your-domain.com/fix-installation-limit.html`
+
+2. **Follow the Guided Process:**
+   - The utility will diagnose your issue
+   - Clear local keys as a first step
+   - Provide multiple solutions based on your situation
+   - Export data if needed
+
+3. **What the Fixer Does:**
+   - ✅ Scans for all XMTP keys in localStorage
+   - ✅ Shows which keys are causing conflicts
+   - ✅ Clears installation keys safely
+   - ✅ Provides server-side revocation instructions
+   - ✅ Exports your XMTP data for backup
+
+### **Option 2: Manual Clear (May Not Work)**
+
+If you want to try manually first:
 
 1. **In Browser Console:**
    ```javascript
@@ -54,33 +79,60 @@ Since you already hit the 10 installation limit, your stored key is likely inval
    ```
 
 2. **Or Use the UI:**
-   - When you see the error screen, click the "🗑️ Clear Installation Key" button
+   - When you see the error screen, click "🗑️ Quick Clear (May Not Fix)"
    - Then click "Retry Connection"
 
-3. **Still Failing?**
-   - The stored key may not match the error's wallet
-   - Check all stored keys: `localStorage` → Filter by `xmtp_installation_key`
-   - Clear all XMTP keys if needed
+3. **Why This May Not Work:**
+   - This only clears LOCAL data
+   - The 10 installations are still registered on XMTP servers
+   - You might still hit the limit unless old installations expired
 
-### **Option 2: Revoke Old Installations (If Option 1 Doesn't Work)**
+### **Option 3: Revoke Installations on XMTP Server (Backend Required)**
 
-If clearing the local key doesn't work, you need to revoke old installations:
+This is the REAL fix if clearing local keys doesn't work:
 
-1. **Contact Your Agent Backend:**
-   - Your Pocki agent backend needs to revoke installations
-   - The agent has the wallet that created these installations
-   - Agent should run: `await client.revokeAllInstallations()`
+1. **Backend Must Revoke Installations:**
+   - Your agent backend (or any authorized client) needs to connect
+   - Run: `await client.revokeAllInstallations()`
+   - This clears the 10 installation limit on XMTP servers
 
-2. **Or Wait for Key Export:**
-   - Export an installation key from your agent
-   - Import it into the frontend
-   - This would reuse the agent's installation
+2. **Backend Code Example:**
+   ```javascript
+   import { Client } from '@xmtp/browser-sdk';
+   
+   // Create client with your wallet signer
+   const client = await Client.create(signer, { 
+     env: 'production' 
+   });
+   
+   // Get installation count
+   const installations = await client.getInstallations();
+   console.log(`Current installations: ${installations.length}`);
+   
+   // Revoke all installations
+   await client.revokeAllInstallations();
+   console.log('✅ All installations revoked!');
+   ```
 
-### **Option 3: Nuclear Option - New InboxID**
+3. **After Revocation:**
+   - Clear your local installation key (use the fixer utility)
+   - Refresh and reconnect - should create 1 new installation
+   - Installation count should now be 1/10
 
-If nothing else works:
-1. Use a different wallet address (new InboxID)
-2. Or wait 30 days (installations may expire)
+### **Option 4: Use a Different Wallet**
+
+Each wallet address gets its own InboxID and installation limit:
+
+1. Connect with a different wallet in Pocki Chat
+2. This wallet will have a fresh 0/10 installation count
+3. Your original wallet remains at 10/10 until revoked
+
+### **Option 5: Wait for Expiration (Last Resort)**
+
+XMTP installations may have expiration periods:
+1. Wait 30-90 days (exact period varies)
+2. Old installations may expire automatically
+3. Not recommended - use Options 3 or 4 instead
 
 ## 📊 How to Verify the Fix
 
