@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get XMTP Inbox ID - Pocki Chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: linear-gradient(135deg, #d4f4dd 0%, #f0f9f4 100%);
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 700px;
+      width: 100%;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      color: #2d3748;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    .subtitle {
+      color: #718096;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+    
+    .warning-box {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+    }
+    
+    .warning-box h3 {
+      color: #92400e;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    
+    .warning-box p {
+      color: #78350f;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    
+    .info-box {
+      background: #dbeafe;
+      border-left: 4px solid #3b82f6;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+    }
+    
+    .info-box h3 {
+      color: #1e3a8a;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    
+    .info-box p {
+      color: #1e40af;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .success-box {
+      background: #d1fae5;
+      border-left: 4px solid #10b981;
+      padding: 20px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .success-box h3 {
+      color: #065f46;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+    
+    .result-item {
+      background: white;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #10b981;
+    }
+    
+    .result-label {
+      color: #047857;
+      font-weight: bold;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    
+    .result-value {
+      color: #065f46;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      word-break: break-all;
+      background: #f0fdf4;
+      padding: 8px;
+      border-radius: 4px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      color: #4a5568;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Courier New', monospace;
+      transition: border-color 0.2s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+    
+    button {
+      width: 100%;
+      padding: 15px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 10px;
+    }
+    
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .btn-connect {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .btn-connect:hover:not(:disabled) {
+      background: #2563eb;
+    }
+    
+    .btn-copy {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-copy:hover {
+      background: #059669;
+    }
+    
+    .btn-home {
+      background: #6b7280;
+      color: white;
+    }
+    
+    .btn-home:hover {
+      background: #4b5563;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      display: none;
+    }
+    
+    .spinner {
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid #3b82f6;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .footer {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 14px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .emoji {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    
+    .error-box {
+      background: #fee2e2;
+      border-left: 4px solid #ef4444;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .error-box h3 {
+      color: #991b1b;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    
+    .error-box p {
+      color: #b91c1c;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="emoji">🔑</div>
+    <h1>Get XMTP Inbox ID</h1>
+    <p class="subtitle">For your Pocki AI Agent</p>
+    
+    <div class="warning-box">
+      <h3>🔒 Privacy & Security</h3>
+      <p><strong>Your private key stays in YOUR browser.</strong></p>
+      <p>This tool runs 100% client-side. No data is sent to any server.</p>
+      <p>The private key is only used to connect to XMTP and retrieve your inbox ID.</p>
+    </div>
+    
+    <div class="info-box">
+      <h3>💡 What This Does</h3>
+      <p>Connects to XMTP using your agent's wallet and retrieves its inbox ID. This is the 64-character identifier needed for XMTP V3 Browser SDK, not the Ethereum address.</p>
+    </div>
+    
+    <div class="error-box" id="errorBox">
+      <h3>❌ Error</h3>
+      <p id="errorMessage"></p>
+    </div>
+    
+    <form id="inboxForm">
+      <div class="form-group">
+        <label for="privateKey">Agent's Private Key (0x...)</label>
+        <input 
+          type="password" 
+          id="privateKey" 
+          placeholder="0x1234567890abcdef..."
+          required
+        />
+      </div>
+      
+      <button type="submit" class="btn-connect" id="connectBtn">
+        🔗 Connect to XMTP & Get Inbox ID
+      </button>
+    </form>
+    
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Connecting to XMTP...</p>
+      <p style="font-size: 12px; color: #6b7280; margin-top: 5px;">This may take 10-30 seconds</p>
+    </div>
+    
+    <div class="success-box" id="successBox">
+      <h3>✅ Successfully Retrieved Inbox ID!</h3>
+      
+      <div class="result-item">
+        <div class="result-label">Wallet Address:</div>
+        <div class="result-value" id="walletAddress"></div>
+      </div>
+      
+      <div class="result-item">
+        <div class="result-label">XMTP Inbox ID (USE THIS!):</div>
+        <div class="result-value" id="inboxId"></div>
+      </div>
+      
+      <div class="result-item">
+        <div class="result-label">Installation Count:</div>
+        <div class="result-value" id="installationCount"></div>
+      </div>
+      
+      <button class="btn-copy" onclick="copyInboxId()">
+        📋 Copy Inbox ID
+      </button>
+      
+      <div style="background: #fef3c7; padding: 12px; border-radius: 6px; margin-top: 15px;">
+        <p style="color: #92400e; font-size: 13px; margin-bottom: 8px;"><strong>Next Steps:</strong></p>
+        <p style="color: #78350f; font-size: 12px; line-height: 1.5;">
+          1. Copy the inbox ID above<br>
+          2. Update Railway env var: <code style="background: white; padding: 2px 6px; border-radius: 3px;">NEXT_PUBLIC_AGENT_ADDRESS</code><br>
+          3. Redeploy your app<br>
+          4. Clear XMTP keys in browser<br>
+          5. Test messaging! 🎉
+        </p>
+      </div>
+    </div>
+    
+    <button class="btn-home" onclick="goHome()">
+      🏠 Return to Pocki Chat
+    </button>
+    
+    <div class="footer">
+      <p>Pocki Chat - XMTP Inbox ID Tool</p>
+      <p style="margin-top: 5px; font-size: 12px;">Runs entirely in your browser • No data sent to servers</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { Client } from 'https://esm.sh/@xmtp/browser-sdk@5.0.1';
+    import { createWalletClient, http } from 'https://esm.sh/viem@2.38.2';
+    import { privateKeyToAccount } from 'https://esm.sh/viem@2.38.2/accounts';
+    import { base } from 'https://esm.sh/viem@2.38.2/chains';
+
+    window.getInboxId = async function(privateKey) {
+      const errorBox = document.getElementById('errorBox');
+      const errorMessage = document.getElementById('errorMessage');
+      const loading = document.getElementById('loading');
+      const successBox = document.getElementById('successBox');
+      const connectBtn = document.getElementById('connectBtn');
+      
+      try {
+        // Hide previous messages
+        errorBox.style.display = 'none';
+        successBox.style.display = 'none';
+        
+        // Show loading
+        loading.style.display = 'block';
+        connectBtn.disabled = true;
+        
+        console.log('🔐 Creating wallet client...');
+        
+        // Validate private key
+        if (!privateKey.startsWith('0x')) {
+          throw new Error('Private key must start with 0x');
+        }
+        
+        // Create account from private key
+        const account = privateKeyToAccount(privateKey);
+        console.log('✅ Wallet address:', account.address);
+        
+        // Create wallet client
+        const walletClient = createWalletClient({
+          account,
+          chain: base,
+          transport: http()
+        });
+
+        // Create XMTP signer
+        console.log('🔧 Creating XMTP signer...');
+        const signer = {
+          type: 'EOA',
+          getIdentifier: () => ({
+            identifier: account.address.toLowerCase(),
+            identifierKind: 'Ethereum'
+          }),
+          signMessage: async (message) => {
+            const messageText = typeof message === 'string' ? message : message.message;
+            const signature = await walletClient.signMessage({
+              account,
+              message: messageText
+            });
+            
+            // Convert hex signature to Uint8Array
+            const hexString = signature.startsWith('0x') ? signature.slice(2) : signature;
+            const bytes = new Uint8Array(hexString.length / 2);
+            for (let i = 0; i < hexString.length; i += 2) {
+              bytes[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
+            }
+            return bytes;
+          }
+        };
+
+        // Connect to XMTP
+        console.log('🌐 Connecting to XMTP...');
+        const env = 'production'; // Change if your agent uses 'dev'
+        
+        const client = await Client.create(signer, { env });
+        
+        console.log('✅ Connected to XMTP!');
+        console.log('📬 Inbox ID:', client.inboxId);
+
+        // Get installation count
+        let installationCount = 'N/A';
+        try {
+          const installations = await client.getInstallations();
+          installationCount = `${installations.length}/10`;
+        } catch (err) {
+          console.log('Could not fetch installation count');
+        }
+
+        // Display results
+        document.getElementById('walletAddress').textContent = account.address;
+        document.getElementById('inboxId').textContent = client.inboxId;
+        document.getElementById('installationCount').textContent = installationCount;
+        
+        // Show success box
+        loading.style.display = 'none';
+        successBox.style.display = 'block';
+        
+        // Store inbox ID for copy function
+        window.currentInboxId = client.inboxId;
+        
+      } catch (error) {
+        console.error('❌ Error:', error);
+        
+        // Show error
+        loading.style.display = 'none';
+        errorMessage.textContent = error.message || 'Unknown error occurred';
+        errorBox.style.display = 'block';
+        connectBtn.disabled = false;
+      }
+    };
+
+    // Form submit handler
+    document.getElementById('inboxForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const privateKey = document.getElementById('privateKey').value.trim();
+      await window.getInboxId(privateKey);
+    });
+  </script>
+
+  <script>
+    function copyInboxId() {
+      const inboxId = window.currentInboxId || document.getElementById('inboxId').textContent;
+      
+      navigator.clipboard.writeText(inboxId).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => {
+          btn.textContent = originalText;
+        }, 2000);
+      }).catch(err => {
+        alert('Failed to copy. Please select and copy manually.');
+      });
+    }
+
+    function goHome() {
+      window.location.href = '/';
+    }
+  </script>
+</body>
+</html>
