@@ -261,13 +261,13 @@
         walletAddress = accounts[0];
         log(`✅ Connected: ${walletAddress}`, 'success');
         
-        // Import XMTP dynamically
+        // Import XMTP dynamically using jsDelivr which handles Web Workers properly
         log('Loading XMTP SDK...', 'info');
         showStatus('⏳ Loading XMTP SDK... This may take a moment.', 'info');
         
-        const { Client } = await import('https://esm.sh/@xmtp/browser-sdk@5.0.1');
-        const { createWalletClient, custom } = await import('https://esm.sh/viem@2.38.2');
-        const { base } = await import('https://esm.sh/viem@2.38.2/chains');
+        const { Client } = await import('https://cdn.jsdelivr.net/npm/@xmtp/browser-sdk@5.0.1/+esm');
+        const { createWalletClient, custom } = await import('https://cdn.jsdelivr.net/npm/viem@2.38.2/+esm');
+        const { base } = await import('https://cdn.jsdelivr.net/npm/viem@2.38.2/chains/+esm');
         
         log('✅ XMTP SDK loaded', 'success');
         
