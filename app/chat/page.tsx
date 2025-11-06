@@ -15,7 +15,7 @@ import { BaseAppChat } from '@/components/BaseAppChat';
 import { useMiniApp } from '@/app/contexts/MiniAppContext';
 
 function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
-  const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll, fixConversation } = useXMTP();
+  const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll, fixConversation, revokeAllInstallations, clearLocalInstallationKey } = useXMTP();
   const { logout, authenticated, ready } = usePrivy();
   const { isBaseApp } = useMiniApp();
   const [showTxModal, setShowTxModal] = useState(false);
@@ -194,6 +194,35 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
             Connection Error
           </h2>
           <p className="text-gray-600 text-center mb-6 whitespace-pre-line">{error}</p>
+          
+          {/* Show installation management for installation limit errors */}
+          {error.includes('installation limit') || error.includes('10/10 installations') ? (
+            <div className="space-y-3 mb-4">
+              <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3 text-sm">
+                <p className="font-semibold text-yellow-800 mb-2">🔧 Quick Fix:</p>
+                <ol className="list-decimal list-inside space-y-1 text-yellow-700 text-xs">
+                  <li>Click "Clear Installation Key" below</li>
+                  <li>Click "Retry Connection"</li>
+                  <li>If still failing, open browser console and check the storage key name</li>
+                </ol>
+              </div>
+              <button
+                onClick={() => {
+                  if (activeWalletAddress) {
+                    const key = `xmtp_installation_key_${activeWalletAddress.toLowerCase()}`;
+                    localStorage.removeItem(key);
+                    alert(`Cleared installation key: ${key}\n\nNow click "Retry Connection"`);
+                  } else {
+                    alert('No wallet address found. Please refresh and try again.');
+                  }
+                }}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+              >
+                🗑️ Clear Installation Key
+              </button>
+            </div>
+          ) : null}
+          
           <button
             onClick={() => window.location.reload()}
             className="w-full bg-panda-green-600 hover:bg-panda-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
@@ -338,6 +367,41 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
               >
                 🔄 Force Sync All Conversations
               </button>
+              
+              {/* Installation Management Section */}
+              <div className="mt-4 p-3 bg-purple-50 border border-purple-300 rounded">
+                <h4 className="font-bold text-purple-900 mb-2">🔑 Installation Management</h4>
+                <p className="text-xs text-gray-600 mb-2">
+                  If you're getting installation limit errors (10/10), use these tools:
+                </p>
+                <div className="space-y-2">
+                  <button 
+                    onClick={clearLocalInstallationKey}
+                    className="w-full px-3 py-2 bg-purple-600 text-white text-xs rounded hover:bg-purple-700"
+                    title="Clears the stored installation key from localStorage. Use this if your key is corrupted."
+                  >
+                    🗑️ Clear Local Installation Key
+                  </button>
+                  <button 
+                    onClick={async () => {
+                      if (window.confirm('This will revoke ALL installations for your wallet. You will need to reconnect. Continue?')) {
+                        try {
+                          await revokeAllInstallations();
+                        } catch (err) {
+                          alert('Failed to revoke installations: ' + (err instanceof Error ? err.message : 'Unknown error'));
+                        }
+                      }
+                    }}
+                    className="w-full px-3 py-2 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                    title="Revokes ALL installations on the XMTP network. Use this to clear the 10 installation limit."
+                  >
+                    ⚠️ Revoke All Installations (Dangerous)
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  💡 Tip: Clear local key first. If that doesn't work, revoke all installations.
+                </p>
+              </div>
             </div>
 
             {/* Diagnostic Results */}

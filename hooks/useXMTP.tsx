@@ -42,6 +42,8 @@ interface XMTPContextType {
   };
   forceSyncAll: () => Promise<void>;
   fixConversation: () => Promise<void>;
+  revokeAllInstallations: () => Promise<void>;
+  clearLocalInstallationKey: () => void;
 }
 
 const XMTPContext = createContext<XMTPContextType>({
@@ -64,6 +66,8 @@ const XMTPContext = createContext<XMTPContextType>({
   },
   forceSyncAll: async () => {},
   fixConversation: async () => {},
+  revokeAllInstallations: async () => {},
+  clearLocalInstallationKey: () => {},
 });
 
 // Utility function to check if OPFS (Origin Private File System) is available
@@ -420,14 +424,74 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       const { ReplyCodec } = await import('@xmtp/content-type-reply');
       const { WalletSendCallsCodec, ContentTypeWalletSendCalls } = await import('@xmtp/content-type-wallet-send-calls');
 
-      const newClient = await Client.create(signer, {
+      // CRITICAL FIX: Persist and reuse installation key to prevent hitting installation limit
+      // Each wallet address gets its own installation key to avoid conflicts
+      const installationKeyStorageKey = `xmtp_installation_key_${wallet.address.toLowerCase()}`;
+      let storedInstallationKey: Uint8Array | null = null;
+      
+      try {
+        const storedKeyHex = localStorage.getItem(installationKeyStorageKey);
+        if (storedKeyHex) {
+          console.log('🔑 Found stored installation key, reusing it...');
+          // Convert hex string back to Uint8Array
+          const hexString = storedKeyHex.startsWith('0x') ? storedKeyHex.slice(2) : storedKeyHex;
+          storedInstallationKey = new Uint8Array(hexString.length / 2);
+          for (let i = 0; i < hexString.length; i += 2) {
+            storedInstallationKey[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
+          }
+          console.log('✅ Installation key loaded from storage');
+        } else {
+          console.log('📝 No stored installation key found, will create new one');
+        }
+      } catch (err) {
+        console.warn('⚠️ Failed to load installation key from storage:', err);
+      }
+
+      // Create XMTP client with persistent installation key
+      const clientOptions: any = {
         env: XMTP_ENV,
         codecs: [new ReplyCodec(), new WalletSendCallsCodec()],
-      });
+      };
+      
+      // If we have a stored key, use it to prevent creating new installations
+      if (storedInstallationKey) {
+        clientOptions.installationKey = storedInstallationKey;
+      }
+
+      const newClient = await Client.create(signer, clientOptions);
       console.log('✅ Created XMTP client with ReplyCodec and WalletSendCallsCodec');
       console.log('🌍 XMTP Environment:', XMTP_ENV);
       console.log('📬 Client Inbox ID:', newClient.inboxId);
       console.log('🎯 Target Agent Inbox ID:', AGENT_ADDRESS);
+      
+      // CRITICAL: Save the installation key for future sessions
+      // This prevents creating new installations every time
+      if (!storedInstallationKey) {
+        try {
+          const installationKey = await (newClient as any).installationKey();
+          if (installationKey) {
+            // Convert Uint8Array to hex string for storage
+            const hexString = '0x' + Array.from(installationKey)
+              .map(b => b.toString(16).padStart(2, '0'))
+              .join('');
+            localStorage.setItem(installationKeyStorageKey, hexString);
+            console.log('✅ Installation key saved to localStorage for future sessions');
+            console.log('📊 This prevents hitting the 10 installation limit');
+          }
+        } catch (err) {
+          console.warn('⚠️ Failed to save installation key:', err);
+        }
+      }
+
+      // Log installation count if available
+      try {
+        const installations = await (newClient as any).getInstallations();
+        if (installations) {
+          console.log(`📊 Current installation count: ${installations.length}`);
+        }
+      } catch (err) {
+        console.log('ℹ️ Could not fetch installation count');
+      }
 
       // NOTE: Removed auto-revocation of old installations as it causes "Unknown signer" errors
       // Users can manually clear XMTP data if needed by clearing browser storage
@@ -606,6 +670,28 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       const errorMessage = err instanceof Error ? err.message : '';
       if (errorMessage.includes('User rejected') || errorMessage.includes('user rejected')) {
         setError('You need to sign the message to connect to XMTP. Please try again.');
+      } else if (errorMessage.includes('registered 10/10 installations') || errorMessage.includes('installation limit')) {
+        // Special handling for installation limit error
+        const installationKeyStorageKey = `xmtp_installation_key_${wallet.address.toLowerCase()}`;
+        const hasStoredKey = localStorage.getItem(installationKeyStorageKey);
+        
+        if (hasStoredKey) {
+          setError(
+            'Installation limit reached (10/10). Your stored installation key may be invalid. ' +
+            'Try clearing your local installation key and refreshing the page. ' +
+            'Open browser console and run: localStorage.removeItem("' + installationKeyStorageKey + '")'
+          );
+        } else {
+          setError(
+            'Installation limit reached (10/10). You have too many installations registered. ' +
+            'Please revoke old installations first. Contact support or check your XMTP installations.'
+          );
+        }
+        console.error('🚨 INSTALLATION LIMIT ERROR - Diagnostic info:');
+        console.error('  - Stored key exists:', !!hasStoredKey);
+        console.error('  - Wallet address:', wallet.address);
+        console.error('  - Storage key name:', installationKeyStorageKey);
+        console.error('  - To clear stored key, run: localStorage.removeItem("' + installationKeyStorageKey + '")');
       } else {
         setError(err instanceof Error ? err.message : 'Failed to connect to XMTP');
       }
@@ -1140,6 +1226,53 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
     console.log(`✅ Fixed! Loaded ${normalizedMessages.length} messages from correct conversation`);
   };
 
+  const revokeAllInstallations = async () => {
+    if (!client) {
+      throw new Error('No XMTP client connected');
+    }
+    
+    try {
+      console.log('🔄 Fetching all installations...');
+      const installations = await (client as any).getInstallations();
+      console.log(`📊 Found ${installations.length} installations`);
+      
+      if (installations.length === 0) {
+        console.log('✅ No installations to revoke');
+        return;
+      }
+      
+      console.log('⚠️ Revoking all installations...');
+      await (client as any).revokeAllInstallations();
+      console.log('✅ Successfully revoked all installations');
+      console.log('ℹ️ You will need to reconnect and create a new installation');
+      
+      // Clear client state to force reconnection
+      setClient(null);
+      setConversation(null);
+      setMessages([]);
+      setIsConnected(false);
+      hasInitialized.current = false;
+      
+      alert('All installations revoked successfully. Please refresh the page to reconnect.');
+    } catch (err) {
+      console.error('❌ Failed to revoke installations:', err);
+      throw err;
+    }
+  };
+
+  const clearLocalInstallationKey = () => {
+    if (!activeWalletAddress) {
+      console.warn('⚠️ No active wallet address');
+      return;
+    }
+    
+    const installationKeyStorageKey = `xmtp_installation_key_${activeWalletAddress.toLowerCase()}`;
+    localStorage.removeItem(installationKeyStorageKey);
+    console.log('✅ Cleared local installation key from storage');
+    console.log('ℹ️ Refresh the page to create a new installation');
+    alert('Local installation key cleared. Please refresh the page.');
+  };
+
   // Cleanup: Clear auto-sync timeout on unmount
   useEffect(() => {
     return () => {
@@ -1172,6 +1305,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         },
         forceSyncAll,
         fixConversation,
+        revokeAllInstallations,
+        clearLocalInstallationKey,
       }}
     >
       {children}
