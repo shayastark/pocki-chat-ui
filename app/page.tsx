@@ -17,9 +17,18 @@ import miniappSdk from '@farcaster/miniapp-sdk';
 
 // Chat component when authenticated
 function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
-  const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll, fixConversation, revokeAllInstallations, clearLocalInstallationKey } = useXMTP();
   const { logout, authenticated, ready } = usePrivy();
   const { isBaseApp } = useMiniApp();
+  
+  // IMPORTANT: If user is in Base App, skip XMTP initialization entirely
+  // and show the BaseAppChat redirect component immediately
+  if (isBaseApp) {
+    console.log('🎯 Base App detected - showing native messaging redirect (skipping XMTP init)');
+    return <BaseAppChat />;
+  }
+  
+  // For non-Base App users, proceed with XMTP initialization
+  const { isConnected, isConnecting, error, refreshMessages, activeWalletAddress, debugInfo, forceSyncAll, fixConversation, revokeAllInstallations, clearLocalInstallationKey } = useXMTP();
   const [showTxModal, setShowTxModal] = useState(false);
   const [currentTx, setCurrentTx] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -173,13 +182,8 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   }
 
   if (error) {
-    // If we're in Base App and XMTP failed to initialize (as expected),
-    // show the Base App native messaging interface instead of error
-    if (isBaseApp && error.includes('XMTP Browser SDK cannot initialize')) {
-      return <BaseAppChat />;
-    }
-    
-    // For other errors, show the standard error UI
+    // Note: Base App users never reach this point because they're redirected earlier
+    // This error handling is only for browser/Farcaster users
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4">
