@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revoke XMTP Installations - Pocki Chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+    }
+    
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+    
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid;
+    }
+    
+    .alert-warning {
+      background: #fff3cd;
+      border-color: #ffeeba;
+      color: #856404;
+    }
+    
+    .alert-info {
+      background: #d1ecf1;
+      border-color: #bee5eb;
+      color: #0c5460;
+    }
+    
+    .alert-success {
+      background: #d4edda;
+      border-color: #c3e6cb;
+      color: #155724;
+    }
+    
+    .alert-error {
+      background: #f8d7da;
+      border-color: #f5c6cb;
+      color: #721c24;
+    }
+    
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    
+    button:hover:not(:disabled) {
+      background: #5568d3;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    button.danger {
+      background: #dc3545;
+    }
+    
+    button.danger:hover:not(:disabled) {
+      background: #c82333;
+    }
+    
+    .log {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 8px;
+      padding: 15px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 15px;
+      line-height: 1.6;
+    }
+    
+    .log-entry {
+      margin-bottom: 4px;
+    }
+    
+    .log-info { color: #4fc3f7; }
+    .log-success { color: #4caf50; }
+    .log-warning { color: #ff9800; }
+    .log-error { color: #f44336; }
+    
+    .steps {
+      counter-reset: step;
+      margin: 20px 0;
+    }
+    
+    .step {
+      counter-increment: step;
+      margin-bottom: 15px;
+      padding-left: 35px;
+      position: relative;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    .step:before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: #667eea;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    #status {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚠️ Revoke XMTP Installations</h1>
+    <p class="subtitle">Clear the 10/10 installation limit directly from XMTP network</p>
+    
+    <div class="alert alert-warning">
+      <strong>⚠️ What This Does:</strong><br>
+      This tool will connect your wallet to XMTP and revoke ALL installations registered on their network. This resets your count from 10/10 to 0/10.
+    </div>
+    
+    <div class="alert alert-info">
+      <strong>📋 How It Works:</strong>
+      <div class="steps">
+        <div class="step">Click "Connect Wallet" below</div>
+        <div class="step">Approve the wallet connection</div>
+        <div class="step">Sign XMTP messages (required for authentication)</div>
+        <div class="step">Click "Revoke All Installations"</div>
+        <div class="step">Refresh and reconnect - you'll be at 1/10!</div>
+      </div>
+    </div>
+    
+    <div id="status"></div>
+    
+    <div id="connectSection">
+      <button id="connectBtn" onclick="connectWallet()">
+        🔌 Connect Wallet
+      </button>
+    </div>
+    
+    <div id="revokeSection" style="display: none;">
+      <button id="checkBtn" onclick="checkInstallations()">
+        📊 Check Installation Count
+      </button>
+      <button id="revokeBtn" class="danger" onclick="revokeInstallations()">
+        ⚠️ Revoke All Installations
+      </button>
+    </div>
+    
+    <div id="log" class="log" style="display: none;"></div>
+    
+    <div class="alert alert-info" style="margin-top: 20px;">
+      <strong>💡 After Revocation:</strong><br>
+      1. Go to <a href="/chat" style="color: #667eea; font-weight: bold;">Pocki Chat</a><br>
+      2. Connect your wallet<br>
+      3. You'll be at 1/10 installations! 🎉
+    </div>
+  </div>
+
+  <script type="module">
+    let provider = null;
+    let client = null;
+    let walletAddress = null;
+
+    function log(message, type = 'info') {
+      const logEl = document.getElementById('log');
+      logEl.style.display = 'block';
+      const entry = document.createElement('div');
+      entry.className = `log-entry log-${type}`;
+      const timestamp = new Date().toLocaleTimeString();
+      entry.textContent = `[${timestamp}] ${message}`;
+      logEl.appendChild(entry);
+      logEl.scrollTop = logEl.scrollHeight;
+      console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+
+    function showStatus(message, type = 'info') {
+      const statusEl = document.getElementById('status');
+      statusEl.style.display = 'block';
+      statusEl.className = `alert alert-${type}`;
+      statusEl.innerHTML = message;
+    }
+
+    window.connectWallet = async function() {
+      const connectBtn = document.getElementById('connectBtn');
+      connectBtn.disabled = true;
+      connectBtn.textContent = '🔄 Connecting...';
+      
+      document.getElementById('log').innerHTML = '';
+      log('Starting wallet connection...', 'info');
+
+      try {
+        // Check if MetaMask or other Web3 provider is available
+        if (!window.ethereum) {
+          throw new Error('No Web3 wallet detected. Please install MetaMask or another Web3 wallet.');
+        }
+
+        log('Requesting wallet connection...', 'info');
+        
+        // Request account access
+        const accounts = await window.ethereum.request({ 
+          method: 'eth_requestAccounts' 
+        });
+        
+        walletAddress = accounts[0];
+        log(`✅ Connected: ${walletAddress}`, 'success');
+        
+        // Import XMTP dynamically
+        log('Loading XMTP SDK...', 'info');
+        showStatus('⏳ Loading XMTP SDK... This may take a moment.', 'info');
+        
+        const { Client } = await import('https://esm.sh/@xmtp/browser-sdk@5.0.1');
+        const { createWalletClient, custom } = await import('https://esm.sh/viem@2.38.2');
+        const { base } = await import('https://esm.sh/viem@2.38.2/chains');
+        
+        log('✅ XMTP SDK loaded', 'success');
+        
+        // Create viem wallet client
+        log('Creating wallet client...', 'info');
+        const walletClient = createWalletClient({
+          account: walletAddress,
+          chain: base,
+          transport: custom(window.ethereum)
+        });
+        
+        // Create XMTP signer
+        log('Creating XMTP signer...', 'info');
+        const signer = {
+          type: 'EOA',
+          getIdentifier: () => ({
+            identifier: walletAddress.toLowerCase(),
+            identifierKind: 'Ethereum'
+          }),
+          signMessage: async (message) => {
+            const messageText = typeof message === 'string' ? message : message.message;
+            const signature = await walletClient.signMessage({
+              account: walletAddress,
+              message: messageText
+            });
+            
+            // Convert hex to Uint8Array
+            const hexString = signature.startsWith('0x') ? signature.slice(2) : signature;
+            const bytes = new Uint8Array(hexString.length / 2);
+            for (let i = 0; i < hexString.length; i += 2) {
+              bytes[i / 2] = parseInt(hexString.substring(i, i + 2), 16);
+            }
+            return bytes;
+          }
+        };
+        
+        // Connect to XMTP
+        log('🌐 Connecting to XMTP network...', 'info');
+        log('⚠️ You will need to sign messages to authenticate', 'warning');
+        showStatus('⏳ Connecting to XMTP... Please approve signature requests in your wallet.', 'info');
+        
+        client = await Client.create(signer, { 
+          env: 'production'
+        });
+        
+        log(`✅ Connected to XMTP!`, 'success');
+        log(`📬 Inbox ID: ${client.inboxId}`, 'info');
+        
+        showStatus(`✅ Connected!<br>Wallet: ${walletAddress}<br>Inbox ID: ${client.inboxId}`, 'success');
+        
+        // Show revoke section
+        document.getElementById('connectSection').style.display = 'none';
+        document.getElementById('revokeSection').style.display = 'block';
+        
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+        showStatus(`❌ Connection failed: ${error.message}`, 'error');
+        console.error('Full error:', error);
+        
+        connectBtn.disabled = false;
+        connectBtn.textContent = '🔌 Connect Wallet';
+      }
+    };
+
+    window.checkInstallations = async function() {
+      if (!client) {
+        showStatus('❌ Not connected to XMTP', 'error');
+        return;
+      }
+
+      const checkBtn = document.getElementById('checkBtn');
+      checkBtn.disabled = true;
+      checkBtn.textContent = '⏳ Checking...';
+      
+      log('Checking installations...', 'info');
+
+      try {
+        const installations = await client.getInstallations();
+        log(`📊 Current installation count: ${installations.length}/10`, installations.length >= 10 ? 'error' : 'success');
+        
+        if (installations.length >= 10) {
+          showStatus(`⚠️ Installation limit reached: ${installations.length}/10<br>Click "Revoke All Installations" below to clear them.`, 'warning');
+        } else {
+          showStatus(`✅ Current installations: ${installations.length}/10<br>You have space for ${10 - installations.length} more installations.`, 'success');
+        }
+        
+        console.log('Installations:', installations);
+      } catch (error) {
+        log(`❌ Failed to check installations: ${error.message}`, 'error');
+        showStatus(`❌ Error: ${error.message}`, 'error');
+      } finally {
+        checkBtn.disabled = false;
+        checkBtn.textContent = '📊 Check Installation Count';
+      }
+    };
+
+    window.revokeInstallations = async function() {
+      if (!client) {
+        showStatus('❌ Not connected to XMTP', 'error');
+        return;
+      }
+
+      const confirmed = confirm(
+        '⚠️ WARNING: This will revoke ALL installations!\n\n' +
+        'You will need to reconnect all devices.\n\n' +
+        'Are you sure you want to continue?'
+      );
+      
+      if (!confirmed) {
+        log('Revocation cancelled by user', 'info');
+        return;
+      }
+
+      const revokeBtn = document.getElementById('revokeBtn');
+      revokeBtn.disabled = true;
+      revokeBtn.textContent = '⏳ Revoking...';
+      
+      log('Starting revocation process...', 'warning');
+
+      try {
+        // Check current count
+        const beforeInstallations = await client.getInstallations();
+        log(`Current installations: ${beforeInstallations.length}`, 'info');
+        
+        // Revoke all
+        log('⚠️ Revoking all installations...', 'warning');
+        await client.revokeAllInstallations();
+        
+        log('✅ All installations revoked!', 'success');
+        log('📊 You are now at 0/10 installations', 'success');
+        
+        showStatus(
+          '✅ Success! All installations revoked!<br><br>' +
+          '📋 Next Steps:<br>' +
+          '1. Go to <a href="/chat" style="color: #155724; font-weight: bold;">Pocki Chat</a><br>' +
+          '2. Connect your wallet<br>' +
+          '3. You\'ll create 1 new installation (1/10)<br>' +
+          '4. Start chatting! 🎉',
+          'success'
+        );
+        
+        revokeBtn.style.display = 'none';
+        document.getElementById('checkBtn').style.display = 'none';
+        
+      } catch (error) {
+        log(`❌ Revocation failed: ${error.message}`, 'error');
+        showStatus(`❌ Failed to revoke: ${error.message}`, 'error');
+        console.error('Full error:', error);
+        
+        revokeBtn.disabled = false;
+        revokeBtn.textContent = '⚠️ Revoke All Installations';
+      }
+    };
+  </script>
+</body>
+</html>
