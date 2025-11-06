@@ -12,13 +12,13 @@ export const metadata: Metadata = {
   other: {
     'fc:miniapp': JSON.stringify({
       version: 'next',
-      imageUrl: 'https://pocki-chat.replit.app/images/pocki-wide.png',
+      imageUrl: 'https://chat.pocki.app/images/pocki-wide.png',
       button: {
         title: 'Chat with Pocki',
         action: {
           type: 'launch_frame',
           name: 'Pocki',
-          url: 'https://pocki-chat.replit.app',
+          url: 'https://chat.pocki.app',
         },
       },
     }),
