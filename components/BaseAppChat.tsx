@@ -27,10 +27,10 @@ export function BaseAppChat() {
   };
 
   return (
-    <div className="min-h-screen p-6" style={{backgroundColor: '#E6FC9A'}}>
+    <div className="min-h-screen p-6" style={{backgroundColor: 'white'}}>
       <div className="max-w-2xl mx-auto pt-8">
         {/* Hero Section */}
-        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-3xl p-8 shadow-2xl mb-6">
+        <div className="bg-gradient-to-br from-[#E6FC9A] to-[#d4e889] text-gray-900 rounded-3xl p-8 shadow-2xl mb-6">
           <div className="text-center mb-6">
             <div className="flex justify-center mb-4">
               <Image 
@@ -45,19 +45,19 @@ export function BaseAppChat() {
             <h1 className="text-4xl font-bold mb-3">
               Chat with Pocki
             </h1>
-            <p className="text-blue-100 text-lg mb-2">
+            <p className="text-gray-700 text-lg mb-2">
               Your AI trading companion on Base
             </p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6">
+          <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-6 mb-6">
             <h2 className="font-semibold text-xl mb-3 text-center">
-              💙 Base App Native Messaging
+              💚 Base App Native Messaging
             </h2>
-            <p className="text-blue-50 leading-relaxed mb-4">
+            <p className="text-gray-700 leading-relaxed mb-4">
               Great news! Base App has XMTP messaging built right into the platform. Click below to open a secure, end-to-end encrypted direct message with Pocki's AI agent.
             </p>
-            <p className="text-blue-100 text-sm">
+            <p className="text-gray-600 text-sm">
               ✨ Your messages persist in Base App's message history<br/>
               🔒 Secure XMTP protocol ensures privacy<br/>
               💰 Approve transactions right from the chat
@@ -66,19 +66,19 @@ export function BaseAppChat() {
 
           <button
             onClick={openBaseAppDM}
-            className="w-full bg-white text-blue-600 font-bold text-lg py-5 px-6 rounded-2xl hover:bg-blue-50 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl mb-4"
+            className="w-full bg-white text-gray-900 font-bold text-lg py-5 px-6 rounded-2xl hover:bg-gray-50 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl mb-4"
           >
-            Chat with Pocki in Base App 🎋
+            Chat with Pocki in Base App 🟦
           </button>
 
           <div className="text-center">
-            <p className="text-blue-100 text-sm mb-2">
+            <p className="text-gray-600 text-sm mb-2">
               Or message Pocki directly yourself in Base App:
             </p>
-            <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-mono">
+            <div className="bg-white/20 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-lg text-sm font-mono">
               {AGENT_BASENAME}
             </div>
-            <p className="text-blue-50 text-xs mt-2">
+            <p className="text-gray-600 text-xs mt-2">
               Search in Base App → Open profile → Tap "Message" to chat
             </p>
           </div>
