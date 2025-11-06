@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clear XMTP Keys - Pocki Chat</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: linear-gradient(135deg, #d4f4dd 0%, #f0f9f4 100%);
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      color: #2d3748;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    .subtitle {
+      color: #718096;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+    
+    .warning-box {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+    }
+    
+    .warning-box h3 {
+      color: #92400e;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    
+    .warning-box p {
+      color: #78350f;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .info-box {
+      background: #dbeafe;
+      border-left: 4px solid #3b82f6;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+    }
+    
+    .info-box h3 {
+      color: #1e3a8a;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    
+    .info-box p {
+      color: #1e40af;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .success-box {
+      background: #d1fae5;
+      border-left: 4px solid #10b981;
+      padding: 15px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .success-box h3 {
+      color: #065f46;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    
+    .success-box p {
+      color: #047857;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .key-list {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 25px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .key-item {
+      background: white;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      word-break: break-all;
+    }
+    
+    .key-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .key-name {
+      color: #4a5568;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .key-value {
+      color: #718096;
+      font-size: 11px;
+    }
+    
+    .no-keys {
+      color: #68d391;
+      font-weight: bold;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    button {
+      flex: 1;
+      padding: 15px 25px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .btn-scan {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .btn-scan:hover {
+      background: #2563eb;
+    }
+    
+    .btn-clear {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .btn-clear:hover {
+      background: #dc2626;
+    }
+    
+    .btn-clear:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .btn-home {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-home:hover {
+      background: #059669;
+    }
+    
+    .footer {
+      text-align: center;
+      color: #9ca3af;
+      font-size: 14px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .emoji {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="emoji">🔧</div>
+    <h1>Clear XMTP Keys</h1>
+    <p class="subtitle">Fix "invalid hexadecimal digit" errors</p>
+    
+    <div class="warning-box">
+      <h3>⚠️ What This Does</h3>
+      <p>This utility finds and removes corrupted XMTP installation keys from your browser's localStorage. Corrupted keys cause "invalid hexadecimal digit" errors when connecting to XMTP.</p>
+    </div>
+    
+    <div class="info-box">
+      <h3>💡 When to Use This</h3>
+      <p>Use this tool if you're seeing error messages like:</p>
+      <ul style="margin-top: 8px; margin-left: 20px;">
+        <li style="margin-bottom: 4px;">"invalid hexadecimal digit: 'x'"</li>
+        <li style="margin-bottom: 4px;">"SQLSTATE 22023" database errors</li>
+        <li style="margin-bottom: 4px;">Connection failures after clearing installations</li>
+      </ul>
+    </div>
+    
+    <div class="success-box" id="successBox">
+      <h3>✅ Success!</h3>
+      <p id="successMessage"></p>
+    </div>
+    
+    <div class="button-group">
+      <button class="btn-scan" onclick="scanKeys()">
+        🔍 Scan for Keys
+      </button>
+      <button class="btn-clear" onclick="clearKeys()" id="clearBtn" disabled>
+        🗑️ Clear All XMTP Keys
+      </button>
+    </div>
+    
+    <div class="key-list" id="keyList" style="display: none;">
+      <div class="no-keys">No keys found yet. Click "Scan for Keys" to search.</div>
+    </div>
+    
+    <button class="btn-home" onclick="goHome()">
+      🏠 Return to Pocki Chat
+    </button>
+    
+    <div class="footer">
+      <p>Pocki Chat - XMTP Key Utility</p>
+      <p style="margin-top: 5px; font-size: 12px;">This tool only clears local browser data</p>
+    </div>
+  </div>
+
+  <script>
+    let foundKeys = [];
+
+    function scanKeys() {
+      console.log('🔍 Scanning localStorage for XMTP keys...');
+      foundKeys = [];
+      
+      // Scan all localStorage keys
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.includes('xmtp')) {
+          const value = localStorage.getItem(key);
+          foundKeys.push({ key, value });
+        }
+      }
+      
+      console.log(`Found ${foundKeys.length} XMTP key(s)`);
+      displayKeys();
+    }
+
+    function displayKeys() {
+      const keyList = document.getElementById('keyList');
+      const clearBtn = document.getElementById('clearBtn');
+      
+      if (foundKeys.length === 0) {
+        keyList.innerHTML = '<div class="no-keys">✨ No XMTP keys found! You\'re all clear.</div>';
+        clearBtn.disabled = true;
+      } else {
+        let html = '';
+        foundKeys.forEach((item, index) => {
+          const valuePreview = item.value 
+            ? (item.value.length > 100 
+              ? item.value.substring(0, 100) + '...' 
+              : item.value)
+            : 'null';
+          
+          html += `
+            <div class="key-item">
+              <div class="key-name">Key ${index + 1}: ${item.key}</div>
+              <div class="key-value">${valuePreview}</div>
+            </div>
+          `;
+        });
+        keyList.innerHTML = html;
+        clearBtn.disabled = false;
+      }
+      
+      keyList.style.display = 'block';
+    }
+
+    function clearKeys() {
+      if (foundKeys.length === 0) {
+        alert('No keys to clear! Scan for keys first.');
+        return;
+      }
+      
+      const confirmed = confirm(
+        `⚠️ Are you sure you want to clear ${foundKeys.length} XMTP key(s)?\n\n` +
+        'This will remove:\n' +
+        foundKeys.map(k => `• ${k.key}`).join('\n') +
+        '\n\nYou will need to reconnect to XMTP after this.'
+      );
+      
+      if (!confirmed) {
+        return;
+      }
+      
+      console.log('🗑️ Clearing XMTP keys...');
+      let clearedCount = 0;
+      
+      foundKeys.forEach(item => {
+        try {
+          localStorage.removeItem(item.key);
+          console.log(`✅ Cleared: ${item.key}`);
+          clearedCount++;
+        } catch (err) {
+          console.error(`❌ Failed to clear ${item.key}:`, err);
+        }
+      });
+      
+      console.log(`✅ Cleared ${clearedCount}/${foundKeys.length} key(s)`);
+      
+      // Show success message
+      const successBox = document.getElementById('successBox');
+      const successMessage = document.getElementById('successMessage');
+      successMessage.textContent = `Successfully cleared ${clearedCount} XMTP key(s)! You can now return to Pocki Chat and reconnect.`;
+      successBox.style.display = 'block';
+      
+      // Refresh the scan
+      foundKeys = [];
+      scanKeys();
+    }
+
+    function goHome() {
+      window.location.href = '/';
+    }
+
+    // Auto-scan on page load
+    window.addEventListener('load', () => {
+      console.log('🚀 XMTP Key Utility loaded');
+      scanKeys();
+    });
+  </script>
+</body>
+</html>
