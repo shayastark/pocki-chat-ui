@@ -199,13 +199,22 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
           {error.includes('installation limit') || error.includes('10/10 installations') ? (
             <div className="space-y-3 mb-4">
               <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-3 text-sm">
-                <p className="font-semibold text-yellow-800 mb-2">🔧 Quick Fix:</p>
-                <ol className="list-decimal list-inside space-y-1 text-yellow-700 text-xs">
-                  <li>Click "Clear Installation Key" below</li>
-                  <li>Click "Retry Connection"</li>
-                  <li>If still failing, open browser console and check the storage key name</li>
-                </ol>
+                <p className="font-semibold text-yellow-800 mb-2">🔧 Installation Limit Reached</p>
+                <p className="text-yellow-700 text-xs mb-2">
+                  You have 10 installations registered on the XMTP network. This limit is stored server-side.
+                </p>
+                <p className="text-yellow-700 text-xs">
+                  Use our fix utility to diagnose and resolve this issue.
+                </p>
               </div>
+              <button
+                onClick={() => {
+                  window.location.href = '/fix-installation-limit.html';
+                }}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+              >
+                🔧 Open Installation Fixer
+              </button>
               <button
                 onClick={() => {
                   if (activeWalletAddress) {
@@ -216,9 +225,9 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
                     alert('No wallet address found. Please refresh and try again.');
                   }
                 }}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
               >
-                🗑️ Clear Installation Key
+                🗑️ Quick Clear (May Not Fix)
               </button>
             </div>
           ) : null}
