@@ -27,7 +27,7 @@ export function BaseAppChat() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
+    <div className="min-h-screen p-6" style={{backgroundColor: '#E6FC9A'}}>
       <div className="max-w-2xl mx-auto pt-8">
         {/* Hero Section */}
         <div className="bg-gradient-to-br from-blue-600 to-indigo-600 text-white rounded-3xl p-8 shadow-2xl mb-6">
@@ -52,11 +52,10 @@ export function BaseAppChat() {
 
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-6">
             <h2 className="font-semibold text-xl mb-3 text-center">
-              🎯 Base App Native Messaging
+              💙 Base App Native Messaging
             </h2>
             <p className="text-blue-50 leading-relaxed mb-4">
-              Great news! Base App has XMTP messaging built right into the platform. 
-              Click below to open a secure, end-to-end encrypted direct message with Pocki's AI agent.
+              Great news! Base App has XMTP messaging built right into the platform. Click below to open a secure, end-to-end encrypted direct message with Pocki's AI agent.
             </p>
             <p className="text-blue-100 text-sm">
               ✨ Your messages persist in Base App's message history<br/>
@@ -69,12 +68,12 @@ export function BaseAppChat() {
             onClick={openBaseAppDM}
             className="w-full bg-white text-blue-600 font-bold text-lg py-5 px-6 rounded-2xl hover:bg-blue-50 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl mb-4"
           >
-            Open Pocki Chat in Base App 🎋
+            Chat with Pocki in Base App 🎋
           </button>
 
           <div className="text-center">
             <p className="text-blue-100 text-sm mb-2">
-              Or search for Pocki directly in Base App:
+              Or message Pocki directly yourself in Base App:
             </p>
             <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-mono">
               {AGENT_BASENAME}
@@ -88,7 +87,7 @@ export function BaseAppChat() {
         {/* How It Works */}
         <div className="bg-white rounded-2xl p-6 shadow-lg mb-6">
           <h3 className="font-semibold text-xl mb-4 text-gray-800">
-            🚀 How It Works
+            🐼 How It Works
           </h3>
           <div className="space-y-3">
             <div className="flex items-start gap-3">
@@ -97,7 +96,7 @@ export function BaseAppChat() {
               </div>
               <div>
                 <p className="text-gray-700">
-                  <strong>Open the chat:</strong> Click the button above to navigate to Base App's native messaging
+                  <strong>Open the chat:</strong> Click the button above to chat with Pocki in your Base App account
                 </p>
               </div>
             </div>
@@ -107,7 +106,7 @@ export function BaseAppChat() {
               </div>
               <div>
                 <p className="text-gray-700">
-                  <strong>Start chatting:</strong> Send your first message to Pocki (e.g., "Help me trade DEGEN")
+                  <strong>Start chatting:</strong> Send your first message to Pocki (e.g., "In what ways can you help me?")
                 </p>
               </div>
             </div>
@@ -117,7 +116,7 @@ export function BaseAppChat() {
               </div>
               <div>
                 <p className="text-gray-700">
-                  <strong>Get AI assistance:</strong> Pocki responds with market data, trade suggestions, and analysis
+                  <strong>Get AI assistance:</strong> Pocki responds with market data, social sentiment, wallet analysis, and more
                 </p>
               </div>
             </div>
@@ -127,7 +126,7 @@ export function BaseAppChat() {
               </div>
               <div>
                 <p className="text-gray-700">
-                  <strong>Execute trades:</strong> Approve transactions that Pocki sends through Base App's wallet
+                  <strong>Execute trades:</strong> Approve transactions directly in Base App's wallet
                 </p>
               </div>
             </div>
@@ -141,7 +140,7 @@ export function BaseAppChat() {
           </h3>
           <div className="grid md:grid-cols-2 gap-4">
             <div className="flex items-start gap-3">
-              <div className="text-2xl">💱</div>
+              <div className="text-2xl">👛</div>
               <div>
                 <h4 className="font-semibold text-gray-800">Trade Tokens</h4>
                 <p className="text-sm text-gray-600">
@@ -200,7 +199,7 @@ export function BaseAppChat() {
         {/* Alternative Platforms */}
         <div className="bg-gray-50 rounded-2xl p-6 shadow-md">
           <h3 className="font-semibold text-lg mb-3 text-gray-800">
-            🌐 Want to Use Pocki Elsewhere?
+            Want to Use Pocki Elsewhere?
           </h3>
           <p className="text-gray-600 text-sm mb-3">
             Pocki Chat also works directly in your browser with an embedded chat interface:
@@ -215,26 +214,6 @@ export function BaseAppChat() {
               <span>Farcaster Mini App</span>
             </div>
           </div>
-          <p className="text-gray-500 text-xs mt-3">
-            Visit Pocki Chat in a regular browser for the embedded experience
-          </p>
-        </div>
-
-        {/* Technical Note */}
-        <div className="mt-6 text-center text-gray-500 text-xs">
-          <details className="cursor-pointer">
-            <summary className="hover:text-gray-700">
-              🔧 Technical details (for developers)
-            </summary>
-            <p className="mt-2 text-left bg-gray-100 p-3 rounded-lg">
-              <strong>Why redirect to Base App messaging?</strong><br/>
-              XMTP Browser SDK v5 requires OPFS (Origin Private File System) for local storage,
-              which is blocked in iframe contexts due to browser security policies.
-              Since Base App already has XMTP messaging built into their platform,
-              we leverage their native implementation instead of fighting iframe restrictions.
-              This provides a better UX and requires zero additional infrastructure.
-            </p>
-          </details>
         </div>
       </div>
     </div>
