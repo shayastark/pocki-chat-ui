@@ -33,25 +33,28 @@ const renderTextWithLinks = (text: string) => {
 
 // Helper function to format timestamp consistently
 const formatTimestamp = (sentAt: Date | number | string) => {
-  let date: Date;
+  let timestamp: number;
   
-  // Convert to Date object if needed
+  // Convert to timestamp (milliseconds since epoch)
   if (sentAt instanceof Date) {
-    date = sentAt;
+    timestamp = sentAt.getTime();
   } else if (typeof sentAt === 'number') {
-    date = new Date(sentAt);
+    timestamp = sentAt;
   } else if (typeof sentAt === 'string') {
-    date = new Date(sentAt);
+    timestamp = new Date(sentAt).getTime();
   } else {
-    // Fallback for invalid dates
-    date = new Date();
+    // If invalid type, return placeholder instead of current time
+    return '--:--';
   }
   
-  // Validate the date
-  if (isNaN(date.getTime())) {
-    date = new Date();
+  // Validate the timestamp
+  if (isNaN(timestamp) || timestamp <= 0) {
+    // Return placeholder for invalid timestamps instead of current time
+    return '--:--';
   }
   
+  // Create Date object only when formatting (don't store it)
+  const date = new Date(timestamp);
   return date.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
