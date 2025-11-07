@@ -11,3 +11,4 @@ export const AGENT_BASENAME = 'pocki.base.eth';
 export const XMTP_ENV = (process.env.NEXT_PUBLIC_XMTP_ENV || 'production') as 'production' | 'dev' | 'local';
 export const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID || '';
 export const PRIVY_BASE_APP_CLIENT_ID = process.env.NEXT_PUBLIC_PRIVY_BASE_APP_CLIENT_ID || '';
+export const NEYNAR_API_KEY = process.env.NEYNAR_API_KEY || '';

@@ -3,11 +3,23 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import miniappSdk from '@farcaster/miniapp-sdk';
 
+interface FarcasterProfile {
+  fid: number;
+  username: string;
+  displayName: string;
+  pfpUrl: string;
+  followerCount?: number;
+  followingCount?: number;
+  powerBadge?: boolean;
+}
+
 interface MiniAppContextType {
   isMiniApp: boolean;
   isBaseApp: boolean;
   isFarcaster: boolean;
   detectionComplete: boolean;
+  farcasterProfile: FarcasterProfile | null;
+  setFarcasterProfile: (profile: FarcasterProfile | null) => void;
 }
 
 const MiniAppContext = createContext<MiniAppContextType>({
@@ -15,6 +27,8 @@ const MiniAppContext = createContext<MiniAppContextType>({
   isBaseApp: false,
   isFarcaster: false,
   detectionComplete: false,
+  farcasterProfile: null,
+  setFarcasterProfile: () => {},
 });
 
 export function useMiniApp() {
@@ -22,12 +36,17 @@ export function useMiniApp() {
 }
 
 export function MiniAppProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<MiniAppContextType>({
+  const [state, setState] = useState<Omit<MiniAppContextType, 'setFarcasterProfile'>>({
     isMiniApp: false,
     isBaseApp: false,
     isFarcaster: false,
     detectionComplete: false,
+    farcasterProfile: null,
   });
+
+  const setFarcasterProfile = (profile: FarcasterProfile | null) => {
+    setState(prev => ({ ...prev, farcasterProfile: profile }));
+  };
 
   useEffect(() => {
     const detectMiniApp = async () => {
@@ -40,12 +59,13 @@ export function MiniAppProvider({ children }: { children: ReactNode }) {
           const isBase = clientFid === 309857;
           const isFc = clientFid === 9152;
           
-          setState({
+          setState(prev => ({
+            ...prev,
             isMiniApp: true,
             isBaseApp: isBase,
             isFarcaster: isFc,
             detectionComplete: true,
-          });
+          }));
           
           console.log('🔍 Mini App detected:', {
             inMiniApp: true,
@@ -55,22 +75,24 @@ export function MiniAppProvider({ children }: { children: ReactNode }) {
             isFarcaster: isFc,
           });
         } else {
-          setState({
+          setState(prev => ({
+            ...prev,
             isMiniApp: false,
             isBaseApp: false,
             isFarcaster: false,
             detectionComplete: true,
-          });
+          }));
           console.log('🔍 Not in Mini App environment (browser mode)');
         }
       } catch (error) {
         console.log('🔍 Mini App detection error:', error);
-        setState({
+        setState(prev => ({
+          ...prev,
           isMiniApp: false,
           isBaseApp: false,
           isFarcaster: false,
           detectionComplete: true,
-        });
+        }));
       }
     };
     
@@ -78,7 +100,7 @@ export function MiniAppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <MiniAppContext.Provider value={state}>
+    <MiniAppContext.Provider value={{ ...state, setFarcasterProfile }}>
       {children}
     </MiniAppContext.Provider>
   );
