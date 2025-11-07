@@ -352,9 +352,6 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
             </>
           ) : (
             <>
-              <p className="text-lg text-panda-green-600 font-semibold">
-                ✅ Wallet Connected!
-              </p>
               <button
                 onClick={() => {
                   // For Base App users, directly open DM with Pocki
