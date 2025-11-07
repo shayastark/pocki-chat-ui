@@ -7,6 +7,7 @@ import { createAvatar } from '@dicebear/core';
 import { identicon } from '@dicebear/collection';
 import Image from 'next/image';
 import { useMiniApp } from '@/app/contexts/MiniAppContext';
+import { useTheme } from '@/app/contexts/ThemeContext';
 
 interface UserHeaderProps {
   address: string;
@@ -15,6 +16,7 @@ interface UserHeaderProps {
 
 export function UserHeader({ address, onLogout }: UserHeaderProps) {
   const { farcasterProfile } = useMiniApp();
+  const { theme, toggleTheme } = useTheme();
   const [basename, setBasename] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -140,14 +142,51 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
         )}
       </div>
 
-      {/* Logout Button */}
+      {/* Theme Toggle - Compact */}
+      <button
+        onClick={toggleTheme}
+        className="ml-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        aria-label="Toggle theme"
+        title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      >
+        {theme === 'light' ? (
+          <svg
+            className="w-5 h-5 text-gray-700 dark:text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+            />
+          </svg>
+        ) : (
+          <svg
+            className="w-5 h-5 text-yellow-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 11-8 0 4 4 0 018 0z"
+            />
+          </svg>
+        )}
+      </button>
+
+      {/* Logout Button - Bigger and Text-Only */}
       <button
         onClick={onLogout}
-        className="ml-2 sm:ml-4 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+        className="ml-1 px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 rounded-lg transition-colors shadow-sm"
         title="Logout"
       >
-        <span className="sm:hidden">↗</span>
-        <span className="hidden sm:inline">Logout</span>
+        Logout
       </button>
     </div>
   );

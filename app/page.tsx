@@ -13,7 +13,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { BaseAppBanner } from '@/components/BaseAppBanner';
 import { BaseAppChat } from '@/components/BaseAppChat';
 import { UserHeader } from '@/components/UserHeader';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { useMiniApp } from '@/app/contexts/MiniAppContext';
 import miniappSdk from '@farcaster/miniapp-sdk';
 
@@ -84,7 +83,6 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
           <p className="mt-4 text-gray-600 dark:text-gray-300">Connecting to XMTP...</p>
           <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">🎋 Setting up secure messaging</p>
         </div>
-        <ThemeToggle />
       </div>
     );
   }
@@ -153,7 +151,6 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
             Retry Connection
           </button>
         </div>
-        <ThemeToggle />
       </div>
     );
   }
@@ -200,8 +197,6 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
         onClose={() => setShowTxModal(false)}
         transaction={currentTx}
       />
-      
-      <ThemeToggle />
     </div>
   );
 }
@@ -414,8 +409,6 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
           />
         </div>
       </div>
-      
-      <ThemeToggle />
     </div>
   );
 }
@@ -459,7 +452,6 @@ export default function HomePage() {
           </div>
           <p className="text-gray-600 dark:text-gray-300">Loading...</p>
         </div>
-        <ThemeToggle />
       </div>
     );
   }
