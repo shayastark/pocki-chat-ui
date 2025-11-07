@@ -14,6 +14,7 @@ import { BaseAppChat } from '@/components/BaseAppChat';
 import { UserHeader } from '@/components/UserHeader';
 import { useMiniApp } from '@/app/contexts/MiniAppContext';
 import miniappSdk from '@farcaster/miniapp-sdk';
+import { AGENT_WALLET_ADDRESS } from '@/lib/constants';
 
 // Chat component when authenticated
 function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
@@ -355,7 +356,17 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
                 ✅ Wallet Connected!
               </p>
               <button
-                onClick={onEnterChat}
+                onClick={() => {
+                  // For Base App users, directly open DM with Pocki
+                  if (isBaseApp) {
+                    console.log('🎯 Base App user - opening direct message with Pocki');
+                    const messagingDeeplink = `cbwallet://messaging/${AGENT_WALLET_ADDRESS}`;
+                    window.location.href = messagingDeeplink;
+                  } else {
+                    // For non-Base App users, proceed to chat interface
+                    onEnterChat?.();
+                  }
+                }}
                 className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
               >
                 Enter Chat 💬
