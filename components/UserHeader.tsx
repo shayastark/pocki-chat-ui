@@ -66,14 +66,17 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
   const getDisplayAvatar = () => {
     // Prioritize Farcaster profile picture
     if (farcasterProfile?.pfpUrl) {
+      console.log('🖼️ Using Farcaster pfp:', farcasterProfile.pfpUrl);
       return farcasterProfile.pfpUrl;
     }
     
     if (avatarUrl) {
+      console.log('🖼️ Using Basename avatar:', avatarUrl);
       return avatarUrl;
     }
     
     // Generate identicon from wallet address
+    console.log('🖼️ Generating identicon for:', address);
     const avatar = createAvatar(identicon, {
       seed: address,
       size: 128,
@@ -101,19 +104,28 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
   return (
     <div className="flex items-center gap-2 sm:gap-3">
       {/* Avatar */}
-      <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden ring-2 ring-panda-green-200">
+      <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden ring-2 ring-panda-green-200 bg-gray-100">
         <Image
           src={getDisplayAvatar()}
           alt={displayName}
           fill
           className="object-cover"
           unoptimized={!avatarUrl && !farcasterProfile?.pfpUrl} // Unoptimized for data URIs (identicons)
+          onError={(e) => {
+            console.error('❌ Image failed to load:', getDisplayAvatar());
+            // Fallback to identicon on error
+            const avatar = createAvatar(identicon, {
+              seed: address,
+              size: 128,
+            });
+            (e.target as HTMLImageElement).src = avatar.toDataUri();
+          }}
         />
       </div>
 
       {/* Name or Address */}
       <div className="flex flex-col">
-        <span className="text-sm sm:text-base font-semibold text-gray-900 truncate max-w-[120px] sm:max-w-none">
+        <span className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[120px] sm:max-w-none">
           {displayName}
           {farcasterProfile?.powerBadge && (
             <span className="ml-1 inline-block text-purple-500" title="Power Badge">
@@ -122,7 +134,7 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
           )}
         </span>
         {(farcasterProfile?.username || basename) && (
-          <span className="text-xs text-gray-500 hidden sm:block">
+          <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">
             {farcasterProfile ? `@${farcasterProfile.username}` : address.slice(0, 6) + '...' + address.slice(-4)}
           </span>
         )}
@@ -131,7 +143,7 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
       {/* Logout Button */}
       <button
         onClick={onLogout}
-        className="ml-2 sm:ml-4 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+        className="ml-2 sm:ml-4 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
         title="Logout"
       >
         <span className="sm:hidden">↗</span>

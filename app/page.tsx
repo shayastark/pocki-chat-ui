@@ -13,6 +13,7 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { BaseAppBanner } from '@/components/BaseAppBanner';
 import { BaseAppChat } from '@/components/BaseAppChat';
 import { UserHeader } from '@/components/UserHeader';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useMiniApp } from '@/app/contexts/MiniAppContext';
 import miniappSdk from '@farcaster/miniapp-sdk';
 
@@ -68,7 +69,7 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
 
   if (isConnecting) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
           <div className="mb-4 animate-pulse-gentle">
             <Image 
@@ -80,9 +81,10 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
             />
           </div>
           <LoadingSpinner size="lg" />
-          <p className="mt-4 text-gray-600">Connecting to XMTP...</p>
-          <p className="text-sm text-gray-400 mt-2">🎋 Setting up secure messaging</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">Connecting to XMTP...</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">🎋 Setting up secure messaging</p>
         </div>
+        <ThemeToggle />
       </div>
     );
   }
@@ -91,8 +93,8 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
     // Note: Base App users never reach this point because they're redirected earlier
     // This error handling is only for browser/Farcaster users
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50 dark:from-gray-900 dark:to-gray-800">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 max-w-md mx-4">
           <div className="flex justify-center mb-4">
             <Image 
               src="/pocki-logo.jpg" 
@@ -102,10 +104,10 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
               className="rounded-2xl"
             />
           </div>
-          <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-900 dark:text-gray-100">
             Connection Error
           </h2>
-          <p className="text-gray-600 text-center mb-6 whitespace-pre-line">{error}</p>
+          <p className="text-gray-600 dark:text-gray-300 text-center mb-6 whitespace-pre-line">{error}</p>
           
           {/* Show key management for all XMTP errors */}
           {error.includes('installation limit') || error.includes('10/10 installations') || error.includes('hexadecimal') || error.includes('SQLSTATE') ? (
@@ -151,13 +153,14 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
             Retry Connection
           </button>
         </div>
+        <ThemeToggle />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+    <div className="min-h-screen bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50 dark:from-gray-900 dark:to-gray-800">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
@@ -169,8 +172,8 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
                 className="rounded-lg sm:w-12 sm:h-12"
               />
               <div>
-                <h1 className="text-base sm:text-xl font-bold text-gray-900">Pocki Chat</h1>
-                <p className="text-xs sm:text-sm text-gray-500 hidden sm:block">Mindful AI Trading Companion</p>
+                <h1 className="text-base sm:text-xl font-bold text-gray-900 dark:text-gray-100">Pocki Chat</h1>
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hidden sm:block">Mindful AI Trading Companion</p>
               </div>
             </div>
             {activeWalletAddress && (
@@ -181,7 +184,7 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
       </header>
 
       <div className="max-w-6xl mx-auto p-4 space-y-4 h-[calc(100vh-80px)]">
-        <div className="bg-white rounded-2xl shadow-xl h-full flex flex-col overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl h-full flex flex-col overflow-hidden">
           <MessageList onTransactionRequest={(tx) => {
             console.log('Transaction requested:', tx);
             setCurrentTx(tx);
@@ -197,12 +200,14 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
         onClose={() => setShowTxModal(false)}
         transaction={currentTx}
       />
+      
+      <ThemeToggle />
     </div>
   );
 }
 
 // Landing page component when not authenticated
-function LandingPage() {
+function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
   const { login, authenticated, ready } = usePrivy();
   const { initLoginToMiniApp, loginToMiniApp } = useLoginToMiniApp();
   const { isMiniApp, isBaseApp, detectionComplete } = useMiniApp();
@@ -290,17 +295,17 @@ function LandingPage() {
               priority
             />
           </div>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 dark:text-gray-300">
             Your AI trading companion that helps you stick to your own rules.
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 mb-8 animate-slide-up">
-          <h2 className="text-2xl font-semibold mb-6 text-center text-gray-900">
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 md:p-12 mb-8 animate-slide-up">
+          <h2 className="text-2xl font-semibold mb-6 text-center text-gray-900 dark:text-gray-100">
             What is Pocki?
           </h2>
-          <div className="space-y-4 text-gray-700">
-            <div className="text-gray-900 text-center">
+          <div className="space-y-4 text-gray-700 dark:text-gray-300">
+            <div className="text-gray-900 dark:text-gray-100 text-center">
               <p className="mb-3">Pocki helps you:</p>
               <ul className="list-disc list-inside space-y-2 mb-4 text-left inline-block">
                 <li>Trade tokens</li>
@@ -315,22 +320,22 @@ function LandingPage() {
             <div className="grid md:grid-cols-3 gap-6 mt-8">
               <div className="text-center p-4">
                 <div className="text-4xl mb-3">💬</div>
-                <h3 className="font-semibold mb-2">Chat with AI</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold mb-2 dark:text-gray-100">Chat with AI</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Get personalized advice through secure XMTP messaging
                 </p>
               </div>
               <div className="text-center p-4">
                 <div className="text-4xl mb-3">🔒</div>
-                <h3 className="font-semibold mb-2">Secure Transactions</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold mb-2 dark:text-gray-100">Secure Transactions</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Execute transactions safely on Base network
                 </p>
               </div>
               <div className="text-center p-4">
                 <div className="text-4xl mb-3">📊</div>
-                <h3 className="font-semibold mb-2">Wallet Insights</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold mb-2 dark:text-gray-100">Wallet Insights</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Monitor portfolio health and token sentiment in real-time
                 </p>
               </div>
@@ -338,30 +343,46 @@ function LandingPage() {
           </div>
         </div>
 
-        <div className="text-center">
-          <button
-            onClick={login}
-            className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-          >
-            Connect Wallet to Start 🎋
-          </button>
-          <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
-            Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
-          </p>
+        <div className="text-center space-y-4">
+          {!authenticated ? (
+            <>
+              <button
+                onClick={login}
+                className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+              >
+                Connect Wallet to Start 🎋
+              </button>
+              <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
+                Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-lg text-panda-green-600 font-semibold">
+                ✅ Wallet Connected!
+              </p>
+              <button
+                onClick={onEnterChat}
+                className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+              >
+                Enter Chat 💬
+              </button>
+            </>
+          )}
         </div>
 
         <div className="mt-12">
           <BaseAppBanner />
         </div>
 
-        <div className="mt-8 text-center text-gray-500 text-sm">
+        <div className="mt-8 text-center text-gray-500 dark:text-gray-400 text-sm">
           <p className="flex items-center justify-center gap-2">
             <span>Built by</span>
             <a 
               href="https://base.app/profile/shaya" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-panda-green-600 font-semibold hover:underline"
+              className="text-panda-green-600 dark:text-panda-green-400 font-semibold hover:underline"
             >
               @shaya
             </a>
@@ -370,7 +391,7 @@ function LandingPage() {
               href="https://base.app/profile/zenshortz" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-panda-green-600 font-semibold hover:underline"
+              className="text-panda-green-600 dark:text-panda-green-400 font-semibold hover:underline"
             >
               @zenshortz
             </a>
@@ -378,7 +399,7 @@ function LandingPage() {
         </div>
 
         {/* Bottom Logos - Base and XMTP */}
-        <div className="mt-12 flex items-center justify-between">
+        <div className="mt-12 flex items-center justify-between opacity-80 dark:opacity-60">
           <Image 
             src="/base-logo.png" 
             alt="Base" 
@@ -393,6 +414,8 @@ function LandingPage() {
           />
         </div>
       </div>
+      
+      <ThemeToggle />
     </div>
   );
 }
@@ -401,6 +424,7 @@ function LandingPage() {
 export default function HomePage() {
   const { authenticated, ready } = usePrivy();
   const [isInMiniApp, setIsInMiniApp] = useState(false);
+  const [hasEnteredChat, setHasEnteredChat] = useState(false);
 
   useEffect(() => {
     const initializeMiniApp = async () => {
@@ -422,7 +446,7 @@ export default function HomePage() {
   // Show loading while checking authentication
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
           <div className="mb-4 animate-pulse-gentle">
             <Image 
@@ -433,14 +457,15 @@ export default function HomePage() {
               className="mx-auto rounded-2xl"
             />
           </div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-300">Loading...</p>
         </div>
+        <ThemeToggle />
       </div>
     );
   }
 
-  // Show chat if authenticated, otherwise show landing page
-  if (authenticated) {
+  // Show chat only if authenticated AND user has explicitly entered chat
+  if (authenticated && hasEnteredChat) {
     return (
       <XMTPProvider>
         <ChatContent isInMiniApp={isInMiniApp} />
@@ -448,5 +473,6 @@ export default function HomePage() {
     );
   }
 
-  return <LandingPage />;
+  // Show landing page (either not authenticated, or authenticated but hasn't entered chat yet)
+  return <LandingPage onEnterChat={() => setHasEnteredChat(true)} />;
 }
