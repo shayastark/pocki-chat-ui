@@ -54,6 +54,7 @@ API endpoint to fetch Farcaster profiles:
 
 #### `/components/UserHeader.tsx`
 - Updated to display Farcaster profile data when available
+- **Optimized to skip Basename lookup for Farcaster users** (avoids conflicting API calls)
 - Priority order for display:
   1. Farcaster display name
   2. Farcaster username
@@ -124,12 +125,23 @@ To test the integration:
 3. Your Farcaster profile picture and username should appear in the header
 4. If you have a power badge, you'll see ⚡ next to your name
 
+## Performance Optimization
+
+The implementation is optimized to avoid redundant API calls:
+
+- **Farcaster Users**: Only calls Neynar API, skips OnchainKit Basename lookup
+- **Non-Farcaster Users**: Falls back to OnchainKit Basename lookup as before
+- **No Conflicts**: The logic checks for Farcaster profile first, preventing duplicate lookups
+
+This ensures efficient resource usage and faster load times.
+
 ## Benefits
 
 - **Better User Experience**: Users see their familiar Farcaster identity
 - **Social Proof**: Power badges and profile data increase trust
 - **Consistency**: Matches the user's identity across Farcaster ecosystem
 - **Fallback Support**: Gracefully falls back to Basename or wallet address if Farcaster data is unavailable
+- **Optimized Performance**: No redundant API calls for profile data
 
 ## Future Enhancements
 

@@ -26,6 +26,13 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
         return;
       }
 
+      // Skip Basename lookup if we already have Farcaster profile data
+      if (farcasterProfile) {
+        console.log('✅ Using Farcaster profile, skipping Basename lookup');
+        setIsLoading(false);
+        return;
+      }
+
       try {
         setIsLoading(true);
 
@@ -53,7 +60,7 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
     }
 
     fetchBasenameData();
-  }, [address]);
+  }, [address, farcasterProfile]);
 
   // Generate identicon if no avatar is available
   const getDisplayAvatar = () => {
