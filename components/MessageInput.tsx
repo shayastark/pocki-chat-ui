@@ -31,7 +31,7 @@ export function MessageInput() {
   };
 
   return (
-    <div className="border-t border-gray-200 bg-white p-3 sm:p-4">
+    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 sm:p-4">
       <div className="flex gap-2">
         <textarea
           value={message}
@@ -39,7 +39,7 @@ export function MessageInput() {
           onKeyPress={handleKeyPress}
           placeholder={isConnected ? "Type your message... 🎋" : "Connecting..."}
           disabled={!isConnected || isSending}
-          className="flex-1 resize-none rounded-xl border border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-panda-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="flex-1 resize-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white text-gray-900 placeholder:text-gray-500 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-panda-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
           rows={1}
           style={{ minHeight: '44px', maxHeight: '120px' }}
         />
