@@ -27,7 +27,7 @@ export function BaseAppChat() {
   };
 
   return (
-    <div className="min-h-screen p-6" style={{backgroundColor: 'white'}}>
+    <div className="min-h-screen p-6" style={{backgroundColor: '#E6FC9A'}}>
       <div className="max-w-2xl mx-auto pt-8">
         {/* Hero Section */}
         <div className="bg-gradient-to-br from-[#E6FC9A] to-[#d4e889] text-gray-900 rounded-3xl p-8 shadow-2xl mb-6">
@@ -68,7 +68,7 @@ export function BaseAppChat() {
             onClick={openBaseAppDM}
             className="w-full bg-white text-gray-900 font-bold text-lg py-5 px-6 rounded-2xl hover:bg-gray-50 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl mb-4"
           >
-            Chat with Pocki in Base App 🟦
+            Click here to chat with Pocki 🟦
           </button>
 
           <div className="text-center">
@@ -116,7 +116,7 @@ export function BaseAppChat() {
               </div>
               <div>
                 <p className="text-gray-700">
-                  <strong>Get AI assistance:</strong> Pocki responds with market data, social sentiment, wallet analysis, and more
+                  <strong>Get AI assistance:</strong> Pocki responds with market data, social sentiment, wallet analysis, and swap tokens on Base
                 </p>
               </div>
             </div>
