@@ -293,7 +293,14 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
                     </div>
                     {result?.hash && (
                       <div className="text-xs text-green-600 font-mono mt-1">
-                        Hash: {result.hash.slice(0, 10)}...{result.hash.slice(-8)}
+                        Hash: <a
+                          href={`https://basescan.org/tx/${result.hash}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline hover:text-green-700"
+                        >
+                          {result.hash.slice(0, 10)}...{result.hash.slice(-8)}
+                        </a>
                       </div>
                     )}
                     {result?.error && (
@@ -334,7 +341,14 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
           {result?.hash && (
             <div className="mt-2">
               <div className="text-xs font-mono text-gray-600">
-                Hash: {result.hash.slice(0, 10)}...{result.hash.slice(-8)}
+                Hash: <a
+                  href={`https://basescan.org/tx/${result.hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-gray-800"
+                >
+                  {result.hash.slice(0, 10)}...{result.hash.slice(-8)}
+                </a>
               </div>
               {result.confirmed && (
                 <div className="text-xs text-green-600 mt-1">✅ Confirmed</div>
