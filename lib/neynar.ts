@@ -30,7 +30,7 @@ export async function fetchUserProfile(fid: number) {
         fid: user.fid,
         username: user.username,
         displayName: user.display_name,
-        pfpUrl: user.pfp_url,
+        pfpUrl: user.pfp?.url || null,
         followerCount: user.follower_count,
         followingCount: user.following_count,
         powerBadge: user.power_badge,
