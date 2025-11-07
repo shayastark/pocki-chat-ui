@@ -1,52 +1,42 @@
-import { NeynarAPIClient, Configuration } from "@neynar/nodejs-sdk";
 import { NEYNAR_API_KEY } from "./constants";
 
-let neynarClient: NeynarAPIClient | null = null;
-
 /**
- * Get or create a singleton Neynar API client
- */
-export function getNeynarClient(): NeynarAPIClient {
-  if (!neynarClient) {
-    const config = new Configuration({
-      apiKey: NEYNAR_API_KEY,
-    });
-    neynarClient = new NeynarAPIClient(config);
-  }
-  return neynarClient;
-}
-
-/**
- * Fetch user profile data from Neynar by FID
+ * Fetch user profile data from Neynar by FID using raw API
  */
 export async function fetchUserProfile(fid: number) {
   try {
-    const client = getNeynarClient();
-    const response = await client.fetchBulkUsers({ fids: [fid] });
+    const url = `https://api.neynar.com/v2/farcaster/user/bulk?fids=${fid}`;
     
-    console.log('🔍 Neynar API full response:', JSON.stringify(response, null, 2));
+    console.log('🔍 Fetching from Neynar API:', url);
     
-    if (response.users && response.users.length > 0) {
-      const user = response.users[0];
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'x-api-key': NEYNAR_API_KEY,
+        'x-neynar-experimental': 'false',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Neynar API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    console.log('🔍 Neynar API full response:', JSON.stringify(data, null, 2));
+    
+    if (data.users && data.users.length > 0) {
+      const user = data.users[0];
       
       console.log('🔍 User object structure:', JSON.stringify(user, null, 2));
-      console.log('🔍 PFP field paths:', {
-        'user.pfp_url': (user as any).pfp_url,
-        'user.pfp': user.pfp,
-        'user.pfp?.url': user.pfp?.url,
-        'user.profile?.pfp?.url': (user as any).profile?.pfp?.url,
-      });
-      
-      // Prioritize pfp_url as the primary field from Neynar API response
-      const pfpUrl = (user as any).pfp_url || user.pfp?.url || (user as any).profile?.pfp?.url || null;
-      
-      console.log('✅ Extracted pfp URL:', pfpUrl);
+      console.log('🔍 PFP URL from response:', user.pfp_url);
       
       return {
         fid: user.fid,
         username: user.username,
         displayName: user.display_name,
-        pfpUrl: pfpUrl,
+        pfpUrl: user.pfp_url || null,
         followerCount: user.follower_count,
         followingCount: user.following_count,
         powerBadge: user.power_badge,
