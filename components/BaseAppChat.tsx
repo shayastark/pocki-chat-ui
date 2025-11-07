@@ -115,7 +115,7 @@ export function BaseAppChat() {
               </div>
               <div>
                 <p className="text-gray-700">
-                  <strong>Get AI assistance:</strong> Pocki responds with market data, social sentiment, wallet analysis, and swaps token on Base
+                  <strong>Get AI assistance:</strong> Pocki responds with market data, social sentiment, wallet analysis, and swaps tokens on Base
                 </p>
               </div>
             </div>
