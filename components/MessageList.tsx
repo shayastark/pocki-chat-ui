@@ -8,6 +8,56 @@ interface MessageListProps {
   onTransactionRequest?: (transaction: any) => void;
 }
 
+// Helper function to make URLs clickable
+const renderTextWithLinks = (text: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  
+  return parts.map((part, index) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:text-blue-800 underline break-all"
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+};
+
+// Helper function to format timestamp consistently
+const formatTimestamp = (sentAt: Date | number | string) => {
+  let date: Date;
+  
+  // Convert to Date object if needed
+  if (sentAt instanceof Date) {
+    date = sentAt;
+  } else if (typeof sentAt === 'number') {
+    date = new Date(sentAt);
+  } else if (typeof sentAt === 'string') {
+    date = new Date(sentAt);
+  } else {
+    // Fallback for invalid dates
+    date = new Date();
+  }
+  
+  // Validate the date
+  if (isNaN(date.getTime())) {
+    date = new Date();
+  }
+  
+  return date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
 export function MessageList({ onTransactionRequest }: MessageListProps = {}) {
   const { messages, isAgentTyping, debugInfo } = useXMTP();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -91,22 +141,14 @@ export function MessageList({ onTransactionRequest }: MessageListProps = {}) {
                     </div>
                   ) : (
                     <p className="whitespace-pre-wrap break-words">
-                      {typeof message.content === 'string' ? message.content : '[Unsupported message type]'}
+                      {typeof message.content === 'string' ? renderTextWithLinks(message.content) : '[Unsupported message type]'}
                     </p>
                   )}
                 </div>
                 <div className={`text-xs mt-1 ${isOwn ? 'text-right' : 'text-left'}`}>
                   <span className="text-gray-400">
-                    {new Date(message.sentAt).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                    {formatTimestamp(message.sentAt)}
                   </span>
-                  {hasBeenRead && (
-                    <span className="ml-1" title="Read">
-                      🐼
-                    </span>
-                  )}
                 </div>
               </div>
             </div>

@@ -9,7 +9,7 @@ interface Message {
   id: string;
   content: string;
   senderInboxId: string;
-  sentAt: Date;
+  sentAt: number; // Store as timestamp (milliseconds since epoch) to prevent mutation
   contentType?: 'text' | 'transaction';
   transaction?: any; // WalletSendCallsParams
 }
@@ -695,11 +695,24 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             }
           }
           
+          // Normalize timestamp to number (milliseconds since epoch)
+          const rawTimestamp = msg.sent || msg.sentAt;
+          let timestamp: number;
+          if (rawTimestamp instanceof Date) {
+            timestamp = rawTimestamp.getTime();
+          } else if (typeof rawTimestamp === 'number') {
+            timestamp = rawTimestamp;
+          } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
+            timestamp = (rawTimestamp as any).toDate().getTime();
+          } else {
+            timestamp = Date.now();
+          }
+          
           return textContent ? {
             id: msg.id,
             content: textContent,
             senderInboxId: msg.senderAddress || msg.senderInboxId,
-            sentAt: msg.sent || msg.sentAt,
+            sentAt: timestamp,
           } : null;
         })
         .filter((msg: Message | null): msg is Message => msg !== null);
@@ -881,24 +894,24 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
               const exists = prev.some((m: Message) => m.id === message.id);
               if (exists) return prev;
               
-              // Normalize timestamp to Date object
-              let normalizedTimestamp: Date;
+              // Normalize timestamp to number (milliseconds since epoch)
               const rawTimestamp = message.sent || message.sentAt;
+              let timestamp: number;
               if (rawTimestamp instanceof Date) {
-                normalizedTimestamp = rawTimestamp;
+                timestamp = rawTimestamp.getTime();
               } else if (typeof rawTimestamp === 'number') {
-                normalizedTimestamp = new Date(rawTimestamp);
+                timestamp = rawTimestamp;
               } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
-                normalizedTimestamp = (rawTimestamp as any).toDate();
+                timestamp = (rawTimestamp as any).toDate().getTime();
               } else {
-                normalizedTimestamp = new Date();
+                timestamp = Date.now();
               }
               
               return [...prev, {
                 id: message.id,
                 content: textContent || '',
                 senderInboxId: message.senderAddress || message.senderInboxId,
-                sentAt: normalizedTimestamp,
+                sentAt: timestamp,
                 contentType: messageType,
                 transaction: transactionData,
               }];
@@ -1008,24 +1021,24 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           
           if (!textContent) return null;
           
-          // Normalize timestamp to Date object
-          let normalizedTimestamp: Date;
+          // Normalize timestamp to number (milliseconds since epoch)
           const rawTimestamp = msg.sent || msg.sentAt;
+          let timestamp: number;
           if (rawTimestamp instanceof Date) {
-            normalizedTimestamp = rawTimestamp;
+            timestamp = rawTimestamp.getTime();
           } else if (typeof rawTimestamp === 'number') {
-            normalizedTimestamp = new Date(rawTimestamp);
+            timestamp = rawTimestamp;
           } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
-            normalizedTimestamp = (rawTimestamp as any).toDate();
+            timestamp = (rawTimestamp as any).toDate().getTime();
           } else {
-            normalizedTimestamp = new Date();
+            timestamp = Date.now();
           }
           
           return {
             id: msg.id,
             content: textContent,
             senderInboxId: msg.senderAddress || msg.senderInboxId,
-            sentAt: normalizedTimestamp,
+            sentAt: timestamp,
             contentType: messageType,
             transaction: transactionData,
           };
@@ -1086,7 +1099,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           id: messageId,
           content,
           senderInboxId: client.inboxId,
-          sentAt: new Date(),
+          sentAt: Date.now(), // Store as timestamp to prevent mutation
         };
         setMessages(prev => {
           // Check if message already exists (from stream)
@@ -1159,24 +1172,24 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           
           if (!textContent) return null;
           
-          // Normalize timestamp to Date object
-          let normalizedTimestamp: Date;
+          // Normalize timestamp to number (milliseconds since epoch)
           const rawTimestamp = msg.sent || msg.sentAt;
+          let timestamp: number;
           if (rawTimestamp instanceof Date) {
-            normalizedTimestamp = rawTimestamp;
+            timestamp = rawTimestamp.getTime();
           } else if (typeof rawTimestamp === 'number') {
-            normalizedTimestamp = new Date(rawTimestamp);
+            timestamp = rawTimestamp;
           } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
-            normalizedTimestamp = (rawTimestamp as any).toDate();
+            timestamp = (rawTimestamp as any).toDate().getTime();
           } else {
-            normalizedTimestamp = new Date();
+            timestamp = Date.now();
           }
           
           return {
             id: msg.id,
             content: textContent,
             senderInboxId: msg.senderAddress || msg.senderInboxId,
-            sentAt: normalizedTimestamp,
+            sentAt: timestamp,
             contentType: messageType,
             transaction: transactionData,
           };
@@ -1264,11 +1277,24 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           }
         }
         
+        // Normalize timestamp to number (milliseconds since epoch)
+        const rawTimestamp = msg.sent || msg.sentAt;
+        let timestamp: number;
+        if (rawTimestamp instanceof Date) {
+          timestamp = rawTimestamp.getTime();
+        } else if (typeof rawTimestamp === 'number') {
+          timestamp = rawTimestamp;
+        } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
+          timestamp = (rawTimestamp as any).toDate().getTime();
+        } else {
+          timestamp = Date.now();
+        }
+        
         return textContent ? {
           id: msg.id,
           content: textContent,
           senderInboxId: msg.senderInboxId,
-          sentAt: msg.sentAt,
+          sentAt: timestamp,
         } : null;
       })
       .filter(Boolean) as Message[];
