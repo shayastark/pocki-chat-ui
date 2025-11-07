@@ -16,6 +16,7 @@
     "@dicebear/core": "^9.2.4",
     "@farcaster/miniapp-sdk": "^0.2.1",
     "@farcaster/quick-auth": "^0.0.8",
+    "@neynar/nodejs-sdk": "^3.81.2",
     "@privy-io/react-auth": "^3.5.0",
     "@privy-io/wagmi": "^2.0.2",
     "@react-native-async-storage/async-storage": "^2.2.0",

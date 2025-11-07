@@ -18,8 +18,40 @@ import miniappSdk from '@farcaster/miniapp-sdk';
 
 // Chat component when authenticated
 function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
-  const { logout, authenticated, ready } = usePrivy();
-  const { isBaseApp } = useMiniApp();
+  const { logout, authenticated, ready, user } = usePrivy();
+  const { isBaseApp, setFarcasterProfile } = useMiniApp();
+  
+  // Fetch Farcaster profile when user authenticates with Farcaster
+  useEffect(() => {
+    const fetchFarcasterProfile = async () => {
+      // Check if user authenticated with Farcaster
+      const farcasterAccount = user?.linkedAccounts?.find(
+        (account) => account.type === 'farcaster'
+      );
+      
+      if (farcasterAccount && 'fid' in farcasterAccount) {
+        const fid = farcasterAccount.fid;
+        console.log('🎯 Farcaster user detected, fetching profile for FID:', fid);
+        
+        try {
+          const response = await fetch(`/api/farcaster/profile?fid=${fid}`);
+          if (response.ok) {
+            const profile = await response.json();
+            console.log('✅ Fetched Farcaster profile:', profile);
+            setFarcasterProfile(profile);
+          } else {
+            console.error('Failed to fetch Farcaster profile:', response.status);
+          }
+        } catch (error) {
+          console.error('Error fetching Farcaster profile:', error);
+        }
+      }
+    };
+    
+    if (authenticated && user) {
+      fetchFarcasterProfile();
+    }
+  }, [authenticated, user, setFarcasterProfile]);
   
   // IMPORTANT: If user is in Base App, skip XMTP initialization entirely
   // and show the BaseAppChat redirect component immediately

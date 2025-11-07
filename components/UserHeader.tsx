@@ -6,6 +6,7 @@ import { base } from 'viem/chains';
 import { createAvatar } from '@dicebear/core';
 import { identicon } from '@dicebear/collection';
 import Image from 'next/image';
+import { useMiniApp } from '@/app/contexts/MiniAppContext';
 
 interface UserHeaderProps {
   address: string;
@@ -13,6 +14,7 @@ interface UserHeaderProps {
 }
 
 export function UserHeader({ address, onLogout }: UserHeaderProps) {
+  const { farcasterProfile } = useMiniApp();
   const [basename, setBasename] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,6 +57,11 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
 
   // Generate identicon if no avatar is available
   const getDisplayAvatar = () => {
+    // Prioritize Farcaster profile picture
+    if (farcasterProfile?.pfpUrl) {
+      return farcasterProfile.pfpUrl;
+    }
+    
     if (avatarUrl) {
       return avatarUrl;
     }
@@ -68,10 +75,14 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
     return avatar.toDataUri();
   };
 
-  // Display name: Basename or truncated address
-  const displayName = basename || `${address.slice(0, 6)}...${address.slice(-4)}`;
+  // Display name: Prioritize Farcaster display name > Farcaster username > Basename > truncated address
+  const displayName = farcasterProfile?.displayName 
+    || farcasterProfile?.username 
+    || basename 
+    || `${address.slice(0, 6)}...${address.slice(-4)}`;
 
-  if (isLoading) {
+  // Show loading state only if we're fetching Basename and we don't have Farcaster profile yet
+  if (isLoading && !farcasterProfile) {
     return (
       <div className="flex items-center gap-2 sm:gap-3">
         <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-200 animate-pulse" />
@@ -89,7 +100,7 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
           alt={displayName}
           fill
           className="object-cover"
-          unoptimized={!avatarUrl} // Unoptimized for data URIs (identicons)
+          unoptimized={!avatarUrl && !farcasterProfile?.pfpUrl} // Unoptimized for data URIs (identicons)
         />
       </div>
 
@@ -97,10 +108,15 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
       <div className="flex flex-col">
         <span className="text-sm sm:text-base font-semibold text-gray-900 truncate max-w-[120px] sm:max-w-none">
           {displayName}
+          {farcasterProfile?.powerBadge && (
+            <span className="ml-1 inline-block text-purple-500" title="Power Badge">
+              ⚡
+            </span>
+          )}
         </span>
-        {basename && (
+        {(farcasterProfile?.username || basename) && (
           <span className="text-xs text-gray-500 hidden sm:block">
-            {address.slice(0, 6)}...{address.slice(-4)}
+            {farcasterProfile ? `@${farcasterProfile.username}` : address.slice(0, 6) + '...' + address.slice(-4)}
           </span>
         )}
       </div>
