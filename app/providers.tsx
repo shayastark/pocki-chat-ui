@@ -7,6 +7,7 @@ import { wagmiConfig } from '@/lib/wagmi-config';
 import { PRIVY_APP_ID, PRIVY_BASE_APP_CLIENT_ID } from '@/lib/constants';
 import { ReactNode, useState } from 'react';
 import { MiniAppProvider, useMiniApp } from '@/app/contexts/MiniAppContext';
+import { ThemeProvider } from '@/app/contexts/ThemeContext';
 
 function PrivyWrapper({ children }: { children: ReactNode }) {
   const { isBaseApp, detectionComplete } = useMiniApp();
@@ -62,8 +63,10 @@ function PrivyWrapper({ children }: { children: ReactNode }) {
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
-    <MiniAppProvider>
-      <PrivyWrapper>{children}</PrivyWrapper>
-    </MiniAppProvider>
+    <ThemeProvider>
+      <MiniAppProvider>
+        <PrivyWrapper>{children}</PrivyWrapper>
+      </MiniAppProvider>
+    </ThemeProvider>
   );
 }
