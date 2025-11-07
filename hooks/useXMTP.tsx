@@ -697,6 +697,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           
           // Normalize timestamp to number (milliseconds since epoch)
           const rawTimestamp = msg.sent || msg.sentAt;
+          console.log('🔍 TIMESTAMP DEBUG (initial load):', {
+            msgId: msg.id,
+            rawTimestamp,
+            timestampType: typeof rawTimestamp,
+            isDate: rawTimestamp instanceof Date,
+            hasToDate: rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp,
+            sentAtNs: (msg as any).sentAtNs,
+            sentAtNsType: typeof (msg as any).sentAtNs
+          });
+          
           let timestamp: number;
           if (rawTimestamp instanceof Date) {
             timestamp = rawTimestamp.getTime();
@@ -704,7 +714,16 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             timestamp = rawTimestamp;
           } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
             timestamp = (rawTimestamp as any).toDate().getTime();
+          } else if ((msg as any).sentAtNs && typeof (msg as any).sentAtNs === 'bigint') {
+            // XMTP Browser SDK v5 uses sentAtNs (nanoseconds as bigint)
+            timestamp = Number((msg as any).sentAtNs / BigInt(1000000));
+            console.log('✅ Extracted timestamp from sentAtNs (bigint):', timestamp, new Date(timestamp).toISOString());
+          } else if ((msg as any).sentAtNs && typeof (msg as any).sentAtNs === 'number') {
+            // Handle if sentAtNs is a number
+            timestamp = Math.floor((msg as any).sentAtNs / 1000000);
+            console.log('✅ Extracted timestamp from sentAtNs (number):', timestamp, new Date(timestamp).toISOString());
           } else {
+            console.warn('⚠️ Could not extract timestamp for message:', msg.id, 'using current time as fallback');
             timestamp = Date.now();
           }
           
@@ -896,6 +915,15 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
               
               // Normalize timestamp to number (milliseconds since epoch)
               const rawTimestamp = message.sent || message.sentAt;
+              console.log('🔍 TIMESTAMP DEBUG (stream):', {
+                msgId: message.id,
+                rawTimestamp,
+                timestampType: typeof rawTimestamp,
+                isDate: rawTimestamp instanceof Date,
+                sentAtNs: (message as any).sentAtNs,
+                sentAtNsType: typeof (message as any).sentAtNs
+              });
+              
               let timestamp: number;
               if (rawTimestamp instanceof Date) {
                 timestamp = rawTimestamp.getTime();
@@ -903,7 +931,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
                 timestamp = rawTimestamp;
               } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
                 timestamp = (rawTimestamp as any).toDate().getTime();
+              } else if ((message as any).sentAtNs && typeof (message as any).sentAtNs === 'bigint') {
+                timestamp = Number((message as any).sentAtNs / BigInt(1000000));
+                console.log('✅ Extracted timestamp from sentAtNs (bigint):', timestamp, new Date(timestamp).toISOString());
+              } else if ((message as any).sentAtNs && typeof (message as any).sentAtNs === 'number') {
+                timestamp = Math.floor((message as any).sentAtNs / 1000000);
+                console.log('✅ Extracted timestamp from sentAtNs (number):', timestamp, new Date(timestamp).toISOString());
               } else {
+                console.warn('⚠️ Could not extract timestamp for message:', message.id, 'using current time as fallback');
                 timestamp = Date.now();
               }
               
@@ -1023,6 +1058,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           
           // Normalize timestamp to number (milliseconds since epoch)
           const rawTimestamp = msg.sent || msg.sentAt;
+          console.log('🔍 TIMESTAMP DEBUG (refresh):', {
+            msgId: msg.id,
+            rawTimestamp,
+            timestampType: typeof rawTimestamp,
+            sentAtNs: (msg as any).sentAtNs,
+            sentAtNsType: typeof (msg as any).sentAtNs
+          });
+          
           let timestamp: number;
           if (rawTimestamp instanceof Date) {
             timestamp = rawTimestamp.getTime();
@@ -1030,7 +1073,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             timestamp = rawTimestamp;
           } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
             timestamp = (rawTimestamp as any).toDate().getTime();
+          } else if ((msg as any).sentAtNs && typeof (msg as any).sentAtNs === 'bigint') {
+            timestamp = Number((msg as any).sentAtNs / BigInt(1000000));
+            console.log('✅ Extracted timestamp from sentAtNs (bigint):', timestamp, new Date(timestamp).toISOString());
+          } else if ((msg as any).sentAtNs && typeof (msg as any).sentAtNs === 'number') {
+            timestamp = Math.floor((msg as any).sentAtNs / 1000000);
+            console.log('✅ Extracted timestamp from sentAtNs (number):', timestamp, new Date(timestamp).toISOString());
           } else {
+            console.warn('⚠️ Could not extract timestamp for message:', msg.id, 'using current time as fallback');
             timestamp = Date.now();
           }
           
@@ -1174,6 +1224,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           
           // Normalize timestamp to number (milliseconds since epoch)
           const rawTimestamp = msg.sent || msg.sentAt;
+          console.log('🔍 TIMESTAMP DEBUG (forceSyncAll):', {
+            msgId: msg.id,
+            rawTimestamp,
+            timestampType: typeof rawTimestamp,
+            sentAtNs: (msg as any).sentAtNs,
+            sentAtNsType: typeof (msg as any).sentAtNs
+          });
+          
           let timestamp: number;
           if (rawTimestamp instanceof Date) {
             timestamp = rawTimestamp.getTime();
@@ -1181,7 +1239,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             timestamp = rawTimestamp;
           } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
             timestamp = (rawTimestamp as any).toDate().getTime();
+          } else if ((msg as any).sentAtNs && typeof (msg as any).sentAtNs === 'bigint') {
+            timestamp = Number((msg as any).sentAtNs / BigInt(1000000));
+            console.log('✅ Extracted timestamp from sentAtNs (bigint):', timestamp, new Date(timestamp).toISOString());
+          } else if ((msg as any).sentAtNs && typeof (msg as any).sentAtNs === 'number') {
+            timestamp = Math.floor((msg as any).sentAtNs / 1000000);
+            console.log('✅ Extracted timestamp from sentAtNs (number):', timestamp, new Date(timestamp).toISOString());
           } else {
+            console.warn('⚠️ Could not extract timestamp for message:', msg.id, 'using current time as fallback');
             timestamp = Date.now();
           }
           
@@ -1279,6 +1344,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
         
         // Normalize timestamp to number (milliseconds since epoch)
         const rawTimestamp = msg.sent || msg.sentAt;
+        console.log('🔍 TIMESTAMP DEBUG (fixConversation):', {
+          msgId: msg.id,
+          rawTimestamp,
+          timestampType: typeof rawTimestamp,
+          sentAtNs: (msg as any).sentAtNs,
+          sentAtNsType: typeof (msg as any).sentAtNs
+        });
+        
         let timestamp: number;
         if (rawTimestamp instanceof Date) {
           timestamp = rawTimestamp.getTime();
@@ -1286,7 +1359,14 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           timestamp = rawTimestamp;
         } else if (rawTimestamp && typeof rawTimestamp === 'object' && 'toDate' in rawTimestamp) {
           timestamp = (rawTimestamp as any).toDate().getTime();
+        } else if ((msg as any).sentAtNs && typeof (msg as any).sentAtNs === 'bigint') {
+          timestamp = Number((msg as any).sentAtNs / BigInt(1000000));
+          console.log('✅ Extracted timestamp from sentAtNs (bigint):', timestamp, new Date(timestamp).toISOString());
+        } else if ((msg as any).sentAtNs && typeof (msg as any).sentAtNs === 'number') {
+          timestamp = Math.floor((msg as any).sentAtNs / 1000000);
+          console.log('✅ Extracted timestamp from sentAtNs (number):', timestamp, new Date(timestamp).toISOString());
         } else {
+          console.warn('⚠️ Could not extract timestamp for message:', msg.id, 'using current time as fallback');
           timestamp = Date.now();
         }
         

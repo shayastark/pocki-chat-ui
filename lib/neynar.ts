@@ -24,13 +24,29 @@ export async function fetchUserProfile(fid: number) {
     const client = getNeynarClient();
     const response = await client.fetchBulkUsers({ fids: [fid] });
     
+    console.log('🔍 Neynar API full response:', JSON.stringify(response, null, 2));
+    
     if (response.users && response.users.length > 0) {
       const user = response.users[0];
+      
+      console.log('🔍 User object structure:', JSON.stringify(user, null, 2));
+      console.log('🔍 PFP field paths:', {
+        'user.pfp': user.pfp,
+        'user.pfp?.url': user.pfp?.url,
+        'user.pfp_url': (user as any).pfp_url,
+        'user.profile?.pfp?.url': (user as any).profile?.pfp?.url,
+      });
+      
+      // Try multiple possible pfp field paths based on Neynar API
+      const pfpUrl = user.pfp?.url || (user as any).pfp_url || (user as any).profile?.pfp?.url || null;
+      
+      console.log('✅ Extracted pfp URL:', pfpUrl);
+      
       return {
         fid: user.fid,
         username: user.username,
         displayName: user.display_name,
-        pfpUrl: user.pfp?.url || null,
+        pfpUrl: pfpUrl,
         followerCount: user.follower_count,
         followingCount: user.following_count,
         powerBadge: user.power_badge,
