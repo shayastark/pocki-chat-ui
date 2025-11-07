@@ -152,7 +152,7 @@ export function BaseAppChat() {
               <div>
                 <h4 className="font-semibold text-gray-800">Market Analysis</h4>
                 <p className="text-sm text-gray-600">
-                  Get real-time sentiment and price data
+                  Get social sentiment and price data
                 </p>
               </div>
             </div>
