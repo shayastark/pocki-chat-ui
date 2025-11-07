@@ -27,10 +27,10 @@ export function BaseAppChat() {
   };
 
   return (
-    <div className="min-h-screen p-6" style={{backgroundColor: '#E6FC9A'}}>
+    <div className="min-h-screen p-6 bg-panda-green-100">
       <div className="max-w-2xl mx-auto pt-8">
         {/* Hero Section */}
-        <div className="bg-gradient-to-br from-[#E6FC9A] to-[#d4e889] text-gray-900 rounded-3xl p-8 shadow-2xl mb-6">
+        <div className="bg-gradient-to-br from-panda-green-200 to-panda-green-300 text-gray-900 rounded-3xl p-8 shadow-2xl mb-6">
           <div className="text-center mb-6">
             <div className="flex justify-center mb-4">
               <Image 
@@ -55,12 +55,11 @@ export function BaseAppChat() {
               💙 Base App Native Messaging
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Great news! Base App has XMTP messaging built right into the platform. Click below to open a secure, end-to-end encrypted direct message with Pocki's AI agent.
+              Base App has XMTP messaging built right into the platform. Click below to open a secure, end-to-end encrypted direct message with Pocki's AI agent.
             </p>
             <p className="text-gray-600 text-sm">
-              ✨ Your messages persist in Base App's message history<br/>
-              🔒 Secure XMTP protocol ensures privacy<br/>
-              💰 Approve transactions right from the chat
+              ✅ Get info and approve transactions right from the chat<br/>
+              🔒 Secure XMTP protocol ensures privacy
             </p>
           </div>
 
@@ -116,7 +115,7 @@ export function BaseAppChat() {
               </div>
               <div>
                 <p className="text-gray-700">
-                  <strong>Get AI assistance:</strong> Pocki responds with market data, social sentiment, wallet analysis, and swap tokens on Base
+                  <strong>Get AI assistance:</strong> Pocki responds with market data, social sentiment, wallet analysis, and swaps tokens on Base
                 </p>
               </div>
             </div>
@@ -153,7 +152,7 @@ export function BaseAppChat() {
               <div>
                 <h4 className="font-semibold text-gray-800">Market Analysis</h4>
                 <p className="text-sm text-gray-600">
-                  Get real-time sentiment and price data
+                  Get social sentiment and price data
                 </p>
               </div>
             </div>
