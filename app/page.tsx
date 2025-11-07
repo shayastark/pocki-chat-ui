@@ -10,7 +10,6 @@ import { MessageList } from '@/components/MessageList';
 import { MessageInput } from '@/components/MessageInput';
 import { TransactionModal } from '@/components/TransactionModal';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-import { BaseAppBanner } from '@/components/BaseAppBanner';
 import { BaseAppChat } from '@/components/BaseAppChat';
 import { UserHeader } from '@/components/UserHeader';
 import { useMiniApp } from '@/app/contexts/MiniAppContext';
@@ -189,7 +188,6 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
           }} />
           <MessageInput />
         </div>
-        {!isInMiniApp && <BaseAppBanner />}
       </div>
 
       <TransactionModal
@@ -364,10 +362,6 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
               </button>
             </>
           )}
-        </div>
-
-        <div className="mt-12">
-          <BaseAppBanner />
         </div>
 
         <div className="mt-8 text-center text-gray-500 dark:text-gray-400 text-sm">
