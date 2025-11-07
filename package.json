@@ -11,6 +11,9 @@
     "xmtp:get-inbox-id": "node scripts/get-agent-inbox-id.mjs"
   },
   "dependencies": {
+    "@coinbase/onchainkit": "^1.1.2",
+    "@dicebear/collection": "^9.2.4",
+    "@dicebear/core": "^9.2.4",
     "@farcaster/miniapp-sdk": "^0.2.1",
     "@farcaster/quick-auth": "^0.0.8",
     "@privy-io/react-auth": "^3.5.0",
