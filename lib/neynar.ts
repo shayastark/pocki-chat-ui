@@ -31,14 +31,14 @@ export async function fetchUserProfile(fid: number) {
       
       console.log('🔍 User object structure:', JSON.stringify(user, null, 2));
       console.log('🔍 PFP field paths:', {
+        'user.pfp_url': (user as any).pfp_url,
         'user.pfp': user.pfp,
         'user.pfp?.url': user.pfp?.url,
-        'user.pfp_url': (user as any).pfp_url,
         'user.profile?.pfp?.url': (user as any).profile?.pfp?.url,
       });
       
-      // Try multiple possible pfp field paths based on Neynar API
-      const pfpUrl = user.pfp?.url || (user as any).pfp_url || (user as any).profile?.pfp?.url || null;
+      // Prioritize pfp_url as the primary field from Neynar API response
+      const pfpUrl = (user as any).pfp_url || user.pfp?.url || (user as any).profile?.pfp?.url || null;
       
       console.log('✅ Extracted pfp URL:', pfpUrl);
       
