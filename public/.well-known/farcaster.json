@@ -10,7 +10,7 @@
   "miniapp": {
     "version": "1",
     "name": "Pocki",
-    "homeUrl": "https://chat.pocki.app/chat",
+    "homeUrl": "https://chat.pocki.app",
     "iconUrl": "https://chat.pocki.app/images/pocki-square.png",
     "splashImageUrl": "https://chat.pocki.app/images/pocki-square.png",
     "splashBackgroundColor": "#1DB574",
