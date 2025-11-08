@@ -296,43 +296,20 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
 
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 md:p-12 mb-8 animate-slide-up">
           <h2 className="text-2xl font-semibold mb-6 text-center text-gray-900 dark:text-gray-100">
-            What is Pocki?
+            Trading on Instinct? There's a Better Way.
           </h2>
           <div className="space-y-4 text-gray-700 dark:text-gray-300">
             <div className="text-gray-900 dark:text-gray-100 text-center">
               <p className="mb-3">Pocki helps you:</p>
               <ul className="list-disc list-inside space-y-2 mb-4 text-left inline-block">
-                <li>Trade tokens</li>
-                <li>Journal your trades</li>
-                <li>Set alerts and guardrails</li>
-                <li>Track social sentiment</li>
-                <li>Monitor portfolio health</li>
+                <li>Trade ERC-20 tokens on Base</li>
+                <li>Follow your strategy</li>
+                <li>Set guardrails before you need them</li>
+                <li>Record journal entries to reference later</li>
+                <li>Gain insight on token metrics and social sentiment</li>
+                <li>Stay on top of portfolio health</li>
               </ul>
-              <p className="leading-relaxed">Giving you clarity and control for onchain tasks.</p>
-              <p className="text-panda-green-600 font-semibold mt-4 text-lg">Trade mindfully. Intention is everything.</p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-6 mt-8">
-              <div className="text-center p-4">
-                <div className="text-4xl mb-3">💬</div>
-                <h3 className="font-semibold mb-2 dark:text-gray-100">Chat with AI</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Get personalized advice through secure XMTP messaging
-                </p>
-              </div>
-              <div className="text-center p-4">
-                <div className="text-4xl mb-3">🔒</div>
-                <h3 className="font-semibold mb-2 dark:text-gray-100">Secure Transactions</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Execute transactions safely on Base network
-                </p>
-              </div>
-              <div className="text-center p-4">
-                <div className="text-4xl mb-3">📊</div>
-                <h3 className="font-semibold mb-2 dark:text-gray-100">Wallet Insights</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Monitor portfolio health and token sentiment in real-time
-                </p>
-              </div>
+              <p className="text-panda-green-600 font-semibold mt-4 text-lg">Clarity. Control. Consistency.</p>
             </div>
           </div>
         </div>
@@ -352,9 +329,6 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
             </>
           ) : (
             <>
-              <p className="text-lg text-panda-green-600 font-semibold">
-                ✅ Wallet Connected!
-              </p>
               <button
                 onClick={() => {
                   // For Base App users, directly open DM with Pocki
