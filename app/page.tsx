@@ -305,8 +305,8 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
                 <li>Trade ERC-20 tokens on Base</li>
                 <li>Follow your strategy</li>
                 <li>Set guardrails before you need them</li>
-                <li>Record journal entries to reference later</li>
-                <li>Gain insight on token metrics and social sentiment</li>
+                <li>Record journal entries to reference</li>
+                <li>Gain insight into metrics, wallets, and social sentiment</li>
                 <li>Stay on top of portfolio health</li>
               </ul>
               <p className="text-panda-green-600 font-semibold mt-4 text-lg">Clarity. Control. Consistency.</p>
