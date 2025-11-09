@@ -31,16 +31,12 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
       
       if (farcasterAccount && 'fid' in farcasterAccount) {
         const fid = farcasterAccount.fid;
-        console.log('🎯 Farcaster user detected, fetching profile for FID:', fid);
         
         try {
           const response = await fetch(`/api/farcaster/profile?fid=${fid}`);
           if (response.ok) {
             const profile = await response.json();
-            console.log('✅ Fetched Farcaster profile by FID:', profile);
             setFarcasterProfile(profile);
-          } else {
-            console.error('Failed to fetch Farcaster profile:', response.status);
           }
         } catch (error) {
           console.error('Error fetching Farcaster profile:', error);
@@ -53,19 +49,15 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
         
         if (walletAccount && 'address' in walletAccount) {
           const address = walletAccount.address;
-          console.log('🎯 Wallet user detected, fetching profile for address:', address);
           
           try {
             const response = await fetch(`/api/farcaster/profile-by-address?address=${address}`);
             if (response.ok) {
               const profile = await response.json();
-              console.log('✅ Fetched Farcaster profile by address:', profile);
               setFarcasterProfile(profile);
-            } else {
-              console.log('No Farcaster profile found for this wallet address');
             }
           } catch (error) {
-            console.log('No Farcaster profile found for this wallet address');
+            // User may not have a Farcaster account
           }
         }
       }

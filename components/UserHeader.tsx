@@ -30,7 +30,6 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
 
       // Skip Basename lookup if we already have Farcaster profile data
       if (farcasterProfile) {
-        console.log('✅ Using Farcaster profile, skipping Basename lookup');
         setIsLoading(false);
         return;
       }
@@ -68,17 +67,14 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
   const getDisplayAvatar = () => {
     // Prioritize Farcaster profile picture
     if (farcasterProfile?.pfpUrl) {
-      console.log('🖼️ Using Farcaster pfp:', farcasterProfile.pfpUrl);
       return farcasterProfile.pfpUrl;
     }
     
     if (avatarUrl) {
-      console.log('🖼️ Using Basename avatar:', avatarUrl);
       return avatarUrl;
     }
     
     // Generate identicon from wallet address
-    console.log('🖼️ Generating identicon for:', address);
     const avatar = createAvatar(identicon, {
       seed: address,
       size: 128,
