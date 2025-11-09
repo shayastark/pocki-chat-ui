@@ -35,17 +35,25 @@ export async function fetchUserProfile(fid: number) {
 
     const data = await response.json();
     
-    console.log('🔍 Neynar API full response:', JSON.stringify(data, null, 2));
-    
     if (data.users && data.users.length > 0) {
       const user = data.users[0];
       
-      console.log('🔍 User object structure:', JSON.stringify(user, null, 2));
-      console.log('🔍 Raw PFP URL from response:', user.pfp_url);
+      // Log only essential user fields to reduce logging verbosity
+      console.log('🔍 Neynar API response:', JSON.stringify({
+        fid: user.fid,
+        username: user.username,
+        display_name: user.display_name,
+        pfp_url: user.pfp_url,
+        custody_address: user.custody_address,
+        pro: user.pro ? {
+          status: user.pro.status,
+          subscribed_at: user.pro.subscribed_at,
+          expires_at: user.pro.expires_at
+        } : undefined
+      }, null, 2));
       
       // Normalize pfp_url to ensure it has the correct protocol
       const normalizedPfpUrl = normalizePfpUrl(user.pfp_url);
-      console.log('🔍 Normalized PFP URL:', normalizedPfpUrl);
       
       return {
         fid: user.fid,
