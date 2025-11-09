@@ -197,121 +197,68 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
   const renderTransactionDetails = () => {
     if (isXMTPFormat) {
       const xmtpTx = transaction as XMTPWalletSendCallsParams;
-      const chainIdDecimal = parseInt(xmtpTx.chainId, 16);
-      
-      // Check if this is a 0x AllowanceHolder transaction
-      const zeroXAllowanceHolder = '0x0000000000001ff3684f28c67538d4d072c22734';
-      const isAllowanceHolderTx = xmtpTx.calls.some(call => 
-        call.to.toLowerCase() === zeroXAllowanceHolder.toLowerCase()
-      );
       
       return (
-        <div className="space-y-4 mb-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-3">
-            <div className="flex items-start gap-2">
-              <div className="text-blue-600 text-lg">ℹ️</div>
-              <div className="flex-1">
-                <div className="font-semibold text-blue-800 mb-1">Multi-Transaction Swap</div>
-                <div className="text-sm text-blue-700">
-                  This swap requires {xmtpTx.calls.length} transactions to complete. There's a <span className="font-semibold">10-second delay</span> between transactions to prevent rate limiting.
-                  {xmtpTx.calls.length > 1 && (
-                    <span> For instant swaps, <a href="https://chainlist.org/chain/8453" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-900">add Alchemy RPC to MetaMask</a>.</span>
+        <div className="mb-6">
+          <div className="bg-gradient-to-br from-panda-green-50 to-green-50 rounded-2xl p-6 space-y-3">
+            {xmtpTx.calls.map((call, idx) => {
+              const result = callResults[idx];
+              const isCurrent = currentCallIndex === idx;
+              const isConfirmed = result?.confirmed;
+              const hasError = result?.error;
+              const isSigning = isCurrent && !isConfirmed;
+              
+              return (
+                <div key={idx}>
+                  {/* Swap Description */}
+                  <div className="text-center mb-4">
+                    <div className="text-2xl font-bold text-gray-900">
+                      {call.metadata?.description || `Transaction ${idx + 1}`}
+                    </div>
+                  </div>
+
+                  {/* Status Indicator */}
+                  {isSigning && (
+                    <div className="bg-white/80 rounded-xl p-4 text-center border border-panda-green-200">
+                      <div className="text-panda-green-600 font-medium">
+                        ⏳ Please confirm in your wallet...
+                      </div>
+                    </div>
+                  )}
+                  
+                  {isConfirmed && (
+                    <div className="bg-white/80 rounded-xl p-4 text-center border border-green-200">
+                      <div className="text-green-600 font-medium">
+                        ✅ Transaction confirmed!
+                      </div>
+                      {result?.hash && (
+                        <div className="text-xs text-gray-600 font-mono mt-2">
+                          <a
+                            href={`https://basescan.org/tx/${result.hash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline hover:text-gray-800"
+                          >
+                            View on BaseScan
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {hasError && (
+                    <div className="bg-red-50 rounded-xl p-4 text-center border border-red-200">
+                      <div className="text-red-600 font-medium">
+                        ❌ Transaction failed
+                      </div>
+                      <div className="text-xs text-red-600 mt-1">
+                        {result.error}
+                      </div>
+                    </div>
                   )}
                 </div>
-              </div>
-            </div>
-          </div>
-          {isAllowanceHolderTx && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-              <div className="flex items-start gap-2">
-                <div className="text-yellow-600 text-lg">⚠️</div>
-                <div className="flex-1">
-                  <div className="font-semibold text-yellow-800 mb-1">Token Approval Required</div>
-                  <div className="text-sm text-yellow-700">
-                    This swap uses the 0x AllowanceHolder. If MetaMask shows "insufficient funds" or high gas fees, 
-                    you need to <span className="font-semibold">approve the token first</span>. 
-                    The transaction will fail if you haven't approved {xmtpTx.calls[0]?.metadata?.currency || 'the token'} spending.
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          <div className="bg-panda-green-50 rounded-xl p-4 space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-600">From:</span>
-              <span className="font-mono text-sm">{xmtpTx.from.slice(0, 6)}...{xmtpTx.from.slice(-4)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Chain:</span>
-              <span className="font-semibold">{chainIdDecimal === 8453 ? 'Base' : `Chain ${chainIdDecimal}`}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Calls:</span>
-              <span className="font-semibold">{xmtpTx.calls.length} transaction{xmtpTx.calls.length > 1 ? 's' : ''}</span>
-            </div>
-          
-            <div className="mt-4 space-y-2">
-              {xmtpTx.calls.map((call, idx) => {
-                const result = callResults[idx];
-                const isCurrent = currentCallIndex === idx;
-                const isConfirmed = result?.confirmed;
-                const hasError = result?.error;
-                // Derive status from currentCallIndex instead of intermediate state
-                const isSigning = isCurrent && !isConfirmed;
-                const isActive = isSigning || isConfirmed;
-                
-                return (
-                  <div 
-                    key={idx} 
-                    className={`bg-white rounded-lg p-3 border ${
-                      isSigning ? 'border-panda-green-500 border-2' : 
-                      isConfirmed ? 'border-green-500' :
-                      hasError ? 'border-red-500' :
-                      'border-gray-200'
-                    }`}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div className="font-medium text-sm mb-1">
-                        {call.metadata?.description || `Transaction ${idx + 1}`}
-                      </div>
-                      {isSigning && <span className="text-xs text-panda-green-600">⏳ Signing & Confirming...</span>}
-                      {isConfirmed && <span className="text-xs text-green-600">✅</span>}
-                      {hasError && <span className="text-xs text-red-600">❌</span>}
-                    </div>
-                    {call.metadata?.transactionType && (
-                      <div className="text-xs text-gray-600">
-                        Type: {call.metadata.transactionType}
-                      </div>
-                    )}
-                    {call.metadata?.amount && call.metadata?.currency && (
-                      <div className="text-xs text-gray-600">
-                        Amount: {call.metadata.amount} {call.metadata.currency}
-                      </div>
-                    )}
-                    <div className="text-xs text-gray-600 font-mono mt-1">
-                      To: {call.to.slice(0, 6)}...{call.to.slice(-4)}
-                    </div>
-                    {result?.hash && (
-                      <div className="text-xs text-green-600 font-mono mt-1">
-                        Hash: <a
-                          href={`https://basescan.org/tx/${result.hash}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline hover:text-green-700"
-                        >
-                          {result.hash.slice(0, 10)}...{result.hash.slice(-8)}
-                        </a>
-                      </div>
-                    )}
-                    {result?.error && (
-                      <div className="text-xs text-red-600 mt-1">
-                        Error: {result.error}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+              );
+            })}
           </div>
         </div>
       );
@@ -320,41 +267,55 @@ export function TransactionModal({ isOpen, onClose, transaction }: TransactionMo
       const result = callResults[0];
       
       return (
-        <div className="bg-panda-green-50 rounded-xl p-4 mb-6 space-y-3">
-          <div className="flex justify-between">
-            <span className="text-gray-600">Type:</span>
-            <span className="font-semibold capitalize">{legacyTx.type}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-600">To:</span>
-            <span className="font-mono text-sm">{legacyTx.to.slice(0, 6)}...{legacyTx.to.slice(-4)}</span>
-          </div>
-          {legacyTx.amount && (
-            <div className="flex justify-between">
-              <span className="text-gray-600">Amount:</span>
-              <span className="font-semibold">{legacyTx.amount} ETH</span>
-            </div>
-          )}
-          {isExecuting && !result?.confirmed && (
-            <div className="text-xs text-panda-green-600 mt-2">⏳ Signing & Confirming...</div>
-          )}
-          {result?.hash && (
-            <div className="mt-2">
-              <div className="text-xs font-mono text-gray-600">
-                Hash: <a
-                  href={`https://basescan.org/tx/${result.hash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-gray-800"
-                >
-                  {result.hash.slice(0, 10)}...{result.hash.slice(-8)}
-                </a>
+        <div className="mb-6">
+          <div className="bg-gradient-to-br from-panda-green-50 to-green-50 rounded-2xl p-6">
+            {/* Transaction Description */}
+            <div className="text-center mb-4">
+              <div className="text-2xl font-bold text-gray-900 capitalize">
+                {legacyTx.type} {legacyTx.amount} ETH
               </div>
-              {result.confirmed && (
-                <div className="text-xs text-green-600 mt-1">✅ Confirmed</div>
-              )}
             </div>
-          )}
+
+            {/* Status Indicator */}
+            {isExecuting && !result?.confirmed && (
+              <div className="bg-white/80 rounded-xl p-4 text-center border border-panda-green-200">
+                <div className="text-panda-green-600 font-medium">
+                  ⏳ Please confirm in your wallet...
+                </div>
+              </div>
+            )}
+            
+            {result?.confirmed && (
+              <div className="bg-white/80 rounded-xl p-4 text-center border border-green-200">
+                <div className="text-green-600 font-medium">
+                  ✅ Transaction confirmed!
+                </div>
+                {result?.hash && (
+                  <div className="text-xs text-gray-600 font-mono mt-2">
+                    <a
+                      href={`https://basescan.org/tx/${result.hash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline hover:text-gray-800"
+                    >
+                      View on BaseScan
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {result?.error && (
+              <div className="bg-red-50 rounded-xl p-4 text-center border border-red-200">
+                <div className="text-red-600 font-medium">
+                  ❌ Transaction failed
+                </div>
+                <div className="text-xs text-red-600 mt-1">
+                  {result.error}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       );
     }
