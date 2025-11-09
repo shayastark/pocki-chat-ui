@@ -1,7 +1,10 @@
-import { NeynarAPIClient } from "@neynar/nodejs-sdk";
+import { NeynarAPIClient, Configuration } from "@neynar/nodejs-sdk";
 import { NEYNAR_API_KEY } from "./constants";
 
-const client = new NeynarAPIClient(NEYNAR_API_KEY);
+const config = new Configuration({
+  apiKey: NEYNAR_API_KEY,
+});
+const client = new NeynarAPIClient(config);
 
 /**
  * Fetch user profile data from Neynar by FID using Neynar SDK
