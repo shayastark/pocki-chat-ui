@@ -30,13 +30,16 @@ export async function fetchUserProfile(fid: number) {
       const user = data.users[0];
       
       console.log('🔍 User object structure:', JSON.stringify(user, null, 2));
-      console.log('🔍 PFP URL from response:', user.pfp_url);
+      
+      // Handle both possible pfp structures: user.pfp.url (object) or user.pfp_url (string)
+      const pfpUrl = user.pfp?.url || user.pfp_url || null;
+      console.log('🔍 PFP URL from response:', pfpUrl);
       
       return {
         fid: user.fid,
         username: user.username,
         displayName: user.display_name,
-        pfpUrl: user.pfp_url || null,
+        pfpUrl: pfpUrl,
         followerCount: user.follower_count,
         followingCount: user.following_count,
         powerBadge: user.power_badge,
