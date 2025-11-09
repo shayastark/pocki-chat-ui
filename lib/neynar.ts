@@ -1,42 +1,23 @@
+import { NeynarAPIClient } from "@neynar/nodejs-sdk";
 import { NEYNAR_API_KEY } from "./constants";
 
+const client = new NeynarAPIClient(NEYNAR_API_KEY);
+
 /**
- * Fetch user profile data from Neynar by FID using raw API
+ * Fetch user profile data from Neynar by FID using Neynar SDK
  */
 export async function fetchUserProfile(fid: number) {
   try {
-    const url = `https://api.neynar.com/v2/farcaster/user/bulk?fids=${fid}`;
+    const response = await client.fetchBulkUsers([fid]);
     
-    console.log('🔍 Fetching from Neynar API:', url);
-    
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'x-api-key': NEYNAR_API_KEY,
-        'x-neynar-experimental': 'false',
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Neynar API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    
-    console.log('🔍 Neynar API full response:', JSON.stringify(data, null, 2));
-    
-    if (data.users && data.users.length > 0) {
-      const user = data.users[0];
-      
-      console.log('🔍 User object structure:', JSON.stringify(user, null, 2));
-      console.log('🔍 PFP URL from response:', user.pfp_url);
+    if (response.users && response.users.length > 0) {
+      const user = response.users[0];
       
       return {
         fid: user.fid,
         username: user.username,
         displayName: user.display_name,
-        pfpUrl: user.pfp_url || null,
+        pfpUrl: user.pfp_url,
         followerCount: user.follower_count,
         followingCount: user.following_count,
         powerBadge: user.power_badge,
