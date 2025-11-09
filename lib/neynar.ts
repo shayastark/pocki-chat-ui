@@ -16,11 +16,11 @@ export async function fetchUserProfile(fid: number) {
       return {
         fid: user.fid,
         username: user.username,
-        displayName: user.displayName || user.username,
-        pfpUrl: user.pfp?.url || user.pfp_url || null,
-        followerCount: user.followerCount,
-        followingCount: user.followingCount,
-        powerBadge: user.powerBadge,
+        displayName: user.display_name,
+        pfpUrl: user.pfp_url,
+        followerCount: user.follower_count,
+        followingCount: user.following_count,
+        powerBadge: user.power_badge,
       };
     }
     
