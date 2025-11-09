@@ -21,7 +21,7 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   const { logout, authenticated, ready, user } = usePrivy();
   const { isBaseApp, setFarcasterProfile } = useMiniApp();
   
-  // Fetch Farcaster profile when user authenticates
+  // Fetch Farcaster profile when user authenticates with Farcaster
   useEffect(() => {
     const fetchFarcasterProfile = async () => {
       // Check if user authenticated with Farcaster
@@ -31,34 +31,19 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
       
       if (farcasterAccount && 'fid' in farcasterAccount) {
         const fid = farcasterAccount.fid;
+        console.log('🎯 Farcaster user detected, fetching profile for FID:', fid);
         
         try {
           const response = await fetch(`/api/farcaster/profile?fid=${fid}`);
           if (response.ok) {
             const profile = await response.json();
+            console.log('✅ Fetched Farcaster profile:', profile);
             setFarcasterProfile(profile);
+          } else {
+            console.error('Failed to fetch Farcaster profile:', response.status);
           }
         } catch (error) {
           console.error('Error fetching Farcaster profile:', error);
-        }
-      } else {
-        // If no Farcaster account, try to fetch by wallet address
-        const walletAccount = user?.linkedAccounts?.find(
-          (account) => account.type === 'wallet'
-        );
-        
-        if (walletAccount && 'address' in walletAccount) {
-          const address = walletAccount.address;
-          
-          try {
-            const response = await fetch(`/api/farcaster/profile-by-address?address=${address}`);
-            if (response.ok) {
-              const profile = await response.json();
-              setFarcasterProfile(profile);
-            }
-          } catch (error) {
-            // User may not have a Farcaster account
-          }
         }
       }
     };
