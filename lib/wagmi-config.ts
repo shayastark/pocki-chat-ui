@@ -3,7 +3,8 @@ import { base } from 'viem/chains';
 import { http, fallback } from 'viem';
 
 // Construct Alchemy RPC URL from environment variable
-const alchemyApiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || process.env.ALCHEMY_API_KEY;
+// SECURITY: Never use NEXT_PUBLIC_ prefix for API keys - they get exposed to browser
+const alchemyApiKey = process.env.ALCHEMY_API_KEY;
 const alchemyRpcUrl = alchemyApiKey 
   ? `https://base-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
   : null;
