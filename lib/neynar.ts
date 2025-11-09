@@ -1,6 +1,17 @@
 import { NEYNAR_API_KEY } from "./constants";
 
 /**
+ * Normalize pfp_url to ensure it has the correct protocol
+ * Handles cases where the URL is missing https: or starts with //
+ */
+function normalizePfpUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith('http')) return url;
+  if (url.startsWith('//')) return 'https:' + url;
+  return url;
+}
+
+/**
  * Fetch user profile data from Neynar by FID using raw API
  */
 export async function fetchUserProfile(fid: number) {
@@ -30,16 +41,17 @@ export async function fetchUserProfile(fid: number) {
       const user = data.users[0];
       
       console.log('🔍 User object structure:', JSON.stringify(user, null, 2));
+      console.log('🔍 Raw PFP URL from response:', user.pfp_url);
       
-      // Handle both possible pfp structures: user.pfp.url (object) or user.pfp_url (string)
-      const pfpUrl = user.pfp?.url || user.pfp_url || null;
-      console.log('🔍 PFP URL from response:', pfpUrl);
+      // Normalize pfp_url to ensure it has the correct protocol
+      const normalizedPfpUrl = normalizePfpUrl(user.pfp_url);
+      console.log('🔍 Normalized PFP URL:', normalizedPfpUrl);
       
       return {
         fid: user.fid,
         username: user.username,
         displayName: user.display_name,
-        pfpUrl: pfpUrl,
+        pfpUrl: normalizedPfpUrl,
         followerCount: user.follower_count,
         followingCount: user.following_count,
         powerBadge: user.power_badge,
