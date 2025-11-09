@@ -24,12 +24,6 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   // Fetch Farcaster profile when user authenticates
   useEffect(() => {
     const fetchFarcasterProfile = async () => {
-      console.log('🔍 Fetching Farcaster profile... user object:', {
-        authenticated,
-        hasUser: !!user,
-        linkedAccounts: user?.linkedAccounts?.map(acc => ({ type: acc.type })),
-      });
-      
       // Check if user authenticated with Farcaster
       const farcasterAccount = user?.linkedAccounts?.find(
         (account) => account.type === 'farcaster'
@@ -37,30 +31,15 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
       
       if (farcasterAccount && 'fid' in farcasterAccount) {
         const fid = farcasterAccount.fid;
-        console.log('🎯 Farcaster user detected, fetching profile for FID:', fid);
         
         try {
           const response = await fetch(`/api/farcaster/profile?fid=${fid}`);
-          const responseText = await response.text();
-          
-          console.log('📥 API Response status:', response.status);
-          console.log('📥 API Response body:', responseText);
-          
           if (response.ok) {
-            try {
-              const profile = JSON.parse(responseText);
-              console.log('✅ Fetched Farcaster profile by FID:', profile);
-              console.log('🖼️ Profile picture URL:', profile.pfpUrl);
-              console.log('👤 Display name:', profile.displayName);
-              setFarcasterProfile(profile);
-            } catch (parseError) {
-              console.error('❌ Failed to parse profile JSON:', parseError);
-            }
-          } else {
-            console.error('❌ Failed to fetch Farcaster profile. Status:', response.status, 'Body:', responseText);
+            const profile = await response.json();
+            setFarcasterProfile(profile);
           }
         } catch (error) {
-          console.error('❌ Error fetching Farcaster profile:', error);
+          console.error('Error fetching Farcaster profile:', error);
         }
       } else {
         // If no Farcaster account, try to fetch by wallet address
@@ -70,30 +49,15 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
         
         if (walletAccount && 'address' in walletAccount) {
           const address = walletAccount.address;
-          console.log('🎯 Wallet user detected, fetching profile for address:', address);
           
           try {
             const response = await fetch(`/api/farcaster/profile-by-address?address=${address}`);
-            const responseText = await response.text();
-            
-            console.log('📥 API Response status:', response.status);
-            console.log('📥 API Response body:', responseText);
-            
             if (response.ok) {
-              try {
-                const profile = JSON.parse(responseText);
-                console.log('✅ Fetched Farcaster profile by address:', profile);
-                console.log('🖼️ Profile picture URL:', profile.pfpUrl);
-                console.log('👤 Display name:', profile.displayName);
-                setFarcasterProfile(profile);
-              } catch (parseError) {
-                console.error('❌ Failed to parse profile JSON:', parseError);
-              }
-            } else {
-              console.log('ℹ️ No Farcaster profile found for this wallet address');
+              const profile = await response.json();
+              setFarcasterProfile(profile);
             }
           } catch (error) {
-            console.log('ℹ️ No Farcaster profile found for this wallet address');
+            // User may not have a Farcaster account
           }
         }
       }

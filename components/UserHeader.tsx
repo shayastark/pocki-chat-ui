@@ -21,21 +21,6 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Log when Farcaster profile changes
-  useEffect(() => {
-    if (farcasterProfile) {
-      console.log('👤 UserHeader received Farcaster profile:', {
-        fid: farcasterProfile.fid,
-        username: farcasterProfile.username,
-        displayName: farcasterProfile.displayName,
-        pfpUrl: farcasterProfile.pfpUrl,
-        powerBadge: farcasterProfile.powerBadge,
-      });
-    } else {
-      console.log('ℹ️ UserHeader: No Farcaster profile available');
-    }
-  }, [farcasterProfile]);
-
   useEffect(() => {
     async function fetchBasenameData() {
       if (!address) {
@@ -45,7 +30,6 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
 
       // Skip Basename lookup if we already have Farcaster profile data
       if (farcasterProfile) {
-        console.log('✅ Using Farcaster profile, skipping Basename lookup');
         setIsLoading(false);
         return;
       }
@@ -83,20 +67,14 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
   const getDisplayAvatar = () => {
     // Prioritize Farcaster profile picture
     if (farcasterProfile?.pfpUrl) {
-      const pfpUrl = farcasterProfile.pfpUrl.trim();
-      if (pfpUrl) {
-        console.log('🖼️ Using Farcaster pfp:', pfpUrl);
-        return pfpUrl;
-      }
+      return farcasterProfile.pfpUrl;
     }
     
     if (avatarUrl) {
-      console.log('🖼️ Using Basename avatar:', avatarUrl);
       return avatarUrl;
     }
     
     // Generate identicon from wallet address
-    console.log('🖼️ Generating identicon for:', address);
     const avatar = createAvatar(identicon, {
       seed: address,
       size: 128,
@@ -106,16 +84,10 @@ export function UserHeader({ address, onLogout }: UserHeaderProps) {
   };
 
   // Display name: Prioritize Farcaster display name > Farcaster username > Basename > truncated address
-  const displayName = (farcasterProfile?.displayName && farcasterProfile.displayName.trim()) 
-    || (farcasterProfile?.username && farcasterProfile.username.trim()) 
+  const displayName = farcasterProfile?.displayName 
+    || farcasterProfile?.username 
     || basename 
     || `${address.slice(0, 6)}...${address.slice(-4)}`;
-  
-  console.log('📝 UserHeader display name:', displayName, 'from:', {
-    fcDisplayName: farcasterProfile?.displayName,
-    fcUsername: farcasterProfile?.username,
-    basename: basename,
-  });
 
   // Show loading state only if we're fetching Basename and we don't have Farcaster profile yet
   if (isLoading && !farcasterProfile) {
