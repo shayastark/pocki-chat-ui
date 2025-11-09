@@ -21,6 +21,9 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   const { logout, authenticated, ready, user } = usePrivy();
   const { isBaseApp, setFarcasterProfile } = useMiniApp();
   
+  // Track the FID separately to prevent multiple fetches
+  const [fetchedFid, setFetchedFid] = useState<number | null>(null);
+  
   // Fetch Farcaster profile when user authenticates with Farcaster
   useEffect(() => {
     const fetchFarcasterProfile = async () => {
@@ -31,19 +34,24 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
       
       if (farcasterAccount && 'fid' in farcasterAccount) {
         const fid = farcasterAccount.fid;
-        console.log('🎯 Farcaster user detected, fetching profile for FID:', fid);
         
-        try {
-          const response = await fetch(`/api/farcaster/profile?fid=${fid}`);
-          if (response.ok) {
-            const profile = await response.json();
-            console.log('✅ Fetched Farcaster profile:', profile);
-            setFarcasterProfile(profile);
-          } else {
-            console.error('Failed to fetch Farcaster profile:', response.status);
+        // Only fetch if we haven't fetched this FID already
+        if (fid !== fetchedFid) {
+          console.log('🎯 Farcaster user detected, fetching profile for FID:', fid);
+          
+          try {
+            const response = await fetch(`/api/farcaster/profile?fid=${fid}`);
+            if (response.ok) {
+              const profile = await response.json();
+              console.log('✅ Fetched Farcaster profile:', profile);
+              setFarcasterProfile(profile);
+              setFetchedFid(fid); // Mark this FID as fetched
+            } else {
+              console.error('Failed to fetch Farcaster profile:', response.status);
+            }
+          } catch (error) {
+            console.error('Error fetching Farcaster profile:', error);
           }
-        } catch (error) {
-          console.error('Error fetching Farcaster profile:', error);
         }
       }
     };
@@ -51,7 +59,7 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
     if (authenticated && user) {
       fetchFarcasterProfile();
     }
-  }, [authenticated, user, setFarcasterProfile]);
+  }, [authenticated, user, setFarcasterProfile, fetchedFid]);
   
   // IMPORTANT: If user is in Base App, skip XMTP initialization entirely
   // and show the BaseAppChat redirect component immediately
