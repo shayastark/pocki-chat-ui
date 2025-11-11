@@ -12,6 +12,15 @@ const nextConfig = {
   experimental: {
     optimizeCss: false, // Disable CSS optimization that can be slow
   },
+  // Allow external images from Neynar CDN
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'imagedelivery.net',
+      },
+    ],
+  },
   webpack: (config, { dev, isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
