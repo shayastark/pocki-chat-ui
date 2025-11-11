@@ -79,10 +79,10 @@ export function MessageList({ onTransactionRequest }: MessageListProps = {}) {
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🐼</div>
           <p className="text-gray-500">
-            Start a conversation with your AI wallet health agent
+            Start a conversation with Pocki
           </p>
           <p className="text-sm text-panda-bamboo-600 mt-2">
-            🎋 I'm here to help you manage your assets
+            🎋 Your companion for intentional onchain moves
           </p>
         </div>
       )}
