@@ -53,7 +53,7 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              script-src 'self' https://challenges.cloudflare.com 'unsafe-eval';
+              script-src 'self' https://challenges.cloudflare.com 'unsafe-eval' 'unsafe-inline';
               style-src 'self' 'unsafe-inline';
               img-src 'self' data: blob: https://imagedelivery.net;
               font-src 'self';

@@ -31,6 +31,7 @@ function PrivyWrapper({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!PRIVY_APP_ID) {
       console.error('❌ PRIVY_APP_ID is missing! Privy cannot initialize.');
+      console.error('⚠️ Make sure NEXT_PUBLIC_PRIVY_APP_ID is set in Railway environment variables');
     } else {
       console.log('🔧 Privy initialization:', {
         appId: PRIVY_APP_ID,
@@ -48,6 +49,26 @@ function PrivyWrapper({ children }: { children: ReactNode }) {
     } else {
       console.log('🎯 Using Base App client ID for Privy');
     }
+  }
+
+  // Prevent crash if PRIVY_APP_ID is missing
+  if (!PRIVY_APP_ID) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-4">
+          <div className="text-6xl text-center mb-4">🐼</div>
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
+            Configuration Error
+          </h2>
+          <p className="text-gray-600 text-center mb-6">
+            PRIVY_APP_ID is missing. Please check your Railway environment variables.
+          </p>
+          <p className="text-xs text-gray-400 text-center">
+            Check the browser console for more details.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
