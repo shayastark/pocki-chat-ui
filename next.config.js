@@ -53,17 +53,17 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              script-src 'self' https://auth.privy.io https://*.privy.io https://challenges.cloudflare.com 'unsafe-eval';
-              style-src 'self' https://auth.privy.io https://*.privy.io 'unsafe-inline';
-              img-src 'self' data: blob: https://imagedelivery.net https://auth.privy.io https://*.privy.io;
-              font-src 'self' https://auth.privy.io https://*.privy.io;
+              script-src 'self' https://challenges.cloudflare.com 'unsafe-eval';
+              style-src 'self' 'unsafe-inline';
+              img-src 'self' data: blob: https://imagedelivery.net;
+              font-src 'self';
               object-src 'none';
               base-uri 'self';
               form-action 'self';
               frame-ancestors 'none';
-              child-src https://auth.privy.io https://*.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
-              frame-src https://auth.privy.io https://*.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com;
-              connect-src 'self' https://auth.privy.io https://*.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com https://xmtp.network https://*.xmtp.network wss://*.xmtp.network;
+              child-src https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
+              frame-src https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com;
+              connect-src 'self' https://auth.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com https://xmtp.network https://*.xmtp.network wss://*.xmtp.network;
               worker-src 'self' blob:;
               manifest-src 'self'
             `.replace(/\s+/g, ' ').trim(),

@@ -405,6 +405,7 @@ export default function HomePage() {
   const { authenticated, ready } = usePrivy();
   const [isInMiniApp, setIsInMiniApp] = useState(false);
   const [hasEnteredChat, setHasEnteredChat] = useState(false);
+  const [privyTimeout, setPrivyTimeout] = useState(false);
 
   useEffect(() => {
     const initializeMiniApp = async () => {
@@ -423,6 +424,22 @@ export default function HomePage() {
     initializeMiniApp();
   }, []);
 
+  // Debug Privy ready state
+  useEffect(() => {
+    console.log('🔍 Privy state:', { ready, authenticated });
+    
+    // Set timeout warning if Privy doesn't become ready within 10 seconds
+    const timeout = setTimeout(() => {
+      if (!ready) {
+        console.error('⚠️ Privy ready state timeout - Privy has not initialized after 10 seconds');
+        console.error('Check browser console for CSP violations or network errors');
+        setPrivyTimeout(true);
+      }
+    }, 10000);
+
+    return () => clearTimeout(timeout);
+  }, [ready, authenticated]);
+
   // Show loading while checking authentication
   if (!ready) {
     return (
@@ -438,6 +455,11 @@ export default function HomePage() {
             />
           </div>
           <p className="text-gray-600 dark:text-gray-300">Loading...</p>
+          {privyTimeout && (
+            <p className="text-sm text-red-500 mt-2">
+              Taking longer than expected. Check browser console for errors.
+            </p>
+          )}
         </div>
       </div>
     );
