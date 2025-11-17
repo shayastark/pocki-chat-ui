@@ -215,6 +215,8 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
   const { isMiniApp, isBaseApp, detectionComplete } = useMiniApp();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [loginAttempted, setLoginAttempted] = useState(false);
+  const [autoLoginError, setAutoLoginError] = useState<string | null>(null);
+  const [showDebug, setShowDebug] = useState(false);
 
   // Auto-login for Mini Apps ONLY - gated on detection being complete
   useEffect(() => {
@@ -223,6 +225,7 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
       const loginMiniApp = async () => {
         try {
           setLoginAttempted(true);
+          setAutoLoginError(null);
           
           if (isBaseApp) {
             console.log('🎯 Base App auto-login starting (using Base App client ID)');
@@ -243,6 +246,8 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
           console.log('✅ Logged in with Privy via Mini App!');
         } catch (error) {
           console.error('❌ Mini App login failed:', error);
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          setAutoLoginError(`Auto-login failed: ${errorMessage}`);
         }
       };
       
@@ -263,9 +268,10 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
     console.log('Privy state:', { ready, authenticated });
   }, [ready, authenticated]);
 
-  if (!ready) {
+  // Show loading while Privy or Mini App detection is loading
+  if (!ready || !detectionComplete) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
           <div className="mb-4 animate-pulse-gentle">
             <Image 
@@ -276,8 +282,11 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
               className="mx-auto rounded-2xl"
             />
           </div>
-          <p className="text-gray-600">Loading...</p>
-          <p className="text-xs text-gray-400 mt-2">Initializing authentication...</p>
+          <LoadingSpinner size="lg" />
+          <p className="text-gray-600 dark:text-gray-300 mt-4">Loading...</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+            {!ready ? 'Initializing authentication...' : 'Detecting environment...'}
+          </p>
         </div>
       </div>
     );
@@ -323,17 +332,92 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
         </div>
 
         <div className="text-center space-y-4">
+          {/* Show error message if auto-login failed */}
+          {autoLoginError && (
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-lg p-4 max-w-md mx-auto mb-4">
+              <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-2">
+                ⚠️ Automatic sign-in failed
+              </p>
+              <p className="text-xs text-yellow-700 dark:text-yellow-300 mb-3">
+                {autoLoginError}
+              </p>
+              <button
+                onClick={() => {
+                  setLoginAttempted(false);
+                  setAutoLoginError(null);
+                }}
+                className="text-xs text-yellow-800 dark:text-yellow-200 underline hover:no-underline"
+              >
+                Try again
+              </button>
+            </div>
+          )}
+
           {!authenticated ? (
             <>
+              {/* Show Farcaster login button for Mini App users */}
+              {isMiniApp && (
+                <button
+                  onClick={async () => {
+                    try {
+                      setAutoLoginError(null);
+                      console.log('🎯 Manual Mini App login starting');
+                      const { nonce } = await initLoginToMiniApp();
+                      console.log('✅ Got nonce from Privy');
+                      const result = await miniappSdk.actions.signIn({ nonce });
+                      console.log('✅ Got signature from Mini App');
+                      await loginToMiniApp({
+                        message: result.message,
+                        signature: result.signature,
+                      });
+                      console.log('✅ Logged in with Privy via Mini App!');
+                    } catch (error) {
+                      console.error('❌ Manual Mini App login failed:', error);
+                      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+                      setAutoLoginError(`Sign-in failed: ${errorMessage}`);
+                    }
+                  }}
+                  className="bg-purple-600 hover:bg-purple-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105 w-full sm:w-auto"
+                >
+                  {isBaseApp ? '🔷 Sign in with Base' : '🟣 Sign in with Farcaster'}
+                </button>
+              )}
+              
+              {/* Show regular wallet connect for non-Mini App users */}
               <button
                 onClick={login}
-                className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+                className="bg-panda-green-600 hover:bg-panda-green-700 text-white text-lg font-semibold py-4 px-12 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105 w-full sm:w-auto"
               >
-                Connect Wallet to Start 🎋
+                {isMiniApp ? '🔗 Or Connect Another Wallet' : 'Connect Wallet to Start 🎋'}
               </button>
-              <p className="mt-3 text-sm text-gray-500 max-w-md mx-auto">
+              <p className="mt-3 text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
                 Pocki only handles transactions you approve and cannot transfer funds out of any connected wallet.
               </p>
+              
+              {/* Debug toggle button */}
+              <button
+                onClick={() => setShowDebug(!showDebug)}
+                className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 mt-4"
+              >
+                {showDebug ? '🔍 Hide Debug Info' : '🔍 Show Debug Info'}
+              </button>
+              
+              {/* Debug panel */}
+              {showDebug && (
+                <div className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-4 max-w-md mx-auto mt-4 text-left">
+                  <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">Debug Information:</p>
+                  <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400 font-mono">
+                    <p>• Privy Ready: {ready ? '✅' : '❌'}</p>
+                    <p>• Detection Complete: {detectionComplete ? '✅' : '❌'}</p>
+                    <p>• In Mini App: {isMiniApp ? '✅' : '❌'}</p>
+                    <p>• Is Base App: {isBaseApp ? '✅' : '❌'}</p>
+                    <p>• Authenticated: {authenticated ? '✅' : '❌'}</p>
+                    <p>• Login Attempted: {loginAttempted ? '✅' : '❌'}</p>
+                    <p>• SDK Loaded: {isSDKLoaded ? '✅' : '❌'}</p>
+                    {autoLoginError && <p className="text-red-600 dark:text-red-400">• Error: {autoLoginError}</p>}
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <>
