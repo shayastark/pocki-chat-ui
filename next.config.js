@@ -61,8 +61,8 @@ const nextConfig = {
               base-uri 'self';
               form-action 'self';
               frame-ancestors 'none';
-              child-src https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org;
-              frame-src https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com;
+              child-src https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://farcaster.xyz https://base.app;
+              frame-src https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com https://farcaster.xyz https://base.app;
               connect-src 'self' https://auth.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com https://xmtp.network https://*.xmtp.network wss://*.xmtp.network;
               worker-src 'self' blob:;
               manifest-src 'self'
