@@ -304,20 +304,21 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
 
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 md:p-12 mb-8 animate-slide-up">
           <h2 className="text-2xl font-semibold mb-6 text-center text-gray-900 dark:text-gray-100">
-            Trading on Instinct? There's a Better Way.
+            Trading on Impulse? Trade Mindfully Instead.
           </h2>
           <div className="space-y-4 text-gray-700 dark:text-gray-300">
             <div className="text-gray-900 dark:text-gray-100 text-center">
               <p className="mb-3">Pocki helps you:</p>
               <ul className="list-disc list-inside space-y-2 mb-4 text-left inline-block">
-                <li>Trade ERC-20 tokens on Base</li>
                 <li>Follow your strategy</li>
+                <li>Trade ERC-20 tokens on Base</li>
+                <li>Pause and reflect before acting on impulse</li>
                 <li>Set guardrails before you need them</li>
                 <li>Record journal entries to reference</li>
-                <li>Gain insight into metrics, wallets, and social sentiment</li>
-                <li>Stay on top of portfolio health</li>
+                <li>Track metrics, wallet activity, and social sentiment</li>
+                <li>Monitor portfolio health proactively</li>
               </ul>
-              <p className="text-panda-green-600 font-semibold mt-4 text-lg">Clarity. Control. Consistency.</p>
+              <p className="text-panda-green-600 font-semibold mt-4 text-lg">Mindful. Strategic. Consistent.</p>
             </div>
           </div>
         </div>
