@@ -311,7 +311,7 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
               <p className="mb-3">Pocki helps you:</p>
               <ul className="list-disc list-inside space-y-2 mb-4 text-left inline-block">
                 <li>Follow your strategy</li>
-                <li>Pause and reflect before acting on impulse</li>
+                <li>Gain insight into creators, tokens, and sentiment</li>
                 <li>Set guardrails before you need them</li>
                 <li>Monitor portfolio health proactively</li>
               </ul>
