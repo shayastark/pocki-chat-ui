@@ -358,29 +358,6 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
           )}
         </div>
 
-        <div className="mt-8 text-center text-gray-500 dark:text-gray-400 text-sm">
-          <p className="flex items-center justify-center gap-2">
-            <span>Built by</span>
-            <a 
-              href="https://base.app/profile/shaya" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-panda-green-600 dark:text-panda-green-400 font-semibold hover:underline"
-            >
-              @shaya
-            </a>
-            <span>and</span>
-            <a 
-              href="https://base.app/profile/zenshortz" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-panda-green-600 dark:text-panda-green-400 font-semibold hover:underline"
-            >
-              @zenshortz
-            </a>
-          </p>
-        </div>
-
         {/* Bottom Logos - Base and XMTP */}
         <div className="mt-12 flex items-center justify-between opacity-80 dark:opacity-60">
           <Image 
