@@ -378,6 +378,7 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
 // Main page component - shows landing or chat based on authentication
 export default function HomePage() {
   const { authenticated, ready } = usePrivy();
+  const { isMiniApp, detectionComplete } = useMiniApp();
   const [isInMiniApp, setIsInMiniApp] = useState(false);
   const [hasEnteredChat, setHasEnteredChat] = useState(false);
   const [privyTimeout, setPrivyTimeout] = useState(false);
@@ -414,6 +415,20 @@ export default function HomePage() {
 
     return () => clearTimeout(timeout);
   }, [ready, authenticated]);
+
+  // Auto-enter chat for browser users (not Mini Apps) after wallet connection
+  useEffect(() => {
+    // Only auto-enter if:
+    // - Privy is ready
+    // - User is authenticated
+    // - Detection is complete (we know if we're in Mini App or not)
+    // - NOT in Mini App (browser users only)
+    // - Hasn't already entered chat
+    if (ready && authenticated && detectionComplete && !isMiniApp && !hasEnteredChat) {
+      console.log('🌐 Browser user authenticated - auto-entering chat');
+      setHasEnteredChat(true);
+    }
+  }, [ready, authenticated, detectionComplete, isMiniApp, hasEnteredChat]);
 
   // Show loading while checking authentication
   if (!ready) {
