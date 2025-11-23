@@ -31,7 +31,7 @@ const renderTextWithLinks = (text: string) => {
   });
 };
 
-// Helper function to format timestamp consistently
+// Helper function to format timestamp as relative time
 const formatTimestamp = (sentAt: Date | number | string) => {
   let timestamp: number;
   
@@ -53,11 +53,55 @@ const formatTimestamp = (sentAt: Date | number | string) => {
     return '--:--';
   }
   
-  // Create Date object only when formatting (don't store it)
+  const now = Date.now();
+  const diffMs = now - timestamp;
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  
   const date = new Date(timestamp);
-  return date.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  // Same day - check if today or yesterday
+  const isToday = date.toDateString() === today.toDateString();
+  const isYesterday = date.toDateString() === yesterday.toDateString();
+  
+  // Less than a minute ago
+  if (diffSeconds < 60) {
+    return 'Just now';
+  }
+  
+  // Less than an hour ago
+  if (diffMinutes < 60) {
+    return `${diffMinutes}m ago`;
+  }
+  
+  // Less than 24 hours ago - show hours or "Today"
+  if (diffHours < 24 && isToday) {
+    if (diffHours < 1) {
+      return `${diffMinutes}m ago`;
+    }
+    return `${diffHours}h ago`;
+  }
+  
+  // Yesterday
+  if (isYesterday) {
+    return 'Yesterday';
+  }
+  
+  // Less than 7 days ago
+  if (diffDays < 7) {
+    return `${diffDays}d ago`;
+  }
+  
+  // Older than a week - show date
+  return date.toLocaleDateString([], {
+    month: 'short',
+    day: 'numeric',
+    year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined,
   });
 };
 

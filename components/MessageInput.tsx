@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useXMTP } from '@/hooks/useXMTP';
+import { useToast } from '@/components/Toast';
 
 export function MessageInput() {
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const { sendMessage, isConnected } = useXMTP();
+  const { showToast } = useToast();
 
   const handleSend = async () => {
     if (!message.trim() || !isConnected || isSending) return;
@@ -17,7 +19,7 @@ export function MessageInput() {
       setMessage('');
     } catch (error) {
       console.error('Failed to send message:', error);
-      alert('Failed to send message. Please try again.');
+      showToast('Failed to send message. Please try again.', 'error');
     } finally {
       setIsSending(false);
     }
