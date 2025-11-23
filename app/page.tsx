@@ -311,11 +311,8 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
               <p className="mb-3">Pocki helps you:</p>
               <ul className="list-disc list-inside space-y-2 mb-4 text-left inline-block">
                 <li>Follow your strategy</li>
-                <li>Trade ERC-20 tokens on Base</li>
                 <li>Pause and reflect before acting on impulse</li>
                 <li>Set guardrails before you need them</li>
-                <li>Record journal entries to reference</li>
-                <li>Track metrics, wallet activity, and social sentiment</li>
                 <li>Monitor portfolio health proactively</li>
               </ul>
               <p className="text-panda-green-600 font-semibold mt-4 text-lg">Mindful. Strategic. Consistent.</p>
