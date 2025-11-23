@@ -63,7 +63,7 @@ const nextConfig = {
               frame-ancestors 'self' https://farcaster.xyz https://client.farcaster.xyz https://warpcast.com https://client.warpcast.com https://base.app;
               child-src https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://farcaster.xyz https://base.app;
               frame-src https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org https://challenges.cloudflare.com https://farcaster.xyz https://base.app;
-              connect-src 'self' https://auth.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com https://xmtp.network https://*.xmtp.network wss://*.xmtp.network https://mainnet.base.org https://base.drpc.org https://rpc.ankr.com https://base-mainnet.g.alchemy.com https://imagedelivery.net;
+              connect-src 'self' https://auth.privy.io wss://relay.walletconnect.com wss://relay.walletconnect.org wss://www.walletlink.org https://*.rpc.privy.systems https://explorer-api.walletconnect.com https://xmtp.network https://*.xmtp.network wss://*.xmtp.network https://mainnet.base.org https://base.drpc.org https://rpc.ankr.com https://base-mainnet.g.alchemy.com https://imagedelivery.net https://eth.merkle.io;
               worker-src 'self' blob:;
               manifest-src 'self'
             `.replace(/\s+/g, ' ').trim(),
