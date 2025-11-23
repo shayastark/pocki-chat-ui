@@ -55,7 +55,7 @@ const nextConfig = {
               default-src 'self';
               script-src 'self' https://challenges.cloudflare.com 'unsafe-eval' 'unsafe-inline';
               style-src 'self' 'unsafe-inline';
-              img-src 'self' data: blob: https://imagedelivery.net;
+              img-src 'self' data: blob: https://imagedelivery.net https://explorer-api.walletconnect.com;
               font-src 'self';
               object-src 'none';
               base-uri 'self';
