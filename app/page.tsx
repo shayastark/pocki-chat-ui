@@ -298,7 +298,7 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
             />
           </div>
           <p className="text-xl text-gray-600 dark:text-gray-300">
-            Your AI trading companion that helps you stick to your own rules.
+            Your co-pilot for onchain moves
           </p>
         </div>
 
@@ -311,7 +311,7 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
               <p className="mb-3">Pocki helps you:</p>
               <ul className="list-disc list-inside space-y-2 mb-4 text-left inline-block">
                 <li>Follow your strategy</li>
-                <li>Gain insight into creators, tokens, and sentiment</li>
+                <li>Gain insight into wallets, tokens, and sentiment</li>
                 <li>Set guardrails before you need them</li>
                 <li>Monitor portfolio health proactively</li>
               </ul>
