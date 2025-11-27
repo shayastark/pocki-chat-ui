@@ -21,7 +21,7 @@ const EXAMPLE_MESSAGES = [
   "What tokens are trending on Base?",
   "What is the most traded token today?",
   "Analyze my portfolio",
-  "What's in the wallet of FID 99?",
+    "What's in the wallet of FID 8637?",
   "Let me know when $ZORA dips 15%",
   "Set a cooldown period of 6 hours",
   "What are top traders buying?",
@@ -244,7 +244,7 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
         setCurrentMessageIndex((prev) => (prev + 1) % EXAMPLE_MESSAGES.length);
         setIsMessageVisible(true);
       }, 500);
-    }, 3000);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
