@@ -16,6 +16,57 @@ import { useMiniApp } from '@/app/contexts/MiniAppContext';
 import miniappSdk from '@farcaster/miniapp-sdk';
 import { AGENT_WALLET_ADDRESS } from '@/lib/constants';
 
+// Rotating example messages component
+function RotatingMessages() {
+  const messages = [
+    "What tokens are trending on Base?",
+    "What is the most traded token today?",
+    "Analyze my portfolio",
+    "What's in the wallet of FID 99?",
+    "Let me know when $ZORA dips 15%",
+    "Set a cooldown period of 6 hours",
+    "What are top traders buying?",
+    "What NFTs are trending on Base?",
+    "Who in my network owns $jesse?",
+    "buy 50 bucks of AVNT",
+    "Swap 1 ETH for USDC",
+    "What's trending on Arbitrum?",
+    "What's trending on Monad?",
+    "What's trending on World Chain?",
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Fade out
+      setIsVisible(false);
+      
+      // After fade out completes, change message and fade in
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % messages.length);
+        setIsVisible(true);
+      }, 500); // Half of the transition duration
+    }, 3000); // Change every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [messages.length]);
+
+  return (
+    <div className="relative min-h-[80px] flex items-center justify-center">
+      <p
+        key={currentIndex}
+        className={`text-center text-lg md:text-xl text-gray-700 dark:text-gray-300 font-medium transition-all duration-500 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+        }`}
+      >
+        "{messages[currentIndex]}"
+      </p>
+    </div>
+  );
+}
+
 // Chat component when authenticated
 function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   const { logout, authenticated, ready, user } = usePrivy();
@@ -315,8 +366,16 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
                 <li>Set guardrails before you need them</li>
                 <li>Monitor portfolio health proactively</li>
               </ul>
-              <p className="text-panda-green-600 font-semibold mt-4 text-lg">Mindful. Strategic. Consistent.</p>
             </div>
+          </div>
+
+          {/* Ask Pocki rotating messages section */}
+          <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <h3 className="text-panda-green-600 dark:text-panda-green-400 font-serif italic text-3xl md:text-4xl text-center mb-6 font-medium">
+              Ask Pocki
+            </h3>
+            <RotatingMessages />
+          </div>
           </div>
         </div>
 
