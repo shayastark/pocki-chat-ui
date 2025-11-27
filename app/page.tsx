@@ -21,7 +21,7 @@ const EXAMPLE_MESSAGES = [
   "What tokens are trending on Base?",
   "What is the most traded token today?",
   "Analyze my portfolio",
-    "What's in the wallet of FID 8637?",
+  "What's in the wallet of FID 8637?",
   "Let me know when $ZORA dips 15%",
   "Set a cooldown period of 6 hours",
   "What are top traders buying?",
@@ -32,6 +32,14 @@ const EXAMPLE_MESSAGES = [
   "What's trending on Arbitrum?",
   "What's trending on Monad?",
   "What's trending on World Chain?",
+  "Record a journal entry for me: 'I feel good about buying this token and confident in the my research..'",
+  "What are people saying about..?",
+  "List my alerts",
+  "List my journal entries",
+  "Let's switch to beginner mode",
+  "What are your capabilities?",
+  "What does someone mean when they say 'arbitrage opportunities'?",
+  "Tell me a poem about the future of the Base ecosystem",
 ];
 
 // Chat component when authenticated
