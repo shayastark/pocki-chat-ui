@@ -16,7 +16,23 @@ import { useMiniApp } from '@/app/contexts/MiniAppContext';
 import miniappSdk from '@farcaster/miniapp-sdk';
 import { AGENT_WALLET_ADDRESS } from '@/lib/constants';
 
-
+// Example messages for rotating display
+const EXAMPLE_MESSAGES = [
+  "What tokens are trending on Base?",
+  "What is the most traded token today?",
+  "Analyze my portfolio",
+  "What's in the wallet of FID 99?",
+  "Let me know when $ZORA dips 15%",
+  "Set a cooldown period of 6 hours",
+  "What are top traders buying?",
+  "What NFTs are trending on Base?",
+  "Who in my network owns $jesse?",
+  "buy 50 bucks of AVNT",
+  "Swap 1 ETH for USDC",
+  "What's trending on Arbitrum?",
+  "What's trending on Monad?",
+  "What's trending on World Chain?",
+];
 
 // Chat component when authenticated
 function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
@@ -220,31 +236,12 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isMessageVisible, setIsMessageVisible] = useState(true);
 
-  // Example messages for rotating display
-  const exampleMessages = [
-    "What tokens are trending on Base?",
-    "What is the most traded token today?",
-    "Analyze my portfolio",
-    "What's in the wallet of FID 99?",
-    "Let me know when $ZORA dips 15%",
-    "Set a cooldown period of 6 hours",
-    "What are top traders buying?",
-    "What NFTs are trending on Base?",
-    "Who in my network owns $jesse?",
-    "buy 50 bucks of AVNT",
-    "Swap 1 ETH for USDC",
-    "What's trending on Arbitrum?",
-    "What's trending on Monad?",
-    "What's trending on World Chain?",
-  ];
-
   // Rotating messages effect
   useEffect(() => {
-    const messages = exampleMessages;
     const interval = setInterval(() => {
       setIsMessageVisible(false);
       setTimeout(() => {
-        setCurrentMessageIndex((prev) => (prev + 1) % messages.length);
+        setCurrentMessageIndex((prev) => (prev + 1) % EXAMPLE_MESSAGES.length);
         setIsMessageVisible(true);
       }, 500);
     }, 3000);
@@ -365,10 +362,9 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
                   isMessageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
                 }`}
               >
-                &quot;{exampleMessages[currentMessageIndex]}&quot;
+                &quot;{EXAMPLE_MESSAGES[currentMessageIndex]}&quot;
               </p>
             </div>
-          </div>
           </div>
         </div>
 
