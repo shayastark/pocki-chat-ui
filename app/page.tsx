@@ -234,36 +234,20 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
   const { isMiniApp, isBaseApp, detectionComplete } = useMiniApp();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [loginAttempted, setLoginAttempted] = useState(false);
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [isMessageVisible, setIsMessageVisible] = useState(true);
 
-  // Rotating messages component
-  const RotatingMessages = () => {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isVisible, setIsVisible] = useState(true);
-
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setIsVisible(false);
-        setTimeout(() => {
-          setCurrentIndex((prev) => (prev + 1) % EXAMPLE_MESSAGES.length);
-          setIsVisible(true);
-        }, 500);
-      }, 3000);
-      return () => clearInterval(interval);
-    }, []);
-
-    return (
-      <div className="relative min-h-[80px] flex items-center justify-center">
-        <p
-          key={currentIndex}
-          className={`text-center text-lg md:text-xl text-gray-700 dark:text-gray-300 font-medium transition-all duration-500 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-          }`}
-        >
-          &quot;{EXAMPLE_MESSAGES[currentIndex]}&quot;
-        </p>
-      </div>
-    );
-  };
+  // Rotating messages effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsMessageVisible(false);
+      setTimeout(() => {
+        setCurrentMessageIndex((prev) => (prev + 1) % EXAMPLE_MESSAGES.length);
+        setIsMessageVisible(true);
+      }, 500);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Auto-login for Mini Apps ONLY - gated on detection being complete
   useEffect(() => {
@@ -372,7 +356,16 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
             <h3 className="text-panda-green-600 dark:text-panda-green-400 font-serif italic text-3xl md:text-4xl text-center mb-6 font-medium">
               Ask Pocki
             </h3>
-            <RotatingMessages />
+            <div className="relative min-h-[80px] flex items-center justify-center">
+              <p
+                key={currentMessageIndex}
+                className={`text-center text-lg md:text-xl text-gray-700 dark:text-gray-300 font-medium transition-all duration-500 ${
+                  isMessageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+                }`}
+              >
+                &quot;{EXAMPLE_MESSAGES[currentMessageIndex]}&quot;
+              </p>
+            </div>
           </div>
           </div>
         </div>
