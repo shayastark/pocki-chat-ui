@@ -16,42 +16,41 @@ import { useMiniApp } from '@/app/contexts/MiniAppContext';
 import miniappSdk from '@farcaster/miniapp-sdk';
 import { AGENT_WALLET_ADDRESS } from '@/lib/constants';
 
+// Example messages for rotating display
+const EXAMPLE_MESSAGES: readonly string[] = [
+  "What tokens are trending on Base?",
+  "What is the most traded token today?",
+  "Analyze my portfolio",
+  "What's in the wallet of FID 99?",
+  "Let me know when $ZORA dips 15%",
+  "Set a cooldown period of 6 hours",
+  "What are top traders buying?",
+  "What NFTs are trending on Base?",
+  "Who in my network owns $jesse?",
+  "buy 50 bucks of AVNT",
+  "Swap 1 ETH for USDC",
+  "What's trending on Arbitrum?",
+  "What's trending on Monad?",
+  "What's trending on World Chain?",
+];
+
 // Rotating example messages component
 function RotatingMessages() {
-  const messages = [
-    "What tokens are trending on Base?",
-    "What is the most traded token today?",
-    "Analyze my portfolio",
-    "What's in the wallet of FID 99?",
-    "Let me know when $ZORA dips 15%",
-    "Set a cooldown period of 6 hours",
-    "What are top traders buying?",
-    "What NFTs are trending on Base?",
-    "Who in my network owns $jesse?",
-    "buy 50 bucks of AVNT",
-    "Swap 1 ETH for USDC",
-    "What's trending on Arbitrum?",
-    "What's trending on Monad?",
-    "What's trending on World Chain?",
-  ];
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Fade out
       setIsVisible(false);
       
-      // After fade out completes, change message and fade in
       setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % messages.length);
+        setCurrentIndex((prev) => (prev + 1) % EXAMPLE_MESSAGES.length);
         setIsVisible(true);
-      }, 500); // Half of the transition duration
-    }, 3000); // Change every 3 seconds
+      }, 500);
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [messages.length]);
+  }, []);
 
   return (
     <div className="relative min-h-[80px] flex items-center justify-center">
@@ -61,7 +60,7 @@ function RotatingMessages() {
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
         }`}
       >
-        "{messages[currentIndex]}"
+        &quot;{EXAMPLE_MESSAGES[currentIndex]}&quot;
       </p>
     </div>
   );
