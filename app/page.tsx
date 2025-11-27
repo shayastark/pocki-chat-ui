@@ -320,7 +320,6 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-8 animate-fade-in">
           <div className="mb-4 flex justify-center">
@@ -338,14 +337,14 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 md:p-12 mb-8 animate-slide-up">
-          <h2 className="text-2xl font-semibold mb-6 text-center text-gray-900 dark:text-gray-100">
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-6 sm:p-8 md:p-12 mb-8 animate-slide-up">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center text-gray-900 dark:text-gray-100 px-2">
             Trading on Impulse? Trade Mindfully Instead.
           </h2>
           <div className="space-y-4 text-gray-700 dark:text-gray-300">
             <div className="text-gray-900 dark:text-gray-100 text-center">
               <p className="mb-3">Pocki helps you:</p>
-              <ul className="list-disc list-inside space-y-2 mb-4 text-left inline-block">
+              <ul className="list-disc list-inside space-y-2 mb-4 text-left inline-block text-sm sm:text-base">
                 <li>Follow your strategy</li>
                 <li>Gain insight into wallets, tokens, and sentiment</li>
                 <li>Set guardrails before you need them</li>
@@ -355,14 +354,14 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
           </div>
 
           {/* Ask Pocki rotating messages section */}
-          <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-panda-green-600 dark:text-panda-green-400 font-serif italic text-3xl md:text-4xl text-center mb-6 font-medium">
+          <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-200 dark:border-gray-700">
+            <h3 className="text-panda-green-600 dark:text-panda-green-400 font-serif italic text-2xl sm:text-3xl md:text-4xl text-center mb-4 sm:mb-6 font-medium px-2">
               Ask Pocki
             </h3>
-            <div className="relative min-h-[80px] flex items-center justify-center">
+            <div className="relative min-h-[60px] sm:min-h-[80px] flex items-center justify-center px-4">
               <p
                 key={currentMessageIndex}
-                className={`text-center text-lg md:text-xl text-gray-700 dark:text-gray-300 font-medium transition-all duration-500 ${
+                className={`text-center text-base sm:text-lg md:text-xl text-gray-700 dark:text-gray-300 font-medium transition-all duration-500 ${
                   isMessageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
                 }`}
               >
