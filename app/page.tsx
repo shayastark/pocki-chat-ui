@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { useLoginToMiniApp } from '@privy-io/react-auth/farcaster';
 import Image from 'next/image';
@@ -34,37 +34,6 @@ const EXAMPLE_MESSAGES: readonly string[] = [
   "What's trending on World Chain?",
 ];
 
-// Rotating example messages component
-function RotatingMessages() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsVisible(false);
-      
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % EXAMPLE_MESSAGES.length);
-        setIsVisible(true);
-      }, 500);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="relative min-h-[80px] flex items-center justify-center">
-      <p
-        key={currentIndex}
-        className={`text-center text-lg md:text-xl text-gray-700 dark:text-gray-300 font-medium transition-all duration-500 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-        }`}
-      >
-        &quot;{EXAMPLE_MESSAGES[currentIndex]}&quot;
-      </p>
-    </div>
-  );
-}
 
 // Chat component when authenticated
 function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
@@ -265,6 +234,36 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
   const { isMiniApp, isBaseApp, detectionComplete } = useMiniApp();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [loginAttempted, setLoginAttempted] = useState(false);
+
+  // Rotating messages component
+  const RotatingMessages = () => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isVisible, setIsVisible] = useState(true);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setIsVisible(false);
+        setTimeout(() => {
+          setCurrentIndex((prev) => (prev + 1) % EXAMPLE_MESSAGES.length);
+          setIsVisible(true);
+        }, 500);
+      }, 3000);
+      return () => clearInterval(interval);
+    }, []);
+
+    return (
+      <div className="relative min-h-[80px] flex items-center justify-center">
+        <p
+          key={currentIndex}
+          className={`text-center text-lg md:text-xl text-gray-700 dark:text-gray-300 font-medium transition-all duration-500 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+          }`}
+        >
+          &quot;{EXAMPLE_MESSAGES[currentIndex]}&quot;
+        </p>
+      </div>
+    );
+  };
 
   // Auto-login for Mini Apps ONLY - gated on detection being complete
   useEffect(() => {
