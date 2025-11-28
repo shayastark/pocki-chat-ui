@@ -119,6 +119,7 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAgentTyping, setIsAgentTyping] = useState(false);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [activeWalletAddress, setActiveWalletAddress] = useState<string | null>(null);
   const [allConversations, setAllConversations] = useState<any[]>([]);
   const [conversationPeerInboxId, setConversationPeerInboxId] = useState<string | null>(null);
@@ -952,10 +953,39 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
               }];
             });
 
-            // Turn off typing indicator when Pocki's response arrives
+            // Handle typing indicator when Pocki's response arrives
             const wallet = wallets[0];
             if (wallet && message.senderInboxId !== wallet.address) {
-              setIsAgentTyping(false);
+              // Clear any existing timeout
+              if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+                typingTimeoutRef.current = null;
+              }
+              
+              // Check if this is an intermediate message (like "Let me check...")
+              const messageText = textContent?.toLowerCase() || '';
+              const isIntermediateMessage = 
+                messageText.includes('let me check') ||
+                messageText.includes("i'll check") ||
+                messageText.includes('i will check') ||
+                messageText.includes('let me look') ||
+                messageText.includes("i'll look") ||
+                messageText.includes('checking') ||
+                messageText.includes('fetching') ||
+                messageText.includes('analyzing') ||
+                messageText.includes('loading') ||
+                messageText.includes('give me a moment') ||
+                messageText.includes('one moment') ||
+                messageText.includes('just a sec');
+              
+              if (isIntermediateMessage) {
+                // For intermediate messages: keep typing indicator ON
+                // Don't turn it off - it should stay on until the final response
+                setIsAgentTyping(true);
+              } else {
+                // For final messages: turn off typing indicator
+                setIsAgentTyping(false);
+              }
             }
           },
           onError: (err: any) => {
@@ -972,6 +1002,11 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
 
     return () => {
       streamActive = false;
+      // Clear typing timeout on cleanup
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
     };
   }, [conversation, client, wallets]);
 
