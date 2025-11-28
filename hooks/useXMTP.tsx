@@ -979,17 +979,22 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
                 messageText.includes('just a sec');
               
               if (isIntermediateMessage) {
-                // For intermediate messages: keep typing indicator on continuously
-                // This signals that Pocki is still working on a follow-up response
-                // Don't set a timeout - keep it on until the final message arrives
-                setIsAgentTyping(true);
-              } else {
-                // For regular/final messages: turn off typing indicator after a brief delay
-                // This gives a smooth transition without jumpiness
+                // For intermediate messages: turn off typing indicator when message arrives
+                // Then turn it back on after a brief pause to show more is coming
+                setIsAgentTyping(false);
+                
+                // Turn typing indicator back on after 400ms to indicate Pocki is still working
                 typingTimeoutRef.current = setTimeout(() => {
-                  setIsAgentTyping(false);
-                  typingTimeoutRef.current = null;
-                }, 500);
+                  setIsAgentTyping(true);
+                  // Keep it on for up to 30 seconds while waiting for follow-up
+                  typingTimeoutRef.current = setTimeout(() => {
+                    setIsAgentTyping(false);
+                    typingTimeoutRef.current = null;
+                  }, 30000);
+                }, 400);
+              } else {
+                // For regular/final messages: turn off typing indicator
+                setIsAgentTyping(false);
               }
             }
           },
