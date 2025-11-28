@@ -208,7 +208,10 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
               </div>
             </div>
             {activeWalletAddress && (
-              <UserHeader address={activeWalletAddress} onLogout={logout} />
+              <UserHeader address={activeWalletAddress} onLogout={() => {
+                logout();
+                onLogout?.();
+              }} />
             )}
           </div>
         </div>
@@ -235,12 +238,13 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
 }
 
 // Landing page component when not authenticated
-function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
+function LandingPage({ onEnterChat, onLogoutDetected }: { onEnterChat?: () => void; onLogoutDetected?: () => void }) {
   const { login, authenticated, ready } = usePrivy();
   const { initLoginToMiniApp, loginToMiniApp } = useLoginToMiniApp();
   const { isMiniApp, isBaseApp, detectionComplete } = useMiniApp();
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [loginAttempted, setLoginAttempted] = useState(false);
+  const [logoutTimestamp, setLogoutTimestamp] = useState<number | null>(null);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isMessageVisible, setIsMessageVisible] = useState(true);
 
@@ -256,10 +260,36 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
     return () => clearInterval(interval);
   }, []);
 
+  // Track when user logs out to prevent immediate auto-login
+  useEffect(() => {
+    // When authenticated becomes false, it might be a logout
+    if (!authenticated && ready) {
+      // Set logout timestamp to prevent immediate auto-login
+      setLogoutTimestamp(Date.now());
+      setLoginAttempted(false); // Reset so user can login again after delay
+      onLogoutDetected?.();
+    }
+  }, [authenticated, ready, onLogoutDetected]);
+
+  // Reset logout timestamp after delay
+  useEffect(() => {
+    if (logoutTimestamp) {
+      const resetTimer = setTimeout(() => {
+        setLogoutTimestamp(null);
+      }, 3000); // Wait 3 seconds after logout before allowing auto-login again
+      
+      return () => clearTimeout(resetTimer);
+    }
+  }, [logoutTimestamp]);
+
   // Auto-login for Mini Apps ONLY - gated on detection being complete
   useEffect(() => {
-    // Wait for: Privy ready, detection complete, not already authenticated, is a Mini App, haven't tried yet
-    if (ready && detectionComplete && !authenticated && isMiniApp && !loginAttempted) {
+    // Wait for: Privy ready, detection complete, not already authenticated, is a Mini App, 
+    // haven't tried yet, and enough time has passed since logout (if applicable)
+    const timeSinceLogout = logoutTimestamp ? Date.now() - logoutTimestamp : Infinity;
+    const canAutoLogin = timeSinceLogout > 3000; // At least 3 seconds since logout
+    
+    if (ready && detectionComplete && !authenticated && isMiniApp && !loginAttempted && canAutoLogin) {
       const loginMiniApp = async () => {
         try {
           setLoginAttempted(true);
@@ -283,12 +313,14 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
           console.log('✅ Logged in with Privy via Mini App!');
         } catch (error) {
           console.error('❌ Mini App login failed:', error);
+          // Reset loginAttempted on error so user can try again
+          setLoginAttempted(false);
         }
       };
       
       loginMiniApp();
     }
-  }, [ready, detectionComplete, authenticated, isMiniApp, isBaseApp, loginAttempted, initLoginToMiniApp, loginToMiniApp]);
+  }, [ready, detectionComplete, authenticated, isMiniApp, isBaseApp, loginAttempted, logoutTimestamp, initLoginToMiniApp, loginToMiniApp]);
 
   // Ensure Mini App SDK is ready
   useEffect(() => {
@@ -521,5 +553,11 @@ export default function HomePage() {
   }
 
   // Show landing page (either not authenticated, or authenticated but hasn't entered chat yet)
-  return <LandingPage onEnterChat={() => setHasEnteredChat(true)} />;
+  return <LandingPage 
+    onEnterChat={() => setHasEnteredChat(true)} 
+    onLogoutDetected={() => {
+      // Reset hasEnteredChat when logout is detected
+      setHasEnteredChat(false);
+    }}
+  />;
 }
