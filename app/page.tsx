@@ -40,6 +40,20 @@ const EXAMPLE_MESSAGES = [
   "What are your capabilities?",
   "What does someone mean when they say 'arbitrage opportunities'?",
   "Tell me a poem about the future of the Base ecosystem",
+  "Show me my biggest position",
+  "What's the sentiment around $DEGEN?",
+  "Alert me if my portfolio drops 20%",
+  "What did I trade last week?",
+  "Explain the difference between a DEX and CEX",
+  "Set a max trade size of 0.5 ETH",
+  "What's the trading volume for $USDC today?",
+  "Who are the biggest holders of this token?",
+  "Cancel my cooldown period",
+  "What's my total PnL this month?",
+  "Show me tokens I've been watching",
+  "What's the liquidity like for this pool?",
+  "Help me set trading goals for this week",
+  "What tokens are my friends trading?",
 ];
 
 // Chat component when authenticated
