@@ -208,10 +208,7 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
               </div>
             </div>
             {activeWalletAddress && (
-              <UserHeader address={activeWalletAddress} onLogout={() => {
-                logout();
-                onLogout?.();
-              }} />
+              <UserHeader address={activeWalletAddress} onLogout={logout} />
             )}
           </div>
         </div>
