@@ -979,25 +979,21 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
                 messageText.includes('just a sec');
               
               if (isIntermediateMessage) {
-                // For intermediate messages: turn off typing indicator after showing the message
-                // Then turn it back on to indicate more is coming
-                setTimeout(() => {
+                // For intermediate messages: keep typing indicator on continuously
+                // This signals that Pocki is still working on a follow-up response
+                setIsAgentTyping(true);
+                // Keep it on for up to 20 seconds while waiting for follow-up
+                typingTimeoutRef.current = setTimeout(() => {
                   setIsAgentTyping(false);
-                  
-                  // Turn typing indicator back on after a brief pause (300ms)
-                  // This signals that Pocki is fetching more information
-                  setTimeout(() => {
-                    setIsAgentTyping(true);
-                    // Keep it on for up to 20 seconds while waiting for follow-up
-                    typingTimeoutRef.current = setTimeout(() => {
-                      setIsAgentTyping(false);
-                      typingTimeoutRef.current = null;
-                    }, 20000);
-                  }, 300);
-                }, 500); // Small delay so user sees the immediate response first
+                  typingTimeoutRef.current = null;
+                }, 20000);
               } else {
-                // For regular/final messages: turn off typing indicator
-                setIsAgentTyping(false);
+                // For regular/final messages: turn off typing indicator after a brief delay
+                // This gives a smooth transition without jumpiness
+                typingTimeoutRef.current = setTimeout(() => {
+                  setIsAgentTyping(false);
+                  typingTimeoutRef.current = null;
+                }, 500);
               }
             }
           },
