@@ -369,6 +369,7 @@ function LandingPage({ onEnterChat }: { onEnterChat?: () => void }) {
                 <li>Follow your strategy</li>
                 <li>Gain insight into wallets, tokens, and sentiment</li>
                 <li>Set guardrails before you need them</li>
+                <li>Buy and sell tokens</li>
                 <li>Monitor portfolio health proactively</li>
               </ul>
             </div>
