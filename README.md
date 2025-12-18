@@ -1,60 +1,23 @@
-# 🐼 Pocki Chat - AI Wallet Health Agent
+# Pocki Chat UI
 
-A Next.js 14 web application for chatting with an AI wallet health agent using XMTP messaging protocol.
+Frontend web application for the Pocki Agent, an AI trading companion that helps users trade mindfully and strategically on Base.
+
+**Live Application:** [https://chat.pocki.app](https://chat.pocki.app)  
+**Main Website:** [https://pocki.app](https://pocki.app)
+
+## Overview
+
+Pocki Chat is a Next.js application that provides a chat interface for interacting with the Pocki Agent via XMTP messaging. The agent helps users with portfolio analysis, trading decisions, setting guardrails, and monitoring wallet health.
 
 ## Features
 
-- 🔐 **Privy Authentication** - Support for wallet, email, Google, and Twitter login
-- 💬 **XMTP Messaging** - Secure, decentralized messaging with AI agent
-- 🔄 **Auto-Reconnection** - Automatic retry logic for dropped XMTP connections
-- 🐼 **Panda Read Status** - Message read indicators with panda emoji
-- ⌨️ **Typing Indicators** - See when the AI agent is typing
-- 🔗 **Base Network** - Transaction execution on Base (chainId: 8453)
-- 🎨 **Panda Theme** - Calm, bamboo-inspired design
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 20 or higher
-- A Privy App ID (get one at [https://dashboard.privy.io](https://dashboard.privy.io))
-
-### Environment Setup
-
-1. **Get Your Privy App ID:**
-   - Visit [https://dashboard.privy.io](https://dashboard.privy.io)
-   - Create a new app or select an existing one
-   - Copy your App ID from the dashboard
-
-2. **Configure Environment in Replit:**
-   - Open the "Secrets" tab in Replit (lock icon in left sidebar)
-   - Add a new secret:
-     - Key: `NEXT_PUBLIC_PRIVY_APP_ID`
-     - Value: Your Privy App ID from step 1
-   - The `.env.local` file is already configured with other values
-
-3. **Alternative: Manual Configuration**
-   If not using Replit Secrets, update `.env.local` directly:
-   
-   ```env
-   NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id_here
-   NEXT_PUBLIC_XMTP_ENV=production
-   NEXT_PUBLIC_AGENT_ADDRESS=0xd003c8136e974da7317521ef5866c250f17ad155
-   ```
-
-### Installation
-
-```bash
-npm install
-```
-
-### Development
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:5000](http://localhost:5000) in your browser.
+- **Authentication** - Wallet, email, Google, and Twitter login via Privy
+- **XMTP Messaging** - Secure, decentralized messaging with the Pocki Agent
+- **Transaction Execution** - Execute trades and swaps directly from the chat interface
+- **Portfolio Analysis** - Real-time wallet and portfolio insights
+- **Alerts & Guardrails** - Set trading limits, cooldown periods, and price alerts
+- **Multi-Chain Support** - Base network integration with support for other chains
+- **Mini App Support** - Works as a Farcaster and Base App Mini App
 
 ## Tech Stack
 
@@ -67,73 +30,87 @@ Open [http://localhost:5000](http://localhost:5000) in your browser.
 - **Viem** - Ethereum utilities
 - **TanStack Query** - Data fetching and caching
 
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18 or higher
+- npm 9 or higher
+- Privy App ID ([https://dashboard.privy.io](https://dashboard.privy.io))
+
+### Installation
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+Create a `.env.local` file with the following variables:
+
+```env
+NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
+NEXT_PUBLIC_PRIVY_BASE_APP_CLIENT_ID=your_base_app_client_id
+NEXT_PUBLIC_XMTP_ENV=production
+NEXT_PUBLIC_NEYNAR_API_KEY=your_neynar_api_key
+```
+
+### Development
+
+```bash
+npm run dev
+```
+
+The application will be available at [http://localhost:5000](http://localhost:5000).
+
+### Build
+
+```bash
+npm run build
+npm start
+```
+
 ## Architecture
 
 ### Provider Hierarchy
 
-1. **PrivyProvider** - Authentication and wallet management
-2. **QueryClientProvider** - TanStack Query for data fetching
-3. **WagmiProvider** - Ethereum wallet interactions
-4. **XMTPProvider** - XMTP messaging client
+1. **ThemeProvider** - Dark/light mode theming
+2. **ToastProvider** - Toast notifications
+3. **MiniAppProvider** - Farcaster/Base App detection
+4. **PrivyProvider** - Authentication and wallet management
+5. **QueryClientProvider** - TanStack Query for data fetching
+6. **WagmiProvider** - Ethereum wallet interactions
+7. **XMTPProvider** - XMTP messaging client
 
 ### Key Components
 
-- **Landing Page** (`/`) - Authentication and app introduction
-- **Chat Interface** (`/chat`) - Protected route with XMTP messaging
-- **MessageList** - Display conversation history with auto-scroll
-- **MessageInput** - Send messages to AI agent
+- **Landing Page** (`app/page.tsx`) - Authentication and app introduction
+- **Chat Interface** - XMTP messaging with the Pocki Agent
+- **MessageList** - Display conversation history
+- **MessageInput** - Send messages to the agent
 - **TransactionModal** - Confirm and execute blockchain transactions
-- **ErrorBoundary** - Comprehensive error handling
+- **UserHeader** - User profile and logout
 
 ### XMTP Integration
 
-The app uses the XMTP Browser SDK (v4.0.0) with:
+The application uses the XMTP Browser SDK for secure, end-to-end encrypted messaging with the Pocki Agent. Features include:
 
-- Automatic reconnection logic (up to 6 retries with exponential backoff)
-- Message streaming with real-time updates
-- Typing indicators from AI agent
-- Read status tracking
+- Real-time message streaming
+- Automatic reconnection logic
+- Typing indicators
+- Message history synchronization
 
-**Important:** XMTP Browser SDK requires specific CORS headers (configured in `next.config.js`):
-- `Cross-Origin-Embedder-Policy: require-corp`
-- `Cross-Origin-Opener-Policy: same-origin`
+## Deployment
 
-## Transaction Handling
+The application is deployed on Railway. The build process uses Nixpacks and runs `npm run build` before starting the production server.
 
-The app supports:
-
-- ETH transfers on Base network
-- ERC-20 token approvals
-- Token swaps
-- Transaction confirmation modals
-- Receipt display with transaction status
-
-## Design Theme
-
-- **Mascot:** 🐼 Panda (calm, thoughtful, supportive)
-- **Accent:** 🎋 Bamboo
-- **Colors:** Soft greens, blacks, whites
-- **Animations:** Gentle, smooth transitions
-
-## Security Notes
+## Security
 
 - All wallet operations use Privy + Wagmi
 - XMTP messages are end-to-end encrypted
 - Transaction confirmations required before execution
+- Content Security Policy (CSP) configured for secure resource loading
 - Environment variables for sensitive configuration
-
-## Troubleshooting
-
-### XMTP Connection Issues
-
-If you experience connection issues:
-1. Check that CORS headers are configured in `next.config.js`
-2. Verify your wallet is connected via Privy
-3. Try refreshing the page (auto-reconnect will retry)
-
-### Single Tab Limitation
-
-The XMTP Browser SDK uses OPFS (Origin Private File System) which only supports single-tab usage. Opening multiple tabs may cause connection issues.
 
 ## License
 
