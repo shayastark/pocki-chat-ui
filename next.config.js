@@ -12,15 +12,7 @@ const nextConfig = {
   experimental: {
     optimizeCss: false, // Disable CSS optimization that can be slow
   },
-  // Allow external images from Neynar CDN
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'imagedelivery.net',
-      },
-    ],
-  },
+  // Explicitly use webpack instead of Turbopack (for Next.js 14 compatibility)
   webpack: (config, { dev, isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -39,6 +31,15 @@ const nextConfig = {
     }
 
     return config;
+  },
+  // Allow external images from Neynar CDN
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'imagedelivery.net',
+      },
+    ],
   },
   async headers() {
     return [
