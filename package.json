@@ -29,7 +29,7 @@
     "@xmtp/content-type-reply": "^2.0.2",
     "@xmtp/content-type-wallet-send-calls": "^2.0.0",
     "ethers": "^6.15.0",
-    "next": "^14.2.15",
+    "next": "^14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "styled-jsx": "^5.1.7",
