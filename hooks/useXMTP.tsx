@@ -269,15 +269,43 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
       // Chain must be correct before any signature requests begin
       console.log('🔍 Verifying wallet chain before XMTP initialization...');
       
+      // Give wallet a moment to initialize before checking chain ID
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
       let chainSwitchAttempts = 0;
-      const maxChainSwitchAttempts = 3;
+      const maxChainSwitchAttempts = 5; // Increased from 3 to 5 for more resilience
       
       while (chainSwitchAttempts < maxChainSwitchAttempts) {
         try {
-          const currentChainIdRaw = await wallet.chainId;
+          // Get chain ID with timeout handling
+          let currentChainIdRaw;
+          try {
+            currentChainIdRaw = await Promise.race([
+              wallet.chainId,
+              new Promise((_, reject) => setTimeout(() => reject(new Error('chainId timeout')), 3000))
+            ]);
+          } catch (chainIdError) {
+            console.warn('⚠️ Error getting chainId, retrying...', chainIdError);
+            chainSwitchAttempts++;
+            if (chainSwitchAttempts < maxChainSwitchAttempts) {
+              await new Promise(resolve => setTimeout(resolve, 500));
+              continue;
+            }
+            throw new Error('Failed to get wallet chain ID. Please ensure your wallet is connected and try again.');
+          }
           
           // Parse chain ID - handle both CAIP-2 format (eip155:8453) and hex format (0x2105)
           let currentChainId: number;
+          if (currentChainIdRaw === null || currentChainIdRaw === undefined) {
+            console.warn('⚠️ Chain ID is null/undefined, retrying...');
+            chainSwitchAttempts++;
+            if (chainSwitchAttempts < maxChainSwitchAttempts) {
+              await new Promise(resolve => setTimeout(resolve, 500));
+              continue;
+            }
+            throw new Error('Wallet chain ID is not available. Please ensure your wallet is connected and try again.');
+          }
+          
           if (typeof currentChainIdRaw === 'string') {
             if (currentChainIdRaw.startsWith('eip155:')) {
               // CAIP-2 format: "eip155:8453" -> extract "8453" -> convert to number
@@ -301,8 +329,8 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
           console.log(`⚠️ Wallet on chain ${currentChainId}, switching to Base (${base.id})...`);
           await wallet.switchChain(base.id);
           
-          // Wait for chain switch to complete
-          await new Promise(resolve => setTimeout(resolve, 300));
+          // Wait longer for chain switch to complete (increased from 300ms to 800ms)
+          await new Promise(resolve => setTimeout(resolve, 800));
           
           // Verify the switch succeeded
           const newChainIdRaw = await wallet.chainId;
@@ -329,21 +357,21 @@ export function XMTPProvider({ children }: { children: ReactNode }) {
             chainSwitchAttempts++;
             if (chainSwitchAttempts < maxChainSwitchAttempts) {
               console.log(`🔄 Retrying chain switch (attempt ${chainSwitchAttempts + 1}/${maxChainSwitchAttempts})...`);
-              await new Promise(resolve => setTimeout(resolve, 500));
+              await new Promise(resolve => setTimeout(resolve, 800)); // Increased from 500ms
             }
           }
-        } catch (chainError) {
+        } catch (chainError: any) {
           console.error('❌ Chain verification/switch error:', chainError);
           chainSwitchAttempts++;
           if (chainSwitchAttempts >= maxChainSwitchAttempts) {
             throw new Error('Failed to switch wallet to Base network. Please manually switch to Base network and try again.');
           }
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise(resolve => setTimeout(resolve, 800)); // Increased from 500ms
         }
       }
       
       if (chainSwitchAttempts >= maxChainSwitchAttempts) {
-        throw new Error('Failed to verify wallet is on Base network after multiple attempts.');
+        throw new Error('Failed to verify wallet is on Base network after multiple attempts. Please ensure your wallet is connected to Base network and try again.');
       }
       
       // Get viem wallet client from Privy wallet (following Privy docs)
