@@ -64,6 +64,12 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
   // Track the FID separately to prevent multiple fetches
   const [fetchedFid, setFetchedFid] = useState<number | null>(null);
   
+  // IMPORTANT: All hooks must be called unconditionally at the top
+  // Call useXMTP even for Base App users (hook will handle gracefully)
+  const { isConnected, isConnecting, error, activeWalletAddress } = useXMTP();
+  const [showTxModal, setShowTxModal] = useState(false);
+  const [currentTx, setCurrentTx] = useState(null);
+  
   // Fetch Farcaster profile when user authenticates with Farcaster
   useEffect(() => {
     const fetchFarcasterProfile = async () => {
@@ -108,10 +114,7 @@ function ChatContent({ isInMiniApp }: { isInMiniApp: boolean }) {
     return <BaseAppChat />;
   }
   
-  // For non-Base App users, proceed with XMTP initialization
-  const { isConnected, isConnecting, error, activeWalletAddress } = useXMTP();
-  const [showTxModal, setShowTxModal] = useState(false);
-  const [currentTx, setCurrentTx] = useState(null);
+  // For non-Base App users, proceed with XMTP initialization (hooks already called above)
 
 
   if (isConnecting) {
@@ -455,6 +458,13 @@ export default function HomePage() {
   const [isInMiniApp, setIsInMiniApp] = useState(false);
   const [hasEnteredChat, setHasEnteredChat] = useState(false);
   const [privyTimeout, setPrivyTimeout] = useState(false);
+  // CRITICAL: Track if component has mounted on client to prevent hydration mismatch
+  const [mounted, setMounted] = useState(false);
+
+  // Set mounted after client-side hydration completes
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const initializeMiniApp = async () => {
@@ -473,8 +483,10 @@ export default function HomePage() {
     initializeMiniApp();
   }, []);
 
-  // Debug Privy ready state
+  // Debug Privy ready state - only after mount to prevent hydration issues
   useEffect(() => {
+    if (!mounted) return;
+    
     console.log('🔍 Privy state:', { ready, authenticated });
     
     // Set timeout warning if Privy doesn't become ready within 10 seconds
@@ -487,11 +499,14 @@ export default function HomePage() {
     }, 10000);
 
     return () => clearTimeout(timeout);
-  }, [ready, authenticated]);
+  }, [ready, authenticated, mounted]);
 
   // Auto-enter chat for browser users (not Mini Apps) after wallet connection
   useEffect(() => {
+    if (!mounted) return;
+    
     // Only auto-enter if:
+    // - Component has mounted (hydration complete)
     // - Privy is ready
     // - User is authenticated
     // - Detection is complete (we know if we're in Mini App or not)
@@ -501,10 +516,11 @@ export default function HomePage() {
       console.log('🌐 Browser user authenticated - auto-entering chat');
       setHasEnteredChat(true);
     }
-  }, [ready, authenticated, detectionComplete, isMiniApp, hasEnteredChat]);
+  }, [ready, authenticated, detectionComplete, isMiniApp, hasEnteredChat, mounted]);
 
-  // Show loading while checking authentication
-  if (!ready) {
+  // CRITICAL: Don't render auth-dependent content until after hydration
+  // This ensures server and client render the same initial content
+  if (!mounted || !ready) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-panda-green-50 to-panda-bamboo-50 dark:from-gray-900 dark:to-gray-800">
         <div className="text-center">
@@ -529,6 +545,7 @@ export default function HomePage() {
   }
 
   // Show chat only if authenticated AND user has explicitly entered chat
+  // Now safe to render - hydration is complete and Privy is ready
   if (authenticated && hasEnteredChat) {
     return (
       <XMTPProvider>

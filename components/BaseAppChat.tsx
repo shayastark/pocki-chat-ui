@@ -55,7 +55,7 @@ export function BaseAppChat() {
               💙 Base App Native Messaging
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Base App has XMTP messaging built right into the platform. Click below to open a secure, end-to-end encrypted direct message with Pocki's AI agent.
+              Base App has XMTP messaging built right into the platform. Click below to open a secure, end-to-end encrypted direct message with Pocki&apos;s AI agent.
             </p>
             <p className="text-gray-600 text-sm">
               ✅ Get info and approve transactions right from the chat<br/>
@@ -78,7 +78,7 @@ export function BaseAppChat() {
               {AGENT_BASENAME}
             </div>
             <p className="text-gray-600 text-xs mt-2">
-              Search in Base App → Open profile → Tap "Message" to chat
+              Search in Base App → Open profile → Tap &quot;Message&quot; to chat
             </p>
           </div>
         </div>
@@ -105,7 +105,7 @@ export function BaseAppChat() {
               </div>
               <div>
                 <p className="text-gray-700">
-                  <strong>Start chatting:</strong> Send your first message to Pocki (e.g., "In what ways can you help me?")
+                  <strong>Start chatting:</strong> Send your first message to Pocki (e.g., &quot;In what ways can you help me?&quot;)
                 </p>
               </div>
             </div>
@@ -125,7 +125,7 @@ export function BaseAppChat() {
               </div>
               <div>
                 <p className="text-gray-700">
-                  <strong>Execute trades:</strong> Approve transactions directly in Base App's wallet
+                  <strong>Execute trades:</strong> Approve transactions directly in Base App&apos;s wallet
                 </p>
               </div>
             </div>
